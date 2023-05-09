@@ -30,3 +30,16 @@ producing:
   * the User Help Text
 
 [Crystal Clear](https://www.researchgate.net/profile/Alistair-Cockburn/publication/234820806_Crystal_clear_a_human-powered_methodology_for_small_teams/links/56d434b508ae2ea08cf8e07a/Crystal-clear-a-human-powered-methodology-for-small-teams.pdf)
+
+## Roles in the CLASP security activities guide
+
+* The Project Manager
+* Requirements Specifier
+* Architect
+* Designer
+* Implementor
+* Test Analyst
+* Security Auditor
+
+
+[CLASP](https://cwe.mitre.org/documents/sources/TheCLASPApplicationSecurityProcess.pdf)
