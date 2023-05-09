@@ -1,4 +1,4 @@
-# Possible Strategies for Continuing a Project
+# Possible Strategies for Enhancing a Project
 
 ## Information Radiators
 
