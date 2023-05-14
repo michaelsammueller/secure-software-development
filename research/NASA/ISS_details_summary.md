@@ -13,8 +13,8 @@
 * Mitigation methods can include: switching systems, crew repairs or logisitic deliveries; except during time-critical exceptions such as: loss of cabin pressure, collisions, toxic spills and fires. Catastrophic collisions have likelihood of under 10% over 10 years. [(NASA, 2007)](final_report_of_the_international_space_station_independent_safety_task_force.pdf)
 * Diligence in monitoring the ISS. [(NASA, 2007)](final_report_of_the_international_space_station_independent_safety_task_force.pdf)
 * In flight health monitoring. Medical events are expected every four-six years for a team of six. [(NASA, 2007)](final_report_of_the_international_space_station_independent_safety_task_force.pdf)
-* Criticality 1 hazardous commands are required to be two stage, , and can only be unsafed by Mission Control Center-Houston, before being resafed again [(NASA, 2007)](final_report_of_the_international_space_station_independent_safety_task_force.pdf).
-* Criticality 2 hazardous commands are required to have popups, and are unsafable by individual ground controller. Command accuracry is around 99.95%,, and can only be unsafed by Mission Control Center-Houston, before being resafed again. [(NASA, 2007)](final_report_of_the_international_space_station_independent_safety_task_force.pdf)
+* Criticality 1 hazardous commands are required to be two stage, and can only be unsafed by Mission Control Center-Houston, before being resafed again [(NASA, 2007)](final_report_of_the_international_space_station_independent_safety_task_force.pdf).
+* Criticality 2 hazardous commands are required to have popups, and are unsafable by individual ground controller. Command accuracy is around 99.95%,, and can only be unsafed by Mission Control Center-Houston, before being resafed again. [(NASA, 2007)](final_report_of_the_international_space_station_independent_safety_task_force.pdf)
 
 ## Regulations
 
@@ -79,7 +79,7 @@ Major Systems:
   * CO2 removal
   * O2 generation
   * Water deliveries
-  * Atmospheric containment removal
+  * Atmospheric contamination removal
   * Temperature and humidity control
 * navigational control,
 * pressure,
