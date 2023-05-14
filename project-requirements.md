@@ -26,5 +26,4 @@ Requirements for the assignment are:
 
 - List any tools and libraries used in the solution.
 
-
 **IMPORTANT:** ***Get the design outline reviewed and approved by the tutor before submitting the final version in Unit 6.***
