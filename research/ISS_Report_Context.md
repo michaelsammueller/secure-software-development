@@ -19,7 +19,7 @@
 
 - The S&MA are responsible for establishing design and operational safety requirements, performing safety assessments, reviewing designs to assure safety requirements are implemented and performing operational safety assessments
 
-## NASA report - ideas for system:
+## ISS report - ideas for system:
 *a searchable relational database for critical ISS safety-related data (Recommendation 5.10.1 - section 5.10) - pg 76
 
 *a system to authorise extraordinary procedures (page 15)
