@@ -2,6 +2,7 @@
 
 ## Built-In Libraries
 
+* async
 * logging - event logging
 * secrets - encryption
 * sockets - network sessions
