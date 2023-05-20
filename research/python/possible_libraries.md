@@ -2,11 +2,11 @@
 
 ## Built-In Libraries
 
-* async
 * logging - event logging
 * secrets - encryption
 * sockets - network sessions
 * sqlite3 - CRUD
+* threading - multithreading
 * unitest - code reliability
 
 ## External Libraries
