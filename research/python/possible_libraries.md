@@ -3,6 +3,7 @@
 ## Built-In Libraries
 
 * logging - event logging
+* mutliprocessing - multiprocessing
 * secrets - encryption
 * sockets - network sessions
 * sqlite3 - CRUD
