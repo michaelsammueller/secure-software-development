@@ -3,7 +3,6 @@
 '''
 
 import sqlite3
-from imports import Permission
 
 class Role:
     '''
@@ -20,9 +19,13 @@ class Role:
         '''
         #connect to SQL databse
         connect = sqlite3.connect('data/securespace.db')
+
+        #enable foreign keys
+        connect.execute("PRAGMA foreign_keys = ON")
+        
         cursor = connect.cursor()
 
-        #insert role_id and permission_id pairing into the database
+        #insert role_id and permission_id pairing into database
         cursor.execute("INSERT INTO role_has_permissions (role_id, permission_id) VALUES (?, ?)",
                        (self.role_id, permission_id))
         
@@ -62,4 +65,5 @@ class Superadmin(Role):
 
     def __str__(self):
         return f"{self.name} has {self.role_id} role id"
+
 
