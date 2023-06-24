@@ -2,6 +2,9 @@
     This file contains the Role class.
 '''
 
+import sqlite3
+from imports import Permission
+
 class Role:
     '''
         A parent class for the system roles.
@@ -10,14 +13,22 @@ class Role:
         self.name = name
         self.role_id = role_id
 
-    def role_has_permission(self, permission_id):
+    def add_permission(self, permission_id):
         '''
-        A method which pairs the role_id with the permission_id
+            A method to store the role_id with the corresponding permission_id
+            in the table role_has_permissions
         '''
-        if self.role_id == permission_id:
-            return True
-        else:
-            return False
+        #connect to SQL databse
+        connect = sqlite3.connect('data/securespace.db')
+        cursor = connect.cursor()
+
+        #insert role_id and permission_id pairing into the database
+        cursor.execute("INSERT INTO role_has_permissions (role_id, permission_id) VALUES (?, ?)",
+                       (self.role_id, permission_id))
+        
+        #commit the change and close the database connection
+        connect.commit()
+        connect.close()
    
 class Astronaut(Role):
     '''
@@ -51,3 +62,4 @@ class Superadmin(Role):
 
     def __str__(self):
         return f"{self.name} has {self.role_id} role id"
+
