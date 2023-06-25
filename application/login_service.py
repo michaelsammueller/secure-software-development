@@ -1,12 +1,13 @@
 # Imports
 from imports import sqlite3, bcrypt
 
+
 # Login Class
 class Login_Service:
     def __init__(self, username, password):
         self.username = username
         self.password = password
-    
+
     def authenticate_user_credentials(self, username, password):
         """Authenticate user credentials"""
         connect = sqlite3.connect('data/securespace.db')
@@ -27,4 +28,3 @@ class Login_Service:
         print("Invalid username or password.\n")
         connect.close()
         return False
-        
