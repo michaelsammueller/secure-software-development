@@ -1,19 +1,30 @@
 # Imports
-from imports import bcrypt
+from imports import Fernet
+
 
 # Encryption Service Class
 class Encryption_Service:
+    def __init__(self, secret_key):
+        self.secret_key = secret_key
 
-    def __init__(self, secret, data):
-        self.secret = secret
-        self.data = data
-    
-    def encrypt(self, secret, data):
+    def encrypt(self, data):
         """Encrypt data"""
-        encrypted_data = secret.encrypt(data.encode())
+        cipher_suite = Fernet(self.secret_key)
+        encrypted_data = cipher_suite.encrypt(data.encode('utf-8'))
         return encrypted_data
-    
-    def decrypt(self, secret, data):
+
+    def decrypt(self, encrypted_data):
         """Decrypt data"""
-        decrypted_data = secret.decrypt(data).decode()
-        return decrypted_data
+        cipher_suite = Fernet(self.secret_key)
+        decrypted_data = cipher_suite.decrypt(encrypted_data)
+        return decrypted_data.decode('utf-8')
+
+
+# Test
+# secret_key = Fernet.generate_key()
+# encryption_service = Encryption_Service(secret_key)
+# data = "Hello World!"
+# encrypted_data = encryption_service.encrypt(data)
+# print(encrypted_data)
+# decrypted_data = encryption_service.decrypt(encrypted_data)
+# print(decrypted_data)
