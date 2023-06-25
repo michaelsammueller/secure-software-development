@@ -6,16 +6,79 @@ class CommonActions(object):
     '''
         A class for encapsulating a set of expected actions.
     '''
-    def add_user(self, user_details):
+    def __init__(self, logger, db, login_service, authorisation_service):
+        self._logger = logger
+        self._login_service = login_service
+        self._authorisation_service = authorisation_service
+        self._db = db
+
+    def add_new_user(self, new_user_details):
         '''
             A method for adding a user to the system.
-        '''
-        pass
 
-    def delete_user(self, user_details):
+            new_user_details interface:
+            {
+                'user_name': user_name,
+                'user_role': 'astronaut' or 'moderator' or 'superadmin',
+            }
+        '''
+        action = 'add_new_user'
+        user = self._login_service.get_logged_in_user()
+        # assert shape of parameter
+        try:
+            all(new_user_details['user_name'], 
+                new_user_details['user_role'],
+                )
+        except KeyError:
+            self._logger.log({
+                'user' : user,
+                'activity_type' : 'event',
+                'severity' : 'warning',
+                'event' : {
+                    'type' : 'add_new_user_key_error',
+                    'parameters' : {
+                        key : value for key, value in new_user_details.items()
+                    }
+                }
+            })
+            return False
+        # assert permission for action
+        if not self._authorisation_service.check_permission(action, user):
+            return False
+        # log action
+        self._logger.log({
+            'user' : user,
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : {
+                    key : value for key, value in new_user_details.items()
+                }
+            }
+        })
+        # add user to database
+        return self._db.insert('users', new_user_details)
+
+    def delete_user(self, old_user_name):
         '''
             A method for deleting a user from the system.
         '''
+        action = 'delete_user'
+        user = self._login_service.get_logged_in_user()
+        # assert permission for action
+        if not self._authorisation_service.check_permission(action, user):
+            return False
+        # log action
+        self._logger.log({
+            'user' : user,
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : {
+                    'user_name' : old_user_name
+                }
+            }
+        })
         pass
 
     def add_health_update(self, health_details):
@@ -34,7 +97,24 @@ class CommonActions(object):
         '''
             A method for querying the system using raw sql.
         '''
-        pass
+        action = 'input_raw_sql'
+        user = self._login_service.get_logged_in_user()
+        # assert permission for action
+        if not self._authorisation_service.check_permission(action, user):
+            return False
+        # log action
+        self._logger.log({
+            'user' : self._login_service.get_logged_in_user(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : {
+                    'sql_query' : sql_query
+                }
+            }
+        })
+        # execute sql
+        return self._db.execute(sql_query)
 
     def view_temperature(self):
         '''

@@ -13,7 +13,7 @@ class Logger(object):
         self._encryption_service = encryption_service
         self._auditor = auditor
     
-    def log(self, loggable_information):
+    def log(self, loggable_information): # TODO: needs to assert shape of parameter
         '''
             A method for writing information about an action into a log file.
 
