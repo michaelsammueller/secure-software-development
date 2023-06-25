@@ -85,7 +85,7 @@ cursor.execute('''
 
 
 
-# Creation of the health records table
+# Creation of the checks table
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS checks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -118,6 +118,19 @@ cursor.execute('''
         FOREIGN KEY (user_id) REFERENCES users (id)
     )
 ''')
+
+
+
+
+# Seed the check table
+
+checks = [('Temperature',),
+          ('Radiation',)]
+
+cursor.executemany(''' 
+        INSERT INTO checks(name) 
+        VALUES(?)
+''', checks)
 
 # Commit changes and close the connection
 connect.commit()
