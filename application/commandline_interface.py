@@ -1,6 +1,9 @@
+"""
+    This file contains the CommandLineInterface class
+"""
+
 # Imports
-from imports import getpass
-from imports import Login_Service
+from imports import getpass, Login_Service, User
 
 
 # CommandLineInterface class
@@ -9,7 +12,7 @@ class CommandLineInterface:
     def __init__(self, selection, confirmation, user):
         self.selection = selection
         self.confirmation = confirmation
-        self.user = user  # Will be an instance of the User class
+        self.user = User()  # Will be an instance of the User class
 
     def greeting(self):
         """Display greeting message"""
@@ -17,6 +20,20 @@ class CommandLineInterface:
         -------------------------
         Welcome, {self.user.username}!
         -------------------------\n""")
+
+    def get_user_information(self, attribute=None):
+        """
+            Retrieve user information.
+            Args:
+                attribute: The attribute to retrieve (e.g. 'first_name')
+            Returns:
+                The value of the specified attribute. If no attribute is
+                specified, all attributes are returned.
+        """
+        if attribute is None:
+            return vars(self.user)
+        else:
+            return getattr(self.user, attribute)
 
     def request_login_details(self):
         """Request user login details"""
@@ -45,7 +62,7 @@ class CommandLineInterface:
         self.greeting()
 
         while True:
-            pass  # Add options to add health record, view health records, and logout
+            pass  # Create an instance of the "Action_Controller" class
 
     def display_main_menu(self):
         """Display main menu options"""
@@ -61,13 +78,21 @@ class CommandLineInterface:
                 username, password = self.request_login_details()  # Request user login details
                 # Create instance of Login_Service class
                 login_service = Login_Service(username, password)
-                # If user credentials are valid, display user menu
-                if login_service.authenticate_user_credentials(username, password):
-                    self.display_user_menu(username)  # Display user menu for logged in user
-                else:
-                    print("Invalid username or password.\n")
+                login_service.login()  # Login user
             elif selection == '2':
                 print("Exiting...\n")
                 break
             else:
                 print("Invalid selection.\n")
+
+    # change_password method (SHOULD LIVE IN ACTION CONTROLLER - NOT HERE)
+    # Should this method require reauthentication?
+    def change_password(self):
+        """Changes user password"""
+        pass
+
+    # change_phrase method (SHOULD LIVE IN ACTION CONTROLLER - NOT HERE)
+    # Should this method require reauthentication?
+    def change_phrase(self):
+        """Changes user phrase"""
+        pass
