@@ -1,78 +1,62 @@
 '''
     This file contains the User class.
 '''
-import sqlite3
-from imports import Login_Service
+import uuid
+import dbmanager
+import datetime
+
 
 class User:
     '''
         A class to create user objects.
     '''
-    def __init__(self, first_name, last_name, username, password, secret_phrase):
-        '''
-            attributes come from user set-up
-        '''
-        self.first_name = first_name
-        self.last_name = last_name
-        self.username = username
-        self.password = password
-        self.secret_phrase = secret_phrase
-        '''
-            attribute retrieved from logger
-        '''
-        self.last_login = str
-    
-    def login(self):
-        '''
-            A method to handle user logins
-        '''
-        #create an instance of Login_Service
-        login_service = Login_Service()
+    def __init__(self, name, code, dob, role_id, country_id, username, password):
+        self._name = name
+        self._code = code
+        self._dob = dob
+        self._role_id = role_id
+        self._country_id = country_id
+        self._username = username
+        self._password = password
+        self._uuid = uuid.uuid4()
+        self._created_at = None
+        self._updated_at = None
+        self._last_login_at = None
 
-        #call authenticate_user_credentials method
-        is_authenticated = login_service.authenticate_user_credentials(self.username, self.password)
+        # initialise instance of DBManager
+        self.db_manager = dbmanager.DBManager()
 
-        #check authentication
-        if is_authenticated:
-            print("Successful login")
-        else:
-            print("Invalid login")
+        # set current_time to now
+        self.current_time = datetime.datetime.now()
 
-    def change_password(self, new_password):
-        '''
-            A method to handle user password changes.
-        '''
-        #update the password in the User object
-        self.password = new_password
+    def add_user(self):
+        # update created_at and updated_at attributes
+        if self._created_at is None:
+            self._created_at = self.current_time
+        self._updated_at = self.current_time
 
-        #update the password in the database
-        db = sqlite3.connect('data/securespace.db')
-        cursor = db.cursor()
+        # perform database query to save user attributes.
+        query = "INSERT INTO users (uuid, name, code, dob, role_id, \
+            country_id, username, password) VALUES ?, ?, ?, ?, ?, ?, ?, ?)"
+        values = (str(self._uuid), self._name, self._code, self._dob, self._role_id,
+                  self._country_id, self._username, self._password, self._created_at)
 
-        query = "UPDATE users SET password = ? WHERE username = ?"
-        cursor.execute(query, (new_password, self.username))
+        # call do_insert method from DBmanager.
+        self.db_manager.do_insert(query, [values], dry=False)
 
-        db.commit()
-        db.close()
+    def update_user(self):
+        # update the 'updated_at' attribute.
+        self._updated_at = self.current_time
 
-    def change_phrase(self, new_phrase):
-        '''
-            A method to handle user secret phrase changes.
-        '''
+        # perform database query to update user attributes.
+        query = "UPDATE users SET name=?, code=?, dob=?, role_id=?, \
+            country_id=?, username=?, password=?, updated_at=? WHERE uuid=?"
+        values = (self._name, self._code, self._dob, self._role_id, self._country_id,
+                  self._username, self._password, self._updated_at, str(self._uuid))
+
+        # call do_update method from DBmanager.
+        self.db_manager.do_update(query, values)
+
+    def delete_user(self):
         pass
 
-    def is_phrase_required(time):
-        '''
-            A method for...
-        '''
-        pass
-
-    def decrypt(secret_phrase):
-        '''
-            A method for...
-        '''
-        pass
-
-            A method for...
-        '''
-        pass
