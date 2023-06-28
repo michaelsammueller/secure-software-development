@@ -1,8 +1,8 @@
 '''
-    This file contains the CommonActions class.
+    This file contains the ActionsController class.
 '''
 
-class CommonActions(object):
+class ActionsController(object):
     '''
         A class for encapsulating a set of expected actions.
     '''
