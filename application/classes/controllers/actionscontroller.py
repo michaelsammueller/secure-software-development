@@ -1,16 +1,49 @@
 '''
-    This file contains the CommonActions class.
+    This file contains the ActionsController class.
 '''
 
-class CommonActions(object):
+class ActionsController(object):
     '''
         A class for encapsulating a set of expected actions.
     '''
-    def __init__(self, logger, db, login_service, authorisation_service):
+    def __init__(self, logger, db, user, authorisation_service):
         self._logger = logger
-        self._login_service = login_service
+        self._user = user
         self._authorisation_service = authorisation_service
         self._db = db
+        self._ACTIONS = [
+            'Add New User',
+            'Delete User',
+            'Add Health Record',
+            'View Health Record',
+            'Execute SQL Query',
+            'View Warning Logs', # TODO
+            'View All Logs', # TODO
+            'View Temperature', # TODO
+            'View Radiation Levels', # TODO
+            'Update Health Record', # TODO
+            'Delete Health Record', # TODO
+            ''
+        ]
+
+    def get_actions(self):
+        return self._ACTIONS
+    
+    def __call__(self, action, parameters):
+        '''
+            A method for calling an action.
+        '''
+        if action not in self._ACTIONS:
+            return False
+        func_map  = {
+            'Add New User': self.add_new_user,
+            'Delete User': self.delete_user,
+            'Add Health Record': self.add_health_record,
+            'View Health Record': self.view_health_records,
+            'Execute SQL Query': self.input_raw_sql,
+            'View Temperature': self.view_temperature,
+        }
+        return func_map[action](parameters)
 
     def add_new_user(self, new_user_details):
         '''
@@ -23,7 +56,7 @@ class CommonActions(object):
             }
         '''
         action = 'add_new_user'
-        user = self._login_service.get_logged_in_user()
+        user = self._user.get_name()
         # assert shape of parameter
         try:
             all(new_user_details['user_name'], 
@@ -56,14 +89,14 @@ class CommonActions(object):
             }
         })
         # add user to database
-        return self._db.insert('users', new_user_details)
+        return self._db.do_insert('users', new_user_details)
 
     def delete_user(self, old_user_details):
         '''
             A method for deleting a user from the system.
         '''
         action = 'delete_user'
-        user = self._login_service.get_logged_in_user()
+        user = self._user.get_name()
         # assert permission for action
         if not self._authorisation_service.check_permission(action, user):
             return False
@@ -79,7 +112,7 @@ class CommonActions(object):
             }
         })
         # delete user from database
-        return self._db.delete('users', old_user_details)
+        return self._db.do_delete('users', old_user_details)
 
     def add_health_record(self, new_health_record_details):
         '''
@@ -98,7 +131,7 @@ class CommonActions(object):
             }
         '''
         action = 'add_new_health_record'
-        user = self._login_service.get_logged_in_user()
+        user = self._user.get_name()
         # assert shape of parameter
         try:
             all(new_health_record_details['user_name'])
@@ -130,9 +163,9 @@ class CommonActions(object):
             }
         })
         # add user to database
-        return self._db.insert('users', new_health_record_details)
+        return self._db.do_insert('users', new_health_record_details)
 
-    def view_health_records(self, request_details):
+    def view_health_record(self, request_details):
         '''
             A method for viewing the health records about a user.
         '''
@@ -143,13 +176,13 @@ class CommonActions(object):
             A method for querying the system using raw sql.
         '''
         action = 'input_raw_sql'
-        user = self._login_service.get_logged_in_user()
+        user = self._user.get_name()
         # assert permission for action
         if not self._authorisation_service.check_permission(action, user):
             return False
         # log action
         self._logger.log({
-            'user' : self._login_service.get_logged_in_user(),
+            'user' : self._user.get_name(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,

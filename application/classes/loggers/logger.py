@@ -3,6 +3,7 @@
 '''
 
 from datetime import datetime
+import json
 
 class Logger(object):
     '''
@@ -42,7 +43,8 @@ class Logger(object):
             # encrypt sensitive data
             encrypted_information = self._encrypt(loggable_information)
             # store log
-            file.write(f'{encrypted_information}\n') #JSON-lines format
+            json_line = json.dumps(encrypted_information)
+            file.write(f'{json_line}\n') #JSON-lines format
         # audit logfile
         if additional_information := self._auditor.audit(self.log_file):
             #handle audit

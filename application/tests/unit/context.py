@@ -14,5 +14,5 @@ import sys
 path = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(path))
 
-from sensors.geigercounter import GeigerCounter
-from sensors.thermometer import Thermometer
+from classes.sensors.geigercounter import GeigerCounter
+from classes.sensors.thermometer import Thermometer

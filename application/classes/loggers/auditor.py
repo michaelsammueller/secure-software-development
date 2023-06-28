@@ -14,27 +14,39 @@ class Auditor(object):
         self._danger_handler = danger_handler
         self._severity_level = 'info' # alt states: 'warning', 'danger'
         self._new_log = {}
+        self._num_lines_read = 0
         # severity parameters
         self._num_login_attempts = 0
         self._warning_login_attempts = 3
         self._danger_login_attempts = 6
     
-    def audit(self, log_file):
+    def audit(self, log_file, reset=False):
         '''
-            A method for creating additional logs if needed
+            A method for creating additional logs if needed.
+
+            If a warning log is created, that will be stored in the warning file,
+            with some decrypted information accessible to the moderator.
+
+            If a danger log is created, that will be stored in the usual log file,
+            containing encrypted sensitive information, accessible only to the superadmin.
         '''
+        if reset:
+            self._num_lines_read = 0
         with open(log_file, 'r') as file:
-            for line in file.readlines():
-                log = json.loads(line)
-                self._monitor_login_attempts(log)
-            else:
-                if self._severity_level == 'warning':
-                    self._warning_file.write(f'{self.new_log}\n')
-                    self._severity_level = 'info'
-                new_log = self._new_log
-                self._new_log = {} # reset
-                self._num_login_attempts = 0 # reset
-                return new_log
+            for i, line in enumerate(file.readlines()):
+                if i < self._num_lines_read:
+                    continue
+                else:
+                    log = json.loads(line)
+                    self._monitor_login_attempts(log)
+                    if self._severity_level == 'warning':
+                        self._warning_file.write(f'{self._new_log}\n')
+                    if self._new_log:
+                        new_log = self._new_log
+                        self._severity_level = 'info' # reset
+                        self._new_log = {} # reset
+                        self._num_login_attempts = 0 # reset
+                        return new_log
     
     def _monitor_login_attempts(self, log):
         '''
@@ -79,6 +91,7 @@ class Auditor(object):
                         }
                     }
                 }
+        elif log['activity_type'] == 'event':
+            pass
         else:
             self._num_login_attempts = 0
-
