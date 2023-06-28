@@ -1,69 +1,68 @@
 '''
     This file contains the Role class.
 '''
+import datetime
+import dbmanager
 
-import sqlite3
 
 class Role:
     '''
         A parent class for the system roles.
     '''
-    def __init__(self, name, role_id):
-        self.name = name
-        self.role_id = role_id
+    def __init__(self, name):
+        self._name = name
+        self._role_id = None # return from databse
+        self._created_at = None
+        self._updated_at = None
 
-    def add_permission(self, permission_id):
-        '''
-            A method to store the role_id with the corresponding permission_id
-            in the table role_has_permissions
-        '''
-        #connect to SQL databse
-        connect = sqlite3.connect('data/securespace.db')
+        # initialise instance of DBManager
+        self.db_manager = dbmanager.DBManager()
 
-        #enable foreign keys
-        connect.execute("PRAGMA foreign_keys = ON")
+        # set current_time to now
+        self.current_time = datetime.datetime.now()
+
+    def add_role(self):
+        # update created_at and updated_at attributes
+        if self._created_at is None:
+            self._created_at = self.current_time
+        self._updated_at = self.current_time
+
+        # prepare the data for updating the role table
+        values = (self._name, self._role_id, self._created_at, self._updated_at)
+
+        # call do_insert method from DBManager
+        query = " INSERT INTO roles (name, role_id, created_at, updated_at) \
+            VALUES (?, ?, ?, ?)"
+        self.db_manager.do_insert(query, [values], dry=False)
+
+    def update_role(self):
+        # update the 'updated_at' attribute.
+        self._updated_at = self.current_time
+
+        # perform database query to update permission attributes.
+        query = "UPDATE roles SET name=?, updated_at=? WHERE role_id=?"
+        values = (self._name, self._updated_at, self._role_id)
+
+        # call do_update method from DBmanager.
+        self.db_manager.do_update(query, values)
+
+    def delete_role(self):
+        # identify records to delete with id
+        query = "DELETE FROM roles WHERE id = ?"
+        where = (self._role_id)
+
+        # call do_delete method from DBManager
+        result = self.db_manager.do_delete(query, where, dry=True)
         
-        cursor = connect.cursor()
-
-        #insert role_id and permission_id pairing into database
-        cursor.execute("INSERT INTO role_has_permissions (role_id, permission_id) VALUES (?, ?)",
-                       (self.role_id, permission_id))
+        # if id is matched, records will be deleted.
+        if result:
+            print(f"Deleted {len(result)} record(s) from roles table.")
+            return True
         
-        #commit the change and close the database connection
-        connect.commit()
-        connect.close()
-   
-class Astronaut(Role):
-    '''
-        A child class for the 'Astronaut' role.
-    '''
-    def __init__(self):
-        super().__init__("Astronaut")
-        self.role_id = int
-
-    def __str__(self):
-        return f"{self.name} has {self.role_id} role id"
-        
-class Moderator(Role):
-    '''
-        A child class for the 'Moderator' role.
-    '''
-    def __init__(self):
-        super().__init__("Moderator")
-        self.role_id = int
-
-    def __str__(self):
-        return f"{self.name} has {self.role_id} role id"
-
-class Superadmin(Role):
-    '''
-        A child class for the 'Superadmin' role.
-    '''
-    def __init__(self):
-        super().__init__("Superadmin")
-        self.role_id = int
-
-    def __str__(self):
-        return f"{self.name} has {self.role_id} role id"
-
-
+        # if id is not matched, records will not be deleted.
+        else:
+            print("No records deleted.")
+            return False
+    
+    def role_has_permissions():
+        pass
