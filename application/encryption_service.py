@@ -5,7 +5,6 @@
 # Imports
 from imports import Fernet
 
-
 # Encryption Service Class
 class Encryption_Service:
     def __init__(self):
