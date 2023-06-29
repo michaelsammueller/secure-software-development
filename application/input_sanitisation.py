@@ -5,7 +5,6 @@
 # Imports
 from imports import re
 
-
 # Input Sanitisation Service Class
 class Input_Sanitisation_Service:
 
