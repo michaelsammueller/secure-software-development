@@ -58,7 +58,7 @@ class DBManager():
                 if not dry:                    
                     self.__db_connection.commit()
 
-                return self.__db_cursor.lastrowid
+                return self.__db_cursor.lastrowid                
             
             except sqlite3.DatabaseError as e:
                 print("Error: %s" % (e.args[0]))    
@@ -92,7 +92,7 @@ dbman = DBManager()
 # mono = dbman.do_select('SELECT * FROM checks WHERE id = ?', (2,) ) 
 # print(mono['name'])
 
-print( dbman.do_insert("INSERT INTO roles(name) VALUES (?) ", ('Astronaut',),  False ) )
+print( dbman.do_insert("INSERT INTO roles(name) VALUES (?) ", ('Astronaut2',),  False ) )
 
 # print( dbman.do_select("SELECT * FROM checks") )
 
@@ -100,7 +100,7 @@ print( dbman.do_insert("INSERT INTO roles(name) VALUES (?) ", ('Astronaut',),  F
 
 # print( dbman.do_select("SELECT * FROM checks") )
 
-# print( dbman.do_update("UPDATE checks SET name = 'Mono'  WHERE id = ? ", (2,) ) )
+#print( dbman.do_update("UPDATE checks SET name = 'Mono'  WHERE id = ? ", (2,) ) )
 
 # print( dbman.do_delete("DELETE FROM checks WHERE id = ?", (10,), False ) )
 # print( dbman.do_select("SELECT * FROM checks") )
