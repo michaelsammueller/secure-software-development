@@ -1,7 +1,7 @@
 '''
     This file contains the Thermometer class.
 '''
-from sensors.abstract import Sensor
+from classes.sensors.abstract import Sensor
 from random import gauss
 
 
@@ -26,6 +26,12 @@ class Thermometer(Sensor):
         self._temperature = self.get_converters()[unit](self._temperature + delta, self._unit)
         self._unit = unit
         return self._temperature
+    
+    def get_units(self):
+        '''
+            A method for getting the units used for the last reading.
+        '''
+        return self._unit
 
     @classmethod
     def convert_to_celsius(cls, temperature, unit):

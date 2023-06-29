@@ -15,3 +15,9 @@ class Sensor(ABC):
         '''
             Abstract method for reading data from the sensor.
         '''
+    @abstractmethod
+    def get_units():
+        '''
+            Abstract method for getting the units used for the last reading.
+        '''
+    
