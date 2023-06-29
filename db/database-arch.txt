@@ -1,0 +1,198 @@
+-- -----------------------------------------------------
+-- Schema iss
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `iss` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `iss` ;
+
+-- -----------------------------------------------------
+-- Table `iss`.`audit_log`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `iss`.`audit_log` (
+  `id` INT NOT NULL,
+  `user_id` INT(11) NOT NULL,
+  `severity` INT NULL,
+  `activity` VARCHAR(45) NULL,
+  `category` VARCHAR(45) NULL,
+  `data` LONGBLOB NULL,
+  `created_at` DATETIME NULL,
+  `updated_at` DATETIME NULL,
+  INDEX `fk_audit_log_user1_idx` (`user_id` ASC) VISIBLE,
+  CONSTRAINT `fk_audit_log_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `iss`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `iss`.`check`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `iss`.`check` (
+  `check_id` INT(11) NOT NULL,
+  `name` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`check_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `iss`.`permission`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `iss`.`permission` (
+  `id` INT(11) NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `iss`.`record`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `iss`.`record` (
+  `id` INT(11) NOT NULL,
+  `uuid` VARCHAR(45) NOT NULL,
+  `user_id` INT(11) NOT NULL,
+  `created_at` DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_record_user1_idx` (`user_id` ASC) VISIBLE,
+  CONSTRAINT `fk_record_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `iss`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `iss`.`record_item`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `iss`.`record_item` (
+  `id` INT(11) NOT NULL,
+  `record_id` INT(11) NOT NULL,
+  `complains` VARCHAR(255) NULL DEFAULT NULL,
+  `height` FLOAT NULL,
+  `weight` FLOAT NULL,
+  `blood_pressure` VARCHAR(25) NULL,
+  `created_at` DATETIME NULL,
+  `updated_at` DATETIME NULL,
+  PRIMARY KEY (`id`),
+  INDEX `record_id_idx` (`record_id` ASC) VISIBLE,
+  CONSTRAINT `record_id`
+    FOREIGN KEY (`record_id`)
+    REFERENCES `iss`.`record` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `iss`.`record_item_has_check`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `iss`.`record_item_has_check` (
+  `record_item_id` INT(11) NOT NULL,
+  `check_id` INT(11) NOT NULL,
+  `mesurement` INT(11) NULL DEFAULT NULL,
+  `unit` VARCHAR(45) NULL DEFAULT NULL,
+  `comments` VARCHAR(255) NULL,
+  PRIMARY KEY (`record_item_id`, `check_id`),
+  INDEX `check_id_idx` (`check_id` ASC, `record_item_id` ASC) VISIBLE,
+  CONSTRAINT `check_id`
+    FOREIGN KEY (`check_id`)
+    REFERENCES `iss`.`check` (`check_id`),
+  CONSTRAINT `record_details_id`
+    FOREIGN KEY (`record_item_id`)
+    REFERENCES `iss`.`record_item` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `iss`.`role`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `iss`.`role` (
+  `id` INT(11) NOT NULL,
+  `name` VARCHAR(45) NULL DEFAULT NULL,
+  `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `iss`.`role_has_permission`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `iss`.`role_has_permission` (
+  `permission_id` INT(11) NOT NULL,
+  `role_id` INT(11) NOT NULL,
+  PRIMARY KEY (`permission_id`, `role_id`),
+  INDEX `role_id_idx` (`role_id` ASC) VISIBLE,
+  CONSTRAINT `permission_id`
+    FOREIGN KEY (`permission_id`)
+    REFERENCES `iss`.`permission` (`id`),
+  CONSTRAINT `role_id`
+    FOREIGN KEY (`role_id`)
+    REFERENCES `iss`.`role` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `iss`.`user`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `iss`.`user` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `uuid` VARCHAR(45) NOT NULL,
+  `code` VARCHAR(45) NULL,
+  `user_type_id` INT(11) NULL DEFAULT NULL,
+  `approved` TINYINT(1) NOT NULL DEFAULT '0',
+  `role_id` INT(11) NOT NULL,
+  `name` VARCHAR(45) NULL DEFAULT NULL,
+  `last_login_at` DATETIME NULL DEFAULT NULL,
+  `activated_at` DATETIME NULL DEFAULT NULL,
+  `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NOT NULL,
+  `is_held` TINYINT(1) NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  INDEX `user_type_id_idx` (`user_type_id` ASC) VISIBLE,
+  INDEX `fk_user_role1_idx` (`role_id` ASC) VISIBLE,
+  UNIQUE INDEX `code_UNIQUE` (`code` ASC) VISIBLE,
+  CONSTRAINT `user_type_id`
+    FOREIGN KEY (`user_type_id`)
+    REFERENCES `iss`.`user_type` (`id`),
+  CONSTRAINT `fk_user_role`
+    FOREIGN KEY (`role_id`)
+    REFERENCES `iss`.`role` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `iss`.`user_type`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `iss`.`user_type` (
+  `id` INT(11) NOT NULL,
+  `name` VARCHAR(45) NULL DEFAULT NULL,
+  `created_at` DATETIME NULL,
+  `updated_at` DATETIME NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
