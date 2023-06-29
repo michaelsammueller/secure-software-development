@@ -15,10 +15,10 @@ cursor.execute('''
         role_id INTEGER,        
         country_id INTEGER,
         username TEXT,
-        password TEXT,
-        last_login_at INTEGER NULL,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL,
+        password TEXT,        
+        last_login_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         is_held NUMERIC DEFAULT 1,
         status NUMERIC DEFAULT 0,        
         FOREIGN KEY (role_id) REFERENCES roles (id)
@@ -30,8 +30,8 @@ cursor.execute('''
     CREATE TABLE IF NOT EXISTS roles (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
 ''')
 
@@ -40,8 +40,8 @@ cursor.execute('''
     CREATE TABLE IF NOT EXISTS permissions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
 ''')
 
@@ -61,8 +61,8 @@ cursor.execute('''
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         uuid TEXT NOT NULL,
         user_id INTEGER,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users (id)
     )
 ''')
@@ -77,8 +77,8 @@ cursor.execute('''
         height REAL NULL,
         weight REAL NULL,
         blood_pressure TEXT NULL,      
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (record_id) REFERENCES records (id)
     )
 ''')
@@ -113,8 +113,8 @@ cursor.execute('''
         activity TEXT NULL,
         category INTEGER NULL,
         data TEXT NULL,      
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users (id)
     )
 ''')
