@@ -13,15 +13,12 @@ class TestCLI(unittest.TestCase):
 
     def test_exit(self):
         '''
-            A method that tests the read_data method.
+            A method that tests exiting the main menu.
         '''
         mock_selections = (x for x in ['2'])
         self.cli.ask_for_selection = lambda: next(mock_selections) # monkey patch
         self.assertTrue(self.cli.display_main_menu())
     
-
-
-
 
 if __name__ == '__main__':
     unittest.main()
