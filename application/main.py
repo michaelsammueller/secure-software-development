@@ -1,7 +1,6 @@
 """
     Contains the main function for the program.
 """
-
 # Imports
 from commandline_interface import CommandLineInterface
 from user import User
@@ -22,3 +21,4 @@ def main():
 # Run Program
 if __name__ == "__main__":
     main()
+=======
