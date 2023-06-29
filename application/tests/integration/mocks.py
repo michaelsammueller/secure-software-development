@@ -1,3 +1,7 @@
+'''
+    This is a file that contains classes with mock methods for testing.
+'''
+
 class MockAuthorisationService:
     '''
         A class for mocking the authorisation service.
