@@ -3,16 +3,15 @@
 """
 
 # Imports
-from imports import getpass, Login_Service, User
-
+from imports import getpass, Login_Service, User, Input_Sanitisation_Service
 
 # CommandLineInterface class
 # This class will be responsible for handling user input
 class CommandLineInterface:
-    def __init__(self, selection, confirmation, user):
-        self.selection = selection
-        self.confirmation = confirmation
-        self.user = User()  # Will be an instance of the User class
+    #def __init__(self, selection, confirmation, user):
+        #self.selection = selection
+        #self.confirmation = confirmation
+        #self.user = User()  # Will be an instance of the User class
 
     def greeting(self):
         """Display greeting message"""
@@ -78,21 +77,80 @@ class CommandLineInterface:
                 username, password = self.request_login_details()  # Request user login details
                 # Create instance of Login_Service class
                 login_service = Login_Service(username, password)
-                login_service.login()  # Login user
+                if login_service.login():
+                    self.display_user_menu()
+                else:
+                    print("Unable to login.\n")
             elif selection == '2':
                 print("Exiting...\n")
                 break
             else:
                 print("Invalid selection.\n")
 
-    # change_password method (SHOULD LIVE IN ACTION CONTROLLER - NOT HERE)
-    # Should this method require reauthentication?
+    # Will live in here for now
     def change_password(self):
         """Changes user password"""
-        pass
+        # Ask user for reauthentication
+        username, password = self.request_login_details()
+        # Create instance of Login_Service class
+        login_service = Login_Service(username, password)
+        # Authenticate user credentials
+        if login_service.authenticate_user_credentials():
+            # Ask user for new password
+            new_password = getpass.getpass("New Password: ", stream=None)
+            # Ask user to confirm new password
+            new_password_confirmation = getpass.getpass("Confirm New Password: ", stream=None)
+            # Check if new password matches confirmation
+            if new_password == new_password_confirmation:
+                # Sanitise password
+                new_password = Input_Sanitisation_Service.filter_special_characters(new_password)
+                # Check if new password is the same as the old password
+                if new_password == password:
+                    print("New password cannot be the same as the old password.\n")
+                else:
+                    # Ask user for phrase
+                    phrase = input("Enter your phrase: ")
+                    # Authenticate phrase
+                    if login_service.authenticate_phrase(phrase):
+                        # Change password
+                        login_service.change_password(new_password)
+                        print("Password changed successfully.\n")
+                        # Create logger to log password change
+                        return True
+                    else:
+                        print("Phrase incorrect.\n")
+                        # Create logger to log failed password change
+                        return False
+            else:
+                print("Passwords do not match.\n")
+                # Create logger to log failed password change
+                return False
 
-    # change_phrase method (SHOULD LIVE IN ACTION CONTROLLER - NOT HERE)
-    # Should this method require reauthentication?
+    # Will live in here for now
     def change_phrase(self):
         """Changes user phrase"""
-        pass
+        # Ask user for reauthentication
+        username, password = self.request_login_details()
+        # Create instance of Login_Service class
+        login_service = Login_Service(username, password)
+        # Authenticate user credentials
+        if login_service.authenticate_user_credentials():
+            # Ask user for new phrase
+            new_phrase = input("New Phrase: ")
+            # Ask user to confirm new phrase
+            new_phrase_confirmation = input("Confirm New Phrase: ")
+            # Check if new phrase matches confirmation
+            if new_phrase == new_phrase_confirmation:
+                    new_phrase = Input_Sanitisation_Service.sanitise_phrase(new_phrase)
+                    login_service.change_phrase(new_phrase)
+                    print("Phrase changed successfully.\n")
+                    # Create logger to log phrase change
+                    return True
+            else:
+                print("Phrases do not match.\n")
+                # Create logger to log failed phrase change
+                return False
+        else:
+            print("Incorrect credentials.\n")
+            # Create logger to log failed login attempt
+            return False
