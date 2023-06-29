@@ -1,7 +1,7 @@
 '''
     This file contains the GeigerCounter class.
 '''
-from sensors.abstract import Sensor
+from classes.sensors.abstract import Sensor
 from random import gauss
 
 
