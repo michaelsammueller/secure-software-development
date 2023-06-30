@@ -27,7 +27,10 @@ class ActionsController(object):
 
 
     def get_actions(self):
-        return self._ACTIONS
+        user_role = self.user.get_role()
+        key = lambda action: self.authorisation_service.check_permission(action, user_role)
+        filtered_actions = filter(key, self._ACTIONS)
+        return list(filtered_actions)
     
     def get_action_params(self, action):
         '''
@@ -213,7 +216,7 @@ class ActionsController(object):
         '''
         action = 'view_temperature'
         # assert permission for action
-        if not self.authorisation_service.check_permission(action, self.user):
+        if not self.authorisation_service.check_permission(action, self.user.get_role()):
             return False
         # perform action
         temperature = self.thermometer.read_data(measurement_details['units'])
@@ -244,7 +247,7 @@ class ActionsController(object):
         '''
         action = 'view_radiation_level'
         # assert permission for action
-        if not self.authorisation_service.check_permission(action, self.user):
+        if not self.authorisation_service.check_permission(action, self.user.get_role()):
             return False
         # perform action
         radiation = self.geiger_counter.read_data(measurement_details['units'])
