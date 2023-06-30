@@ -80,9 +80,8 @@ class CommandLineInterface:
                 details = {}
                 print("\nRequesting details...")
                 for param in params:
-                    if len(param) == 1: # field name provided
-                        print(f"{param}")
-                        details[param] = self.ask_for_selection()
+                    if not param[1]: # only field name provided
+                        details[param[0]] = self.ask_for_selection()
                     else: # field name and options provided
                         print(f"options for {param[0]}: {param[1]}")
                         details[param[0]] = self.ask_for_selection()
