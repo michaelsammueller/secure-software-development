@@ -21,7 +21,8 @@ cursor.execute('''
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         is_held NUMERIC DEFAULT 1,
         status NUMERIC DEFAULT 0,        
-        FOREIGN KEY (role_id) REFERENCES roles (id)
+        FOREIGN KEY (role_id) REFERENCES roles (id),
+        FOREIGN KEY (country_id) REFERENCES countries (id)
     )
 ''')
 
@@ -120,7 +121,16 @@ cursor.execute('''
 ''')
 
 
-
+# Creation of the countries table
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS countries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        code TEXT,
+        name TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+''')
 
 # Seed the check table
 
