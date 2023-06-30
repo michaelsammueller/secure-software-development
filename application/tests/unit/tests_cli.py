@@ -16,8 +16,8 @@ class TestCLI(unittest.TestCase):
             A method that tests exiting the main menu.
         '''
         mock_selections = (x for x in ['2'])
-        self.cli.ask_for_selection = lambda: next(mock_selections) # monkey patch
-        self.assertTrue(self.cli.display_main_menu())
+        self.cli.ask_for_selection = lambda: next(mock_selections)
+        self.assertTrue(self.cli.display_main_menu()) # successful exit
     
 
 if __name__ == '__main__':
