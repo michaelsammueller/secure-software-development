@@ -27,7 +27,6 @@ class ActionsController(object):
                              ('user_role', ['astronaut', 'moderator', 'superadmin'])],
         }
 
-
     def get_actions(self):
         user_role = self.user.get_role()
         key = lambda action: self.authorisation_service.check_permission(action, user_role)
@@ -64,8 +63,8 @@ class ActionsController(object):
 
             new_user_details interface:
             {
-                'user_name': user_name,
-                'user_role': 'astronaut' or 'moderator' or 'superadmin',
+                'name': name,
+                'role': 'astronaut' or 'moderator' or 'superadmin',
             }
         '''
         action = 'Add New User'
@@ -75,7 +74,11 @@ class ActionsController(object):
         if not self.authorisation_service.check_permission(action, self.user.get_role()):
             return {'Error': 'Unauthorised action'}
         # perform action
-        # results = self.db.do_insert('users', new_user_details) TODO: pass details to database
+        user = self.user_factory.create_user(new_user_details)
+        if user.add_user():
+            results = {'Confirmation': 'User Added'}
+        else:
+            results = {'Error': 'User Not Added'}
         # log action
         json = {
             'user' : self.user.get_name(),
@@ -88,7 +91,7 @@ class ActionsController(object):
                 'results' : results
             }
         }
-        self._logger.log(json)
+        self.logger.log(json)
         # return results
         return results
 
@@ -282,8 +285,8 @@ class ActionsController(object):
                     'type' : 'Missing Parameters',
                     'details' : {
                         'action' : action,
-                        'parameters' : {key : value for key, value in parameters.items()},
-                        'required' : [field[0] for field in fields]
+                        'provided_parameters' : {key : value for key, value in parameters.items()},
+                        'required_parameters' : [field[0] for field in fields]
                     }
                 }
             }
@@ -313,3 +316,7 @@ class ActionsController(object):
     def connect_geiger_counter(self, geiger_counter):
         """Connects the action controller"""
         self.geiger_counter = geiger_counter
+    
+    def connect_user_factory(self, user_factory):
+        """Connects the action controller"""
+        self.user_factory = user_factory
