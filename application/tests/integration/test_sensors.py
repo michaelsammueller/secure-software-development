@@ -5,7 +5,7 @@ from context import ActionsController, CommandLineInterface, GeigerCounter, Ther
 from mock import MockAuthorisationService, MockLoginService, MockLogger, MockUser
 import unittest
 
-class TestThermometer(unittest.TestCase):
+class TestSensors(unittest.TestCase):
     '''
         A class for encapsulating functionality tests for the thermometer.
     '''
