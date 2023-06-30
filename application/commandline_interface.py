@@ -3,7 +3,8 @@
 """
 
 # Imports
-from imports import getpass, Login_Service, User, Input_Sanitisation_Service
+import getpass
+# from imports import getpass, Login_Service, User, Input_Sanitisation_Service
 
 # CommandLineInterface class
 # This class will be responsible for handling user input
@@ -48,7 +49,8 @@ class CommandLineInterface:
     def ask_for_confirmation(self):
         """Request user confirmation"""
         while True:
-            confirmation = input("Enter Y to confirm or N to cancel: ")
+            print("Enter Y to confirm or N to cancel.")
+            confirmation = self.ask_for_selection()
             if confirmation.upper() == 'Y':
                 return True
             elif confirmation.upper() == 'N':
@@ -56,17 +58,51 @@ class CommandLineInterface:
             else:
                 print("Invalid selection. Please enter 'Y' or 'N'.\n")
 
-    def display_user_menu(self, username):
+    def display_user_menu(self):
         """Display user menu options"""
         self.greeting()
-
         while True:
-            pass  # Create an instance of the "Action_Controller" class
+            options = self.action_controller.get_actions()
+            for i, option in enumerate(options):
+                print(f"{i + 1}. {option}")
+        
+            # Request user selection
+            selection = self.ask_for_selection()
+            # Handle user selection
+            try:
+                selection = int(selection)
+            except:
+                print("Invalid selection.\n")
+                continue
+            if selection < len(options):
+                # Get additional paramaters from user 
+                params = self.action_controller.get_action_params(options[selection - 1])
+                details = {}
+                print("\nRequesting details...")
+                for param in params:
+                    if len(param) == 1: # field name provided
+                        print(f"{param}")
+                        details[param] = self.ask_for_selection()
+                    else: # field name and options provided
+                        print(f"options for {param[0]}: {param[1]}")
+                        details[param[0]] = self.ask_for_selection()
+                # Perform action
+                results = self.action_controller(options[selection - 1], details)
+                print("\nResults...")
+                print(f"{[f'{key}: {value}' for key, value in results.items()]}")
+                # Ask to continue
+                print("\nWould you like to continue?")
+                if self.ask_for_confirmation():
+                    continue
+                else:
+                    break
+            else:
+                print("Invalid selection.\n")
 
     def display_main_menu(self):
         """Display main menu options"""
         while True:
-            print("1. Login")
+            print("\n1. Login")
             print("2. Exit\n")
 
             # Request user selection
@@ -75,15 +111,15 @@ class CommandLineInterface:
             # Handle user selection
             if selection == '1':
                 username, password = self.request_login_details()  # Request user login details
-                # Create instance of Login_Service class
-                login_service = Login_Service(username, password)
-                if login_service.login():
+                # Handle Login
+                if self.login_service.login(username, password):
                     self.display_user_menu()
                 else:
                     print("Unable to login.\n")
             elif selection == '2':
+                # Handle Exit
                 print("Exiting...\n")
-                break
+                return True # Confirms exit
             else:
                 print("Invalid selection.\n")
 
@@ -154,3 +190,12 @@ class CommandLineInterface:
             print("Incorrect credentials.\n")
             # Create logger to log failed login attempt
             return False
+        
+    def connect_login_service(self, login_service):
+        """Connects the login service"""
+        self.login_service = login_service
+
+    def connect_action_controller(self, action_controller):
+        """Connects the action controller"""
+        self.action_controller = action_controller
+    

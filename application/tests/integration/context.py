@@ -14,6 +14,7 @@ import sys
 path = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(path))
 
-from commandline_interface import CommandLineInterface
+from classes.controllers.actionscontroller import ActionsController
 from classes.sensors.geigercounter import GeigerCounter
 from classes.sensors.thermometer import Thermometer
+from commandline_interface import CommandLineInterface

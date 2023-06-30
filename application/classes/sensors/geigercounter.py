@@ -1,7 +1,7 @@
 '''
     This file contains the GeigerCounter class.
 '''
-from sensors.abstract import Sensor
+from classes.sensors.abstract import Sensor
 from random import gauss
 
 
@@ -26,6 +26,12 @@ class GeigerCounter(Sensor):
         self._radiation = max(self.get_converters()[unit](self._radiation + delta, self._unit), 0)
         self._unit = unit
         return self._radiation
+    
+    def get_units(self):
+        '''
+            A method for getting the units used for the last reading.
+        '''
+        return self._unit
     
     @classmethod
     def convert_to_rem(cls, radiation, unit):
