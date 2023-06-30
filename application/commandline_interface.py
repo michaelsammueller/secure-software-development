@@ -44,6 +44,7 @@ class CommandLineInterface:
     def ask_for_selection(self):
         """Request user selection"""
         selection = input("Enter your selection: ")
+        print("\n")
         return selection
 
     def ask_for_confirmation(self):
@@ -81,9 +82,10 @@ class CommandLineInterface:
                 print("\nRequesting details...")
                 for param in params:
                     if not param[1]: # only field name provided
+                        print(f"{param[0]}")
                         details[param[0]] = self.ask_for_selection()
                     else: # field name and options provided
-                        print(f"options for {param[0]}: {param[1]}")
+                        print(f"\nOptions for {param[0]}: {param[1]}")
                         details[param[0]] = self.ask_for_selection()
                 # Perform action
                 results = self.action_controller(options[selection - 1], details)
