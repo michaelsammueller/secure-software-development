@@ -1,5 +1,7 @@
 import sys
+import os
 import sqlite3
+
 
 # Connect to SQL database or create database if it doesn't exist
 class DBManager():
@@ -8,7 +10,7 @@ class DBManager():
 
     def __init__(self):
        
-        self.__db_connection = sqlite3.connect(sys.path[0].rstrip('classes') + 'data/securespace.db')
+        self.__db_connection = sqlite3.connect('data/securespace.db')
         self.__db_connection.row_factory = sqlite3.Row # associative array
         self.__db_cursor = self.__db_connection.cursor()
         
@@ -23,7 +25,7 @@ class DBManager():
             else:
                 self.__db_cursor.execute( query )
 
-            return self.__db_cursor.fetchall()
+            return self.__db_cursor.fetchall()        
         
         except sqlite3.DatabaseError as e:
             print("Error: %s" % (e.args[0]))
@@ -51,7 +53,7 @@ class DBManager():
     # where is a list of tuples
     # we need to return the id of the inserted row
     def do_insert( self, query, row = (), dry=True ):
-        
+       
         if row:      
             try:
                 self.__db_cursor.execute( query, row )       
@@ -84,15 +86,21 @@ class DBManager():
         # No data passed      
         else:
             return False
+        
+    # def dict_factory(self, row):
+    #     d = {}
+    #     for idx, col in enumerate(self.__db_cursor.description):
+    #         d[col[0]] = row[idx]
+    #     return d
            
-dbman = DBManager()
+#dbman = DBManager()
 
 # test
 
 # mono = dbman.do_select('SELECT * FROM checks WHERE id = ?', (2,) ) 
 # print(mono['name'])
 
-print( dbman.do_insert("INSERT INTO roles(name) VALUES (?) ", ('Astronaut2',),  False ) )
+#print( dbman.do_insert("INSERT INTO roles(name) VALUES (?) ", ('Astronaut2',),  False ) )
 
 # print( dbman.do_select("SELECT * FROM checks") )
 
