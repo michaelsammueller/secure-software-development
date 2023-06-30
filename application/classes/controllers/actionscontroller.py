@@ -8,20 +8,21 @@ class ActionsController(object):
     '''
     def __init__(self):
         self._ACTIONS = [
-            'Add New User',
-            'Delete User',
-            'Add Health Record',
-            'View Health Record',
-            'Execute SQL Query',
+            'Add New User', # TODO
+            'Delete User', # TODO
+            'Add Health Record', # TODO
+            'View Health Record', # TODO
+            'Execute SQL Query', # TODO
             'View Warning Logs', # TODO
             'View All Logs', # TODO
-            'View Temperature', # TODO
-            'View Radiation Levels', # TODO
+            'View Temperature',
+            'View Radiation Levels',
             'Update Health Record', # TODO
             'Delete Health Record', # TODO
         ]
         self._ACTIONPARAMS = {
             'View Temperature': [('units', ['C', 'F', 'K'])],
+            'View Radiation Levels': [('units', ['Rem', 'SV'])],
         }
 
 
@@ -48,10 +49,11 @@ class ActionsController(object):
             'View Health Record': self.view_health_record,
             'Execute SQL Query': self.input_raw_sql,
             'View Temperature': self.view_temperature,
+            'View Radiation Levels': self.view_radiation_level
         }
         return func_map[action](parameters)
 
-    def add_new_user(self, new_user_details):
+    def add_new_user(self, new_user_details): #TODO
         '''
             A method for adding a user to the system.
 
@@ -97,7 +99,7 @@ class ActionsController(object):
         # add user to database
         return self._db.do_insert('users', new_user_details)
 
-    def delete_user(self, old_user_details):
+    def delete_user(self, old_user_details): #TODO
         '''
             A method for deleting a user from the system.
         '''
@@ -120,7 +122,7 @@ class ActionsController(object):
         # delete user from database
         return self._db.do_delete('users', old_user_details)
 
-    def add_health_record(self, new_health_record_details):
+    def add_health_record(self, new_health_record_details): #TODO
         '''
             A method for adding health record details to the system about a user.
 
@@ -171,13 +173,13 @@ class ActionsController(object):
         # add user to database
         return self._db.do_insert('users', new_health_record_details)
 
-    def view_health_record(self, request_details):
+    def view_health_record(self, request_details): #TODO
         '''
             A method for viewing the health records about a user.
         '''
         pass
 
-    def input_raw_sql(self, sql_query):
+    def input_raw_sql(self, sql_query): #TODO
         '''
             A method for querying the system using raw sql.
         '''
@@ -213,6 +215,7 @@ class ActionsController(object):
         # assert permission for action
         if not self.authorisation_service.check_permission(action, self.user):
             return False
+        # perform action
         temperature = self.thermometer.read_data(measurement_details['units'])
         units = self.thermometer.get_units()
         # log action
@@ -223,6 +226,37 @@ class ActionsController(object):
                 'type' : action,
                 'parameters' : {
                     'temperature' : temperature,
+                    'units' : units
+                }
+            }
+        }
+        self.logger.log(json)
+        return json['action']['parameters']
+    
+    def view_radiation_level(self, measurement_details):
+        '''
+            A method for viewing the readings of a gieger counter.
+
+            measurement_details interface:
+            {
+                'units': 'Rem' or 'SV'
+            }
+        '''
+        action = 'view_radiation_level'
+        # assert permission for action
+        if not self.authorisation_service.check_permission(action, self.user):
+            return False
+        # perform action
+        radiation = self.geiger_counter.read_data(measurement_details['units'])
+        units = self.geiger_counter.get_units()
+        # log action
+        json = {
+            'user' : self.user.get_name(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : {
+                    'radiation' : radiation,
                     'units' : units
                 }
             }
@@ -249,3 +283,7 @@ class ActionsController(object):
     def connect_thermometer(self, thermometer):
         """Connects the action controller"""
         self.thermometer = thermometer
+    
+    def connect_geiger_counter(self, geiger_counter):
+        """Connects the action controller"""
+        self.geiger_counter = geiger_counter
