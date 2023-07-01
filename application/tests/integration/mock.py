@@ -60,7 +60,7 @@ class MockUserFactory:
         A class for mocking a user factory.
     '''
 
-    def create_user(self, *args, **kwargs):
+    def create(self, *args, **kwargs):
         '''
         A method for mocking creating a user.
         '''

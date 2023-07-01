@@ -5,7 +5,7 @@ from context import ActionsController, CommandLineInterface
 from mock import MockAuthorisationService, MockLoginService, MockLogger, MockUser, MockUserFactory
 import unittest
 
-class TestThermometer(unittest.TestCase):
+class TestAdminActions(unittest.TestCase):
     '''
         A class for encapsulating functionality tests for the thermometer.
     '''
@@ -26,10 +26,10 @@ class TestThermometer(unittest.TestCase):
 
     def test_add_user(self):
         '''
-            A method that tests the view temperature option.
+            A method that tests the add user option.
         '''
-        mock_selections = (x for x in ['1', '1', 'test_user', 'astronaut', 'N', '2'])
-        #self.cli.ask_for_selection = lambda: next(mock_selections)
+        mock_selections = (x for x in ['1', '1', 'test_user', 'astronaut', '01/01/1971', 'USA', 'username', 'password', 'N', '2'])
+        self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
 if __name__ == '__main__':
