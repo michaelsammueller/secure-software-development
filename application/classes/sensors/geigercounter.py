@@ -22,8 +22,9 @@ class GeigerCounter(Sensor):
             A method for reading data from the geiger counter.
         '''
         # Random radiation level variation
-        delta = self.get_converters()[self._unit](gauss(0, 0.00001 * self._RATEOFCHANGE), 'Rem')
-        self._radiation = max(self.get_converters()[unit](self._radiation + delta, self._unit), 0)
+        delta = gauss(0, 0.00001 * self._RATEOFCHANGE)
+        self._radiation_rem = max(self.get_converters()['Rem'](self._radiation, self._unit), 0)
+        self._radiation = max(self.get_converters()[unit](self._radiation_rem + delta, 'Rem'), 0)
         self._unit = unit
         return self._radiation
     
