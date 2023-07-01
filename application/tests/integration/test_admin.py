@@ -32,5 +32,13 @@ class TestAdminActions(unittest.TestCase):
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
+    def test_delete_user(self):
+        '''
+            A method that tests the delete user option.
+        '''
+        mock_selections = (x for x in ['1', '2', 'test_user', 'N', '2'])
+        self.cli.ask_for_selection = lambda: next(mock_selections)
+        self.assertTrue(self.cli.display_main_menu())
+
 if __name__ == '__main__':
     unittest.main()

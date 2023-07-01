@@ -55,6 +55,12 @@ class MockUser:
         '''
         return True
     
+    def delete_user(self, *args, **kwargs):
+        '''
+        A method for mocking deleting a user.
+        '''
+        return True
+    
 class MockUserFactory:
     '''
         A class for mocking a user factory.
@@ -63,5 +69,11 @@ class MockUserFactory:
     def create(self, *args, **kwargs):
         '''
         A method for mocking creating a user.
+        '''
+        return MockUser()
+    
+    def get(self, *args, **kwargs):
+        '''
+        A method for mocking getting a user.
         '''
         return MockUser()
