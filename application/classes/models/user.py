@@ -44,7 +44,7 @@ class User:
         # perform database query to update user attributes.
         query = "UPDATE users SET name=?, code=?, dob=?, role_id=?, \
             country_id=?, username=?, password=?, updated_at=? WHERE uuid=?"
-        values = (self.__name, self.__code, self.__dob, self.__role_id, self.__country_id,
+        values = (self.__name, self.__code, self.__dob, str(self.__role_id), str(self.__country_id),
                   self.__username, self.__password, self.__updated_at, str(self.__uuid))
 
         # call do_update method from DBmanager.

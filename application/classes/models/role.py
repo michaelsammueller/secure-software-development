@@ -36,7 +36,7 @@ class Role:
 
     def update_role(self, id, name):
         # update the 'updated_at' attribute.
-        self._updated_at = datetime.datetime.now()
+        self._updated_at = time.mktime(datetime.datetime.now().timetuple())
         # perform database query to update permission attributes.
         query = "UPDATE roles SET name='" + name + "', updated_at= " + self._updated_at + " WHERE role_id=?"
         values = (id,)

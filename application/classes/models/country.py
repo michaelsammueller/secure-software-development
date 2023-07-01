@@ -1,17 +1,9 @@
 '''
     This file contains the Role class.
 '''
-import os
-import sys
 
 import datetime
-
-# fpath = os.path.join(os.path.dirname(__file__).rstrip('classes'), 'data')
-# #print(fpath)
-# sys.path.append(fpath)
-
-from dbmanager import DBManager
-
+import time
 
 class Country:
     '''
@@ -22,16 +14,22 @@ class Country:
         # need id
         self._code = code  
         self._name = name       
-        self._created_at = datetime.datetime.now()
-        self._updated_at = datetime.datetime.now()
-        # initialise instance of DBManager
-        self.db_manager = DBManager()
+        self._created_at = time.mktime(datetime.datetime.now().timetuple())
+        self._updated_at = time.mktime(datetime.datetime.now().timetuple())
+
 
     def get_country(self, id):
         if id:
             return self.db_manager.do_select('SELECT * FROM countries WHERE id = ?', (id,) )
         else:
             return False
+        
+    def get_country_id(self, name):
+        result = self.db_manager.do_select('SELECT id FROM roles WHERE name = ?', (name,) )
+        if len(result) >= 1:        
+            return result[0]['name'] # TODO
+        else:
+            return 0
     
     # Creates a record and returns the inserted id
     def add_country(self, code, name):        
@@ -42,7 +40,7 @@ class Country:
 
     def update_country(self, id, name):
         # update the 'updated_at' attribute.
-        self._updated_at = datetime.datetime.now()
+        self._updated_at = time.mktime(datetime.datetime.now().timetuple())
         # perform database query to update permission attributes.
         query = "UPDATE countries SET name='" + name + "', updated_at= " + self._updated_at + " WHERE role_id=?"
         values = (id,)
@@ -55,12 +53,10 @@ class Country:
         query = "DELETE FROM countries WHERE id = ?"
         where = (id,)
         # call do_delete method from DBManager
-        return self.db_manager.do_delete(query, where, False)      
-  
+        return self.db_manager.do_delete(query, where, False)     
 
-
-# obj_country = Country()
-# print( obj_country.add_country('US', 'USA') )
-# rows = obj_country.get_country(1) 
-# for row in rows:
-#     print( dict(row) )
+    def connect_db_manager(self, db_manager):
+        '''
+            A method for connecting the database manager.
+        '''
+        self.db_manager = db_manager 
