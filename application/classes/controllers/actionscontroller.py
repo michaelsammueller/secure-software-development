@@ -8,13 +8,11 @@ class ActionsController(object):
     '''
     def __init__(self):
         self._ACTIONS = [
-            'Add New User', # TODO
-            'Delete User', # TODO
+            'Add New User',
+            'Delete User',
+            'Update User', # TODO
             'Add Health Record', # TODO
             'View Health Record', # TODO
-            'Execute SQL Query', # TODO
-            'View Warning Logs', # TODO
-            'View All Logs', # TODO
             'View Temperature',
             'View Radiation Level',
             'Update Health Record', # TODO
@@ -25,6 +23,7 @@ class ActionsController(object):
             'View Radiation Level': [('units', ['Rem', 'SV'])],
             'Add New User': [('name', []), 
                              ('role', ['astronaut', 'moderator', 'superadmin'])],
+            'Delete User': [('name', [])],
         }
 
     def get_actions(self):
@@ -61,7 +60,7 @@ class ActionsController(object):
         }
         return func_map[action](parameters)
 
-    def add_new_user(self, new_user_details): #TODO
+    def add_new_user(self, new_user_details):
         '''
             A method for adding a user to the system.
 
@@ -78,7 +77,7 @@ class ActionsController(object):
         if not self.authorisation_service.check_permission(action, self.user.get_role()):
             return {'Error': 'Unauthorised action'}
         # perform action
-        user = self.user_factory.create_user(new_user_details)
+        user = self.user_factory.create_user(new_user_details) # TODO
         if user.add_user():
             results = {'Confirmation': 'User Added'}
         else:
@@ -95,32 +94,46 @@ class ActionsController(object):
                 'results' : results
             }
         }
-        self.logger.log(json)
+        self.logger.log(json) #TODO
         # return results
         return results
 
-    def delete_user(self, old_user_details): #TODO
+    def delete_user(self, old_user_details):
         '''
             A method for deleting a user from the system.
+
+            old_user_details interface:
+            {
+                'name': name,
+            }
         '''
-        action = 'delete_user'
-        user = self._user.get_name()
+        action = "Delete User"
+        if not self.assert_params_shape(old_user_details, action):
+            return {'Error': 'Missing parameters'}
         # assert permission for action
-        if not self._authorisation_service.check_permission(action, user):
-            return False
+        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+            return {'Error': 'Unauthorised action'}
+        # perform action
+        user = self.user_factory.create_user(old_user_details) # TODO
+        if user.add_user():
+            results = {'Confirmation': 'User Deleted'}
+        else:
+            results = {'Error': 'User Not Added'}
         # log action
-        self._logger.log({
-            'user' : user,
+        json = {
+            'user' : self.user.get_name(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
                 'parameters' : {
                     key : value for key, value in old_user_details.items()
-                }
+                },
+                'results' : results
             }
-        })
-        # delete user from database
-        return self._db.do_delete('users', old_user_details)
+        }
+        self.logger.log(json) # TODO
+        # return results
+        return results
 
     def add_health_record(self, new_health_record_details): #TODO
         '''
