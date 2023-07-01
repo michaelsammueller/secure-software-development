@@ -60,6 +60,8 @@ class User:
             country_id, username, password) VALUES ?, ?, ?, ?, ?, ?, ?, ?)"
         values = (str(self.__uuid), self.__name, self.__code, self.__dob, self.__role_id,
                   self.__country_id, self.__username, self.__password, self.__created_at)
+        # call do_update method from DBmanager.
+        self.db_manager.do_update(query, values)
 
     def connect_db_manager(self, db_manager):
         '''
