@@ -10,10 +10,7 @@ class Country:
         A parent class for the system countries.
     '''
 
-    def __init__(self, code = '', name = ''):
-        # need id
-        self._code = code  
-        self._name = name       
+    def __init__(self):     
         self._created_at = time.mktime(datetime.datetime.now().timetuple())
         self._updated_at = time.mktime(datetime.datetime.now().timetuple())
 
