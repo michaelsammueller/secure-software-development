@@ -1,133 +1,62 @@
 """
-    This file contains the Login_Service class
+    This file contains the Input_Sanitisation_Service class
 """
 
 # Imports
-from imports import bcrypt, datetime
-from classes.dbmanager import DBManager
-from input_sanitisation import Input_Sanitisation_Service
+from imports import re
 
-# Login Class
-class Login_Service:
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
+# Input Sanitisation Service Class
+class Input_Sanitisation_Service:
 
-    def check_phrase_required(self):
-        """Check last login"""
-        try:
-            dbman = DBManager()  # Create DBManager instance
-            last_login = dbman.do_select(
-                'SELECT last_login_at FROM users WHERE username = ?', (self.username,))
-            last_login = last_login[0][0]
+    def filter_sql_keywords(self, user_input):
+        """Filters SQL keywords from user input"""
+        sql_keywords = ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'FROM', 'WHERE', 'JOIN']
+        sanitized_input = user_input
 
-            # If last_login is None, return True
-            if last_login is None:
-                return False
-            else:
-                last_login = datetime.datetime.fromtimestamp(last_login)
-                today = datetime.date.today()
+        for keyword in sql_keywords:
+            # Replace SQL keywords with empty string
+            sanitized_input = sanitized_input.replace(keyword, '')
 
-                # Calculate difference in months
-                months_diff = (today.year - last_login.year) * 12 + (today.month - last_login.month)
+        return sanitized_input
 
-                # Check if difference is greater than 3 months
-                if months_diff > 3:
-                    return True
-                else:
-                    return False
-        except Exception as e:
-            print(f"An error occured: {e}\n")
-            # Create logger to log error
-            return True
-
-    def authenticate_user_credentials(self):
-        """Authenticate user credentials"""
-        try:
-            dbman = DBManager()  # Create DBManager instance
-            result = dbman.do_select(
-                'SELECT password FROM users WHERE username = ?', (self.username,))
-            if result:
-                stored_password = result[0][0]
-                # Compare entered password with stored password
-                if bcrypt.checkpw(self.password.encode('utf-8'), stored_password):
-                    return True
-                else:
-                    print("Invalid username or password.\n")
-                    # Create logger to log failed login
-                    return False
-        except Exception as e:
-            print(f"An error occured: {e}\n")
-            # Create logger to log error
-            return False
-
-    def authenticate_phrase(self, phrase):
-        """Authenticate phrase"""
-        try:
-            dbman = DBManager()  # Create DBManager instance
-            secret_phrase = dbman.do_select(
-                'SELECT phrase FROM users WHERE username = ?', (self.username,))
-            if phrase == secret_phrase:
-                return True
-            else:
-                print("Invalid phrase.\n")
-                # Create logger to log failed login
-                return False
-        except Exception as e:
-            print(f"Unable to authenticate phrase: {e}\n")
-            # Create logger to log error
-            return False
-
-    def login(self):
-        """Calls upon the other methods to login the user"""
-        if self.authenticate_user_credentials():
-            if self.check_phrase_required():
-                phrase = input("Enter your secret phrase: ")
-                sanitiser = Input_Sanitisation_Service()
-                sanitised_phrase = sanitiser.sanitise_phrase(phrase)
-                if self.authenticate_phrase(sanitised_phrase):
-                    print("Login successful.\n")
-                    # Create logger to log successful login
-                    return True
-                else:
-                    print("Login failed.\n")
-                    # Create logger to log failed login
-                    return False
-            else:
-                print("Login successful.\n")
-                # Create logger to log successful login
-                return True
+    def filter_special_characters(self, user_input, whitespace=True):
+        """
+            Filters special characters from user input. If whitespace is false,
+            whitespace is not filtered.
+        """
+        if whitespace:
+            sanitized_input = re.sub(r'[^\w\s]', '', user_input)
         else:
-            print("Login failed.\n")
-            # Create logger to log failed login
+            sanitized_input = re.sub(r'[^\w]', '', user_input)
+        return sanitized_input
+
+    def assert_input_size(self, user_input, min_size, max_size):
+        """Asserts that the length of input is within specified range"""
+        if len(user_input) < min_size or len(user_input) > max_size:
+            raise ValueError(f"Input must be between {min_size} and {max_size} characters long")
+        else:
+            return True
+
+    def assert_number(self, user_input):
+        """Asserts that input is a number"""
+        try:
+            float(user_input)  # Convert input to float
+            return True
+        except ValueError:
             return False
 
-    def change_password(self, new_password):
-        """Change user password"""
+    def match_pattern(self, user_input, pattern):
+        """Matches input against specified pattern"""
+        match = re.match(pattern, user_input)
+        return bool(match)  # Returns True if match is found, False otherwise
+
+    def sanitise_phrase(self, phrase):
+        """Sanitises phrase"""
         try:
-            dbman = DBManager()  # Create DBManager instance
-            hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())  # Hash password
-            dbman.do_update('UPDATE users SET password = ? WHERE username = ?',
-                            (hashed_password, self.username))
-            print("Password changed successfully.\n")
-            # Create logger to log successful password change
-            return True
+            # Filter SQL keywords
+            phrase = self.filter_sql_keywords(phrase)
+            # Filter special characters
+            phrase = self.filter_special_characters(phrase, False)
         except Exception as e:
-            print(f"Unable to change password: {e}\n")
+            print(f"An error occured: {e}\n")
             # Create logger to log error
-            return False
-    
-    # CHECK DATABASE SCHEMA ONCE PHRASE ADDED
-    def change_phrase(self, new_phrase):
-        """Change secret phrase"""
-        try:
-            dbman = DBManager()  # Create DBManager instance
-            dbman.do_update('UPDATE users SET phrase = ? WHERE username = ?',
-                             (new_phrase, self.username))
-            print("Secret phrase changed successfully.\n")
-            # Create logger to log successful phrase change
-            return True
-        except Exception as e:
-            print(f"Unable to change secret phrase: {e}\n")
-            # Create logger to log error
-            return False
