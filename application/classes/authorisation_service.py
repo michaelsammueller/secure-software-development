@@ -1,19 +1,16 @@
 '''
     This file contains the Authorisation Service Class
 '''
-from dbmanager import DBManager
-from permission import Permission
-
 class AuthorisationService:
 
     def __init__(self):
-        # initialise instance of DBManager
-        self.db_manager = DBManager()
-        self.permission = Permission()
         # a dictionary to store the action-to-permission mappings
         self.action_to_permission = {
             'Add New User': 'create-user'
         }
+
+    def get_permission_id(self, action):
+        return self.action_to_permission[action]
         
     def check_permissions(self, action, role):
         permission_id = self.action_to_permission[action]
@@ -25,3 +22,7 @@ class AuthorisationService:
             return True
         else:
             return False
+        
+    def connect_db_manager(self, db_manager):
+        """Connects the action controller"""
+        self.db_manager = db_manager
