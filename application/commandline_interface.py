@@ -59,6 +59,7 @@ class CommandLineInterface:
             else:
                 print("Invalid selection. Please enter 'Y' or 'N'.\n")
 
+
     def display_user_menu(self, username): # TESTED AND WORKING
         """Display user menu options"""
         self.greeting(username) # Display greeting message
@@ -114,8 +115,8 @@ class CommandLineInterface:
                 username, password = self.request_login_details()  # Request user login details
                 # Handle Login
                 if self.login_service.login(username, password):
-                    #self.display_user_menu(username)
-                    self.display_test_menu(username)
+                    self.display_user_menu(username)
+                    #self.display_test_menu(username)
                 else:
                     # Create logger to log failed login attempt
                     pass
