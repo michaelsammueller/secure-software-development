@@ -12,29 +12,27 @@ This application is intended for use by astronauts to record health indicators r
 
 The project domain is the International Space Station (ISS), which is a collaborative international space travel and research program between 15 governments, overseen and facilitated by NASA. The  application is intended to support the health and safety of astronauts aboard the ISS during a mission in order to prevent crew health issues jeopardising the success of a mission.
 
-The project brief is to implement secure software development principles into the application design. 
+### Functional overview
+
+The application is accessed via a Command Line Interface (CLI) and allows the User to perform various CRUD actions, based on predefined role-based permission and access parameters. The project brief is to implement secure software development principles into the application design. The project has been deliberately developed in a modular way using object-oriented coding principles and a microservice architecture, in order to improve modifiability, testability and scalability.
 
 ### Application features & Technologies
 
 - **Languages:** Python / SQL
 - **Database:** SQLite3
 - **Interface:** Command Line
-- **Network requirements**: Ethernet - access is via a local terminal (no web access)
+- **Network requirements**: Access via a local terminal (no web access required)
 
-### External tools & libraries (security)
+The program is written in Python3 and uses the following built-in libraries: **re, logging, unittest, getpass, threading, pip, json, datetime, random, sys, uuid, cryptography, unittest, abc, os**
 
-- **Python built-in libraries:** re, logging, unittest, getpass, threading, pip
-- **Bcrypt**
-- **Cryptography**
-
-### External tools & libraries (testing and debugging)
+#### External tools & libraries (testing and debugging)
 
 - **Pylama**
 - **Bandit**
 - **Pytest Security**
 - **coverage**
 
-### How to run the project
+### How to run the program:
 
 ## GDPR
 
