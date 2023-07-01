@@ -13,22 +13,26 @@ class ActionsController(object):
             'Update User', # TODO
             'Add Health Record', # TODO
             'View Health Record', # TODO
-            'View Temperature',
-            'View Radiation Level',
             'Update Health Record', # TODO
             'Delete Health Record', # TODO
+            'View Temperature',
+            'View Radiation Level',
         ]
         self._ACTIONPARAMS = {
             'View Temperature': [('units', ['C', 'F', 'K'])],
             'View Radiation Level': [('units', ['Rem', 'SV'])],
             'Add New User': [('name', []), 
-                             ('role', ['astronaut', 'moderator', 'superadmin'])],
+                             ('role', ['astronaut', 'moderator', 'superadmin']),
+                             ('date of birth', ['DD-MM-YYYY']),
+                             ('country of employment', []),
+                             ('username', []),
+                             ('password', [])],
             'Delete User': [('name', [])],
         }
 
     def get_actions(self):
         '''
-            This returns a list of actions filtered by the role ofthe user.
+            This returns a list of actions filtered by the role of the user.
         '''
         user_role = self.user.get_role()
         key = lambda action: self.authorisation_service.check_permission(action, user_role)
@@ -68,6 +72,10 @@ class ActionsController(object):
             {
                 'name': name,
                 'role': 'astronaut' or 'moderator' or 'superadmin',
+                'date of birth': 'DD-MM-YYYY',
+                'country of employment': country,
+                'username': username,
+                'password': password
             }
         '''
         action = 'Add New User'
@@ -77,8 +85,8 @@ class ActionsController(object):
         if not self.authorisation_service.check_permission(action, self.user.get_role()):
             return {'Error': 'Unauthorised action'}
         # perform action
-        user = self.user_factory.create_user(new_user_details) # TODO
-        if user.add_user():
+        user = self.user_factory.create(new_user_details)
+        if user.add_user(): # TODO
             results = {'Confirmation': 'User Added'}
         else:
             results = {'Error': 'User Not Added'}
@@ -114,11 +122,11 @@ class ActionsController(object):
         if not self.authorisation_service.check_permission(action, self.user.get_role()):
             return {'Error': 'Unauthorised action'}
         # perform action
-        user = self.user_factory.create_user(old_user_details) # TODO
-        if user.add_user():
+        user = self.user_factory.get(old_user_details)
+        if user.delete_user(): # TODO
             results = {'Confirmation': 'User Deleted'}
         else:
-            results = {'Error': 'User Not Added'}
+            results = {'Error': 'User Not Deleted'}
         # log action
         json = {
             'user' : self.user.get_name(),
@@ -151,7 +159,7 @@ class ActionsController(object):
                 'diary_entry'?: diary_entry
             }
         '''
-        action = 'add_new_health_record'
+        action = 'Add Health Record'
         user = self._user.get_name()
         # assert shape of parameter
         try:
