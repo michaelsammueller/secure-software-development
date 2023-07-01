@@ -23,8 +23,8 @@ class ActionsController(object):
         self._ACTIONPARAMS = {
             'View Temperature': [('units', ['C', 'F', 'K'])],
             'View Radiation Level': [('units', ['Rem', 'SV'])],
-            'Add New User': [('user_name', []), 
-                             ('user_role', ['astronaut', 'moderator', 'superadmin'])],
+            'Add New User': [('name', []), 
+                             ('role', ['astronaut', 'moderator', 'superadmin'])],
         }
 
     def get_actions(self):
