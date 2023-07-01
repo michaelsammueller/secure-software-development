@@ -28,6 +28,9 @@ class ActionsController(object):
         }
 
     def get_actions(self):
+        '''
+            This returns a list of actions filtered by the role ofthe user.
+        '''
         user_role = self.user.get_role()
         key = lambda action: self.authorisation_service.check_permission(action, user_role)
         filtered_actions = filter(key, self._ACTIONS)
@@ -37,7 +40,8 @@ class ActionsController(object):
         '''
             The return value consists of a list of fields. 
             Each field is a tuple of the form (field_name, field_options).
-            if field_options is empty, then no options are provided.'''
+            if field_options is empty, then no options are provided.
+        '''
         return self._ACTIONPARAMS[action]
     
     def __call__(self, action, parameters):
