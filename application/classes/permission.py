@@ -53,6 +53,12 @@ class Permission:
         where = (id,)
         # call do_delete method from DBManager
         return self.db_manager.do_delete(query, where, False)   
+    
+    def add_role_has_permissions(self, permission_id, role_id):
+        if role_id and permission_id:          
+            return self.db_manager.do_insert("INSERT INTO role_has_permissions(permission_id, role_id) VALUES (?, ?) ", (permission_id, role_id),  False )  
+        else:
+            return False
    
 
 obj_permission = Permission()

@@ -2,29 +2,32 @@
     This file contains the User class.
 '''
 import uuid
-import dbmanager
+import os
+import sys
 import datetime
-
+fpath = os.path.join(os.path.dirname(__file__).rstrip('classes'), 'data')
+sys.path.append(fpath)
+from dbmanager import DBManager
 
 class User:
     '''
         A class to create user objects.
     '''
     def __init__(self, name, code, dob, role_id, country_id, username, password):
-        self._name = name
-        self._code = code
-        self._dob = dob
-        self._role_id = role_id
-        self._country_id = country_id
-        self._username = username
-        self._password = password
-        self._uuid = uuid.uuid4()
-        self._created_at = None
-        self._updated_at = None
-        self._last_login_at = None
+        self.__name = name
+        self.__code = code
+        self.__dob = dob
+        self.__role_id = role_id
+        self.__country_id = country_id
+        self.__username = username
+        self.__password = password
+        self.__uuid = uuid.uuid4()
+        self.__created_at = None
+        self.__updated_at = None
+        self.__last_login_at = None
 
         # initialise instance of DBManager
-        self.db_manager = dbmanager.DBManager()
+        self.db_manager = DBManager()
 
         # set current_time to now
         self.current_time = datetime.datetime.now()

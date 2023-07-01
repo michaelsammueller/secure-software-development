@@ -41,6 +41,8 @@ class AuthSeeder():
         "5":"update-record"  
     }
 
+    role_has_permissions = [ (1,1), (1,4), (2,2), (2,3), (3,5) ]
+
     def __init__(self):
        
         self.__country = Country()   
@@ -80,11 +82,22 @@ class AuthSeeder():
                 added_ids.append(id) 
         return added_ids
     
+    def seed_role_has_permissions( self ):
+
+        added_ids = []
+
+        for t in self.role_has_permissions:           
+            id = self.__permission.add_role_has_permissions(t[1], t[0])            
+            if id:
+                added_ids.append(id) 
+        return added_ids
+        
     def run_seeder(self):
 
         c = self.seed_countries()
         r = self.seed_roles()   
-        p = self.seed_permissions()       
+        p = self.seed_permissions()  
+        rhp = self.seed_role_has_permissions()     
     
 
 obj_seeder = AuthSeeder()
