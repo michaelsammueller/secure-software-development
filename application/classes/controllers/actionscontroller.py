@@ -8,31 +8,40 @@ class ActionsController(object):
     '''
     def __init__(self):
         self._ACTIONS = [
-            'Add New User',
-            'Delete User',
-            'Add Health Record',
-            'View Health Record',
-            'Execute SQL Query',
+            'Add New User', # TODO
+            'Delete User', # TODO
+            'Add Health Record', # TODO
+            'View Health Record', # TODO
+            'Execute SQL Query', # TODO
             'View Warning Logs', # TODO
             'View All Logs', # TODO
-            'View Temperature', # TODO
-            'View Radiation Levels', # TODO
+            'View Temperature',
+            'View Radiation Level',
             'Update Health Record', # TODO
             'Delete Health Record', # TODO
         ]
         self._ACTIONPARAMS = {
             'View Temperature': [('units', ['C', 'F', 'K'])],
+            'View Radiation Level': [('units', ['Rem', 'SV'])],
+            'Add New User': [('name', []), 
+                             ('role', ['astronaut', 'moderator', 'superadmin'])],
         }
 
-
     def get_actions(self):
-        return self._ACTIONS
+        '''
+            This returns a list of actions filtered by the role ofthe user.
+        '''
+        user_role = self.user.get_role()
+        key = lambda action: self.authorisation_service.check_permission(action, user_role)
+        filtered_actions = filter(key, self._ACTIONS)
+        return list(filtered_actions)
     
     def get_action_params(self, action):
         '''
             The return value consists of a list of fields. 
-            Each field is a either a string representing it's name,
-            or a tuple of the form (field_name, field_options).'''
+            Each field is a tuple of the form (field_name, field_options).
+            if field_options is empty, then no options are provided.
+        '''
         return self._ACTIONPARAMS[action]
     
     def __call__(self, action, parameters):
@@ -48,56 +57,49 @@ class ActionsController(object):
             'View Health Record': self.view_health_record,
             'Execute SQL Query': self.input_raw_sql,
             'View Temperature': self.view_temperature,
+            'View Radiation Level': self.view_radiation_level
         }
         return func_map[action](parameters)
 
-    def add_new_user(self, new_user_details):
+    def add_new_user(self, new_user_details): #TODO
         '''
             A method for adding a user to the system.
 
             new_user_details interface:
             {
-                'user_name': user_name,
-                'user_role': 'astronaut' or 'moderator' or 'superadmin',
+                'name': name,
+                'role': 'astronaut' or 'moderator' or 'superadmin',
             }
         '''
-        action = 'add_new_user'
-        user = self._user.get_name()
-        # assert shape of parameter
-        try:
-            all(new_user_details['user_name'], 
-                new_user_details['user_role'])
-        except KeyError:
-            self._logger.log({
-                'user' : user,
-                'activity_type' : 'event',
-                'severity' : 'warning',
-                'event' : {
-                    'type' : 'add_new_user_key_error',
-                    'parameters' : {
-                        key : value for key, value in new_user_details.items()
-                    }
-                }
-            })
-            return False
+        action = 'Add New User'
+        if not self.assert_params_shape(new_user_details, action):
+            return {'Error': 'Missing parameters'}
         # assert permission for action
-        if not self._authorisation_service.check_permission(action, user):
-            return False
+        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+            return {'Error': 'Unauthorised action'}
+        # perform action
+        user = self.user_factory.create_user(new_user_details)
+        if user.add_user():
+            results = {'Confirmation': 'User Added'}
+        else:
+            results = {'Error': 'User Not Added'}
         # log action
-        self._logger.log({
-            'user' : user,
+        json = {
+            'user' : self.user.get_name(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
                 'parameters' : {
                     key : value for key, value in new_user_details.items()
-                }
+                },
+                'results' : results
             }
-        })
-        # add user to database
-        return self._db.do_insert('users', new_user_details)
+        }
+        self.logger.log(json)
+        # return results
+        return results
 
-    def delete_user(self, old_user_details):
+    def delete_user(self, old_user_details): #TODO
         '''
             A method for deleting a user from the system.
         '''
@@ -120,7 +122,7 @@ class ActionsController(object):
         # delete user from database
         return self._db.do_delete('users', old_user_details)
 
-    def add_health_record(self, new_health_record_details):
+    def add_health_record(self, new_health_record_details): #TODO
         '''
             A method for adding health record details to the system about a user.
 
@@ -171,13 +173,13 @@ class ActionsController(object):
         # add user to database
         return self._db.do_insert('users', new_health_record_details)
 
-    def view_health_record(self, request_details):
+    def view_health_record(self, request_details): #TODO
         '''
             A method for viewing the health records about a user.
         '''
         pass
 
-    def input_raw_sql(self, sql_query):
+    def input_raw_sql(self, sql_query): #TODO
         '''
             A method for querying the system using raw sql.
         '''
@@ -209,10 +211,14 @@ class ActionsController(object):
                 'units': 'C' or 'F or 'K
             }
         '''
-        action = 'view_temperature'
+        action = 'View Temperature'
+        # assert shape of parameter
+        if not self.assert_params_shape(measurement_details, action):
+            return {'Error': 'Invalid parameters'}
         # assert permission for action
-        if not self.authorisation_service.check_permission(action, self.user):
-            return False
+        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+            return {'Error': 'Unauthorised action'}
+        # perform action
         temperature = self.thermometer.read_data(measurement_details['units'])
         units = self.thermometer.get_units()
         # log action
@@ -221,14 +227,75 @@ class ActionsController(object):
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
-                'parameters' : {
+                'results' : {
                     'temperature' : temperature,
                     'units' : units
                 }
             }
         }
         self.logger.log(json)
-        return json['action']['parameters']
+        # return results
+        return json['action']['results']
+    
+    def view_radiation_level(self, measurement_details):
+        '''
+            A method for viewing the readings of a gieger counter.
+
+            measurement_details interface:
+            {
+                'units': 'Rem' or 'SV'
+            }
+        '''
+        action = 'View Radiation Level'
+        # assert shape of parameter
+        if not self.assert_params_shape(measurement_details, action):
+            return {'Error': 'Invalid parameters'}
+        # assert permission for action
+        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+            return {'Error': 'Unauthorised action'}
+        # perform action
+        radiation = self.geiger_counter.read_data(measurement_details['units'])
+        units = self.geiger_counter.get_units()
+        # log action
+        json = {
+            'user' : self.user.get_name(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'results' : {
+                    'radiation' : radiation,
+                    'units' : units
+                }
+            }
+        }
+        self.logger.log(json)
+        # return results
+        return json['action']['results']
+
+    def assert_params_shape(self, parameters, action):
+        '''
+            A method for checking all details were provided for action.
+        '''
+        try:
+            fields = self._ACTIONPARAMS[action]
+            all(parameters[field[0]] for field in fields)
+            return True
+        except KeyError:
+            json = {
+                'user' : self.user.get_name(),
+                'activity_type' : 'event',
+                'severity' : 'warning',
+                'event' : {
+                    'type' : 'Missing Parameters',
+                    'details' : {
+                        'action' : action,
+                        'provided_parameters' : {key : value for key, value in parameters.items()},
+                        'required_parameters' : [field[0] for field in fields]
+                    }
+                }
+            }
+            self._logger.log(json)
+            return False
 
     def connect_logger(self, logger):
         """Connects the logger"""
@@ -249,3 +316,11 @@ class ActionsController(object):
     def connect_thermometer(self, thermometer):
         """Connects the action controller"""
         self.thermometer = thermometer
+    
+    def connect_geiger_counter(self, geiger_counter):
+        """Connects the action controller"""
+        self.geiger_counter = geiger_counter
+    
+    def connect_user_factory(self, user_factory):
+        """Connects the action controller"""
+        self.user_factory = user_factory

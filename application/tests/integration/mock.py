@@ -39,6 +39,29 @@ class MockUser:
 
     def get_name(self, *args, **kwargs):
         '''
-        A method for mocking a login.
+        A method for mocking a user name.
         '''
         return "Brad"
+
+    def get_role(self, *args, **kwargs):
+        '''
+        A method for mocking a user role.
+        '''
+        return "developer"
+    
+    def add_user(self, *args, **kwargs):
+        '''
+        A method for mocking adding a user.
+        '''
+        return True
+    
+class MockUserFactory:
+    '''
+        A class for mocking a user factory.
+    '''
+
+    def create_user(self, *args, **kwargs):
+        '''
+        A method for mocking creating a user.
+        '''
+        return MockUser()

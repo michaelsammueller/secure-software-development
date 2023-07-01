@@ -2,7 +2,6 @@
     This file contains the Auditor class.
 '''
 
-
 import json
 
 class Auditor(object):
