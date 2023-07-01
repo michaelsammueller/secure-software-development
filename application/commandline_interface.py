@@ -75,7 +75,7 @@ class CommandLineInterface:
             except:
                 print("Invalid selection.\n")
                 continue
-            if selection < len(options):
+            if selection <= len(options):
                 # Get additional paramaters from user 
                 params = self.action_controller.get_action_params(options[selection - 1])
                 details = {}
