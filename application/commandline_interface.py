@@ -40,6 +40,11 @@ class CommandLineInterface:
         username = input("Username: ")
         password = getpass.getpass("Password: ", stream=None)
         return username, password
+    
+    def request_password(self):
+        """Requests user to re-enter password"""
+        password = getpass.getpass("Password: ", stream=None)
+        return password
 
     def ask_for_selection(self): # TESTED AND WORKING
         """Request user selection"""
@@ -58,7 +63,6 @@ class CommandLineInterface:
                 return False
             else:
                 print("Invalid selection. Please enter 'Y' or 'N'.\n")
-
 
     def display_user_menu(self, username): # TESTED AND WORKING
         """Display user menu options"""
@@ -131,64 +135,75 @@ class CommandLineInterface:
     def change_password(self): # TESTED AND WORKING
         """Changes user password"""
         # Ask user for reauthentication
-        username, password = self.request_login_details()
+        password = self.request_password()
         # Authenticate user credentials
-        if self.login_service.login(username, password):
-            # Ask user for new password
-            new_password = getpass.getpass("New Password: ", stream=None)
-            # Ask user to confirm new password
-            new_password_confirmation = getpass.getpass("Confirm New Password: ", stream=None)
-            # Check if new password matches confirmation
-            if new_password == new_password_confirmation:
-                # Sanitise password
-                new_password = self.sanitisation_service.filter_special_characters(new_password)
-                # Check if new password is the same as the old password
-                if new_password == password:
-                    print("New password cannot be the same as the old password.\n")
-                else:
-                    # Ask user for phrase
-                    phrase = input("Enter your phrase: ")
-                    # Authenticate phrase
-                    if self.login_service.authenticate_phrase(phrase):
-                        # Change password
-                        self.login_service.change_password(new_password)
-                        # Create logger to log password change
-                        return True
+        if self.login_service.check_password(password):
+            self.login_service.display_password_requirements()
+            while True:
+                # Ask user for new password
+                new_password = getpass.getpass("New Password: ", stream=None)
+                # Check that new password is within constraints
+                if not self.sanitisation_service.validate_password(new_password):
+                    continue
+                # Ask user to confirm new password
+                new_password_confirmation = getpass.getpass("Confirm New Password: ", stream=None)
+                # Check if new password matches confirmation
+                if new_password == new_password_confirmation:
+                    # Check if new password is the same as the old password
+                    if new_password == password:
+                        print("New password cannot be the same as the old password.\n")
                     else:
-                        print("Phrase incorrect.\n")
-                        # Create logger to log failed password change
-                        return False
-            else:
-                print("Passwords do not match.\n")
-                # Create logger to log failed password change
-                return False
+                        # Ask user for phrase
+                        phrase = input("Enter your phrase: ")
+                        # Authenticate phrase
+                        if self.login_service.authenticate_phrase(phrase):
+                            # Change password
+                            self.login_service.change_password(new_password)
+                            self.login_service.set_password(new_password)
+                            # Create logger to log password change
+                            return True
+                        else:
+                            print("Phrase incorrect.\n")
+                            # Create logger to log failed password change
+                            return False
+                else:
+                    print("Passwords do not match.\n")
+                    # Create logger to log failed password change
+                    return False
+        else:
+            print("Password incorrect.\n")
+            # Create logger to log failed password change
+            return False
 
     # Will live in here for now
     def change_phrase(self): # TESTED AND WORKING
         """Changes user phrase"""
         # Ask user for reauthentication
-        username, password = self.request_login_details()
+        password = self.request_password()
         # Authenticate user credentials
-        if self.login_service.login(username, password):
-            # Ask user for new phrase
-            new_phrase = input("New Phrase: ")
-            # Ask user to confirm new phrase
-            new_phrase_confirmation = input("Confirm New Phrase: ")
-            # Check if new phrase matches confirmation
-            if new_phrase == new_phrase_confirmation:
-                    print(f"New phrase: {new_phrase}\n") # TODO: Remove this line
-                    sanitised_phrase = self.sanitisation_service.sanitise_phrase(new_phrase)
-                    print(f"Sanitised phrase: {sanitised_phrase}\n") # TODO: Remove this line
-                    self.login_service.change_phrase(sanitised_phrase)
-                    print("Phrase changed successfully.\n")
-                    # Create logger to log phrase change
-                    return True
-            else:
-                print("Phrases do not match.\n")
-                # Create logger to log failed phrase change
-                return False
+        if self.login_service.check_password(password):
+            while True:
+                # Ask user for new phrase
+                new_phrase = input("New Phrase: ")
+                # Check new phrase against stored phrase
+                if not self.login_service.check_phrase(new_phrase):
+                    print("New phrase cannot be the same as the old phrase.\n")
+                    continue
+                # Ask user to confirm new phrase
+                new_phrase_confirmation = input("Confirm New Phrase: ")
+                # Check if new phrase matches confirmation
+                if new_phrase == new_phrase_confirmation:
+                        sanitised_phrase = self.sanitisation_service.sanitise_phrase(new_phrase)
+                        self.login_service.change_phrase(sanitised_phrase)
+                        print("Phrase changed successfully.\n")
+                        # Create logger to log phrase change
+                        return True
+                else:
+                    print("Phrases do not match.\n")
+                    # Create logger to log failed phrase change
+                    return False
         else:
-            print("Incorrect credentials.\n")
+            print("Incorrect password.\n")
             # Create logger to log failed login attempt
             return False
         

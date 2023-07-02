@@ -13,7 +13,6 @@ class Login_Service:
         self.__username = ''
         self.__password = ''
     
-    """
     def set_username(self, username):
         self.__username = username
 
@@ -25,7 +24,16 @@ class Login_Service:
     
     def get_password(self):
         return self.__password
-    """
+    
+    def check_password(self, password):
+        """Reauthenticates user by checking password"""
+        username = self.get_username()
+        auth_password = self.get_password()
+        # Check that password is correct
+        if password == auth_password:
+            return True
+        else:
+            return False
 
     def check_phrase_required(self):
         """Check last login"""
@@ -50,6 +58,23 @@ class Login_Service:
                     return True
                 else:
                     return False
+        except Exception as e:
+            print(f"An error occured: {e}\n")
+            # Create logger to log error
+            return True
+    
+    def check_phrase(self, new_phrase): # TESTED AND WORKS
+        """Checks new phrase against stored phrase"""
+        try:
+            dbman = DBManager()  # Create DBManager instance
+            stored_phrase = dbman.do_select('SELECT phrase FROM users WHERE username = ?', (self.__username,))
+            stored_phrase = stored_phrase[0][0] # Get stored phrase from tuple
+
+            # Check if new phrase matches stored phrase
+            if new_phrase == stored_phrase:
+                return False
+            else:
+                return True
         except Exception as e:
             print(f"An error occured: {e}\n")
             # Create logger to log error
@@ -155,3 +180,8 @@ class Login_Service:
             print(f"Unable to change secret phrase: {e}\n")
             # Create logger to log error
             return False
+    
+    def display_password_requirements(self):
+        print("Password Requirements\n")
+        print("1. Must be between 8 and 64 characters long\n")
+        print("2. Must not contain special characters\n")
