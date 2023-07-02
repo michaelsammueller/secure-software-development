@@ -72,9 +72,15 @@ class Input_Sanitisation_Service:
         """Validates user password based on constraints"""
         try:
             # Assert password size
-            if not self.assert_input_size(password, 8, 64):
+            if self.assert_input_size(password, 8, 64):
+                # Assert that no special characters in password
+                if self.filter_special_characters(password, True) == password:
+                    return True
+                else:
+                    print("Password cannot contain special characters")
+                    return False
+            else:
                 print("Password must be between 8 and 64 characters long")
-                return False
             return True
         except Exception as e:
             print(f"An error occured: {e}\n")
