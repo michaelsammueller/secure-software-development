@@ -184,4 +184,4 @@ class Login_Service:
     def display_password_requirements(self):
         print("Password Requirements\n")
         print("1. Must be between 8 and 64 characters long\n")
-        print("2. Can contain special characters\n")
+        print("2. Must not contain special characters\n")
