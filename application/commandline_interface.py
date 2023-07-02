@@ -149,8 +149,6 @@ class CommandLineInterface:
                 new_password_confirmation = getpass.getpass("Confirm New Password: ", stream=None)
                 # Check if new password matches confirmation
                 if new_password == new_password_confirmation:
-                    # Sanitise password
-                    new_password = self.sanitisation_service.filter_special_characters(new_password)
                     # Check if new password is the same as the old password
                     if new_password == password:
                         print("New password cannot be the same as the old password.\n")
