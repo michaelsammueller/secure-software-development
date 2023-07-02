@@ -22,7 +22,7 @@ class TestModeratorActions(unittest.TestCase):
 
         # monkey patches
         self.cli.request_login_details = lambda: ('test_name', 'test_password')
-        self.cli.greeting = lambda: "Hello, test_name!"
+        self.cli.greeting = lambda x: f"Hello, {x}!"
 
     def test_add_health_record(self):
         '''
