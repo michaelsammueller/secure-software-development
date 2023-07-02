@@ -11,7 +11,7 @@ class ActionsController(object):
             'Add New User',
             'Delete User',
             'Update User', # TODO
-            'Add Health Record', # TODO
+            'Add Health Record',
             'View Health Record', # TODO
             'Update Health Record', # TODO
             'Delete Health Record', # TODO
@@ -28,6 +28,10 @@ class ActionsController(object):
                              ('username', []),
                              ('password', [])],
             'Delete User': [('name', [])],
+            'Add Health Record': [('name', []),
+                                  ('height', []),
+                                  ('weight', []),
+                                  ('blood pressure', [])],
         }
 
     def get_actions(self):
@@ -58,7 +62,6 @@ class ActionsController(object):
             'Delete User': self.delete_user,
             'Add Health Record': self.add_health_record,
             'View Health Record': self.view_health_record,
-            'Execute SQL Query': self.input_raw_sql,
             'View Temperature': self.view_temperature,
             'View Radiation Level': self.view_radiation_level
         }
@@ -149,79 +152,44 @@ class ActionsController(object):
 
             new_user_details interface:
             {
-                'user_name': user_name,
-                'height'?: height,
-                'weight'?: weight,
-                'blood_type'?: blood_type,
+                'name': name,
+                'height': height,
+                'weight': weight,
                 'blood_pressure'?: blood_pressure,
-                'heart_rate'?: heart_rate,
-                'body_temperature'?: body_temperature,
-                'diary_entry'?: diary_entry
             }
         '''
         action = 'Add Health Record'
-        user = self._user.get_name()
-        # assert shape of parameter
-        try:
-            all(new_health_record_details['user_name'])
-        except KeyError:
-            self._logger.log({
-                'user' : user,
-                'activity_type' : 'event',
-                'severity' : 'warning',
-                'event' : {
-                    'type' : 'add_new_health_record_key_error',
-                    'parameters' : {
-                        key : value for key, value in new_health_record_details.items()
-                    }
-                }
-            })
-            return False
+        if not self.assert_params_shape(new_health_record_details, action):
+            return {'Error': 'Missing parameters'}
         # assert permission for action
-        if not self._authorisation_service.check_permission(action, user):
-            return False
+        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+            return {'Error': 'Unauthorised action'}
+        # perform action
+        if self.health_record_service.add_record(new_health_record_details): # TODO
+            results = {'Confirmation': 'Health Record Added'}
+        else:
+            results = {'Error': 'Health Record Not Added'}
         # log action
-        self._logger.log({
-            'user' : user,
+        json = {
+            'user' : self.user.get_name(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
                 'parameters' : {
                     key : value for key, value in new_health_record_details.items()
-                }
+                },
+                'results' : results
             }
-        })
-        # add user to database
-        return self._db.do_insert('users', new_health_record_details)
+        }
+        self.logger.log(json) # TODO
+        # return results
+        return results
 
-    def view_health_record(self, request_details): #TODO
+    def view_health_record(self, request_details): # TODO
         '''
             A method for viewing the health records about a user.
         '''
         pass
-
-    def input_raw_sql(self, sql_query): #TODO
-        '''
-            A method for querying the system using raw sql.
-        '''
-        action = 'input_raw_sql'
-        user = self._user.get_name()
-        # assert permission for action
-        if not self._authorisation_service.check_permission(action, user):
-            return False
-        # log action
-        self._logger.log({
-            'user' : self._user.get_name(),
-            'activity_type' : 'action',
-            'action' : {
-                'type' : action,
-                'parameters' : {
-                    'sql_query' : sql_query
-                }
-            }
-        })
-        # execute sql
-        return self._db.execute(sql_query)
 
     def view_temperature(self, measurement_details):
         '''
@@ -331,17 +299,21 @@ class ActionsController(object):
         self.authorisation_service = authorisation_service
 
     def connect_user(self, user):
-        """Connects the action controller"""
+        """Connects the loggined in user"""
         self.user = user
 
     def connect_thermometer(self, thermometer):
-        """Connects the action controller"""
+        """Connects the thermometer"""
         self.thermometer = thermometer
     
     def connect_geiger_counter(self, geiger_counter):
-        """Connects the action controller"""
+        """Connects the geiger counter"""
         self.geiger_counter = geiger_counter
     
     def connect_user_factory(self, user_factory):
-        """Connects the action controller"""
+        """Connects the user factory"""
         self.user_factory = user_factory
+
+    def connect_health_record_service(self, health_record_service):
+        """Connects the record service"""
+        self.health_record_service = health_record_service
