@@ -7,7 +7,7 @@ from classes.models.user import User
 
 class UserFactory(Factory):
     '''
-        A class for encapsulating a thermometer component.
+        A class for encapsulating a factory for creating and storing users.
     '''
     def __init__(self):
         self.model = User

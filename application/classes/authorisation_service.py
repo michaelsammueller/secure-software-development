@@ -16,7 +16,7 @@ class AuthorisationService:
         permission_id = self.action_to_permission[action]
         role_id = role
         values = (permission_id, role_id) 
-        query = "SELECT * FROM role_to_permission WHERE pe " # select row where permission id is same as permission id given + role id
+        query = "SELECT * FROM role_to_permission WHERE permission_id=?, role_id=?" # select row where permission id is same as permission id given + role id
         result = self.db_manager.do_select(query, [values])
         if len(result) >= 1:
             return True
@@ -24,5 +24,5 @@ class AuthorisationService:
             return False
         
     def connect_db_manager(self, db_manager):
-        """Connects the action controller"""
+        """Connects the db_manager"""
         self.db_manager = db_manager
