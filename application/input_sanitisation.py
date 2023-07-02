@@ -67,3 +67,15 @@ class Input_Sanitisation_Service:
         except Exception as e:
             print(f"An error occured: {e}\n")
             # Create logger to log error
+    
+    def validate_password(self, password): # SHOULD THIS CONTAIN CHARACTER FILTER TO PREVENT EVIL REGEX?
+        """Validates user password based on constraints"""
+        try:
+            # Assert password size
+            if not self.assert_input_size(password, 8, 64):
+                print("Password must be between 8 and 64 characters long")
+                return False
+            return True
+        except Exception as e:
+            print(f"An error occured: {e}\n")
+            # Create logger to log error
