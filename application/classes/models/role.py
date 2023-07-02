@@ -9,10 +9,6 @@ class Role:
         A parent class for the system roles.
     '''
 
-    def __init__(self):     
-        self._created_at = time.mktime(datetime.datetime.now().timetuple())
-        self._updated_at = time.mktime(datetime.datetime.now().timetuple())
-
     def get_role(self, id):
       
         if id:

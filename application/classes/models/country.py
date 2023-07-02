@@ -10,11 +10,6 @@ class Country:
         A parent class for the system countries.
     '''
 
-    def __init__(self):     
-        self._created_at = time.mktime(datetime.datetime.now().timetuple())
-        self._updated_at = time.mktime(datetime.datetime.now().timetuple())
-
-
     def get_country(self, id):
         if id:
             return self.db_manager.do_select('SELECT * FROM countries WHERE id = ?', (id,) )
