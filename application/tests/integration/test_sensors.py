@@ -38,7 +38,7 @@ class TestSensors(unittest.TestCase):
             A method that tests the view temperature option.
         '''
         mock_selections = (x for x in ['1', '9', 'Rem', 'Y', '9', 'SV', 'N', '2'])
-        #self.cli.ask_for_selection = lambda: next(mock_selections) # comment line for demo
+        self.cli.ask_for_selection = lambda: next(mock_selections) # comment line for demo
         self.cli.display_main_menu()
 
 if __name__ == '__main__':

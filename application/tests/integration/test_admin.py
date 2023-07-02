@@ -7,7 +7,7 @@ import unittest
 
 class TestAdminActions(unittest.TestCase):
     '''
-        A class for encapsulating functionality tests for the thermometer.
+        A class for encapsulating functionality tests for superadmins.
     '''
     def setUp(self):
         self.cli = CommandLineInterface()
