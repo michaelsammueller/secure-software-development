@@ -77,3 +77,13 @@ class MockUserFactory:
         A method for mocking getting a user.
         '''
         return MockUser()
+    
+class MockHealthRecordService:
+    '''
+        A class for mocking the health record service.
+    '''
+    def add_record(self, *args, **kwargs):
+        '''
+        A method for mocking a login.
+        '''
+        return True
