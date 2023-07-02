@@ -5,9 +5,9 @@ from context import ActionsController, CommandLineInterface
 from mock import MockAuthorisationService, MockHealthRecordService, MockLoginService, MockLogger, MockUser
 import unittest
 
-class TestAdminActions(unittest.TestCase):
+class TestModeratorActions(unittest.TestCase):
     '''
-        A class for encapsulating functionality tests for superadmins.
+        A class for encapsulating functionality tests for moderators.
     '''
     def setUp(self):
         self.cli = CommandLineInterface()
@@ -26,7 +26,7 @@ class TestAdminActions(unittest.TestCase):
 
     def test_add_health_record(self):
         '''
-            A method that tests the add user option.
+            A method that tests the add health record option.
         '''
         mock_selections = (x for x in ['1', '4', 'test_user', '180', '80', '90', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)

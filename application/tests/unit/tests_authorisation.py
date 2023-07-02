@@ -6,7 +6,7 @@ import unittest
 
 class TestAuthorisation(unittest.TestCase):
     '''
-        A class for encapsulating unit tests for the CommandLineInterface class.
+        A class for encapsulating unit tests for the Authorisation Service class.
     '''
     def setUp(self):
         self.authserv = AuthorisationService()
