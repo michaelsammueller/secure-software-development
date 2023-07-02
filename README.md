@@ -109,6 +109,44 @@ This project is based on secure design principles, following key vulnerabilites 
 
 ### <a name="9">List of changes - Design Document --> Implementation</a>
 
+> #### 1. Class 'CommonActions'
+> _Original System Design:_
+> > The ‘CommonActions’ class was originally planned as a class to handle all functions and methods relating to user actions.
+>
+> _Final Implementation:_
+> > The class has been renamed to ‘ActionController’ and will act as an interface between the command line and the system objects. It will therefore always call another object’s version of a method. The Action Controller will also perform authorisation and logging. This way, individual class methods remain encapsulated which is favourable in terms of application scalability and microservice design.
+>
+> #### 2. File Downloads
+> _Original System Design:_
+> > Originally, we would allow users to download their health records as data files.
+>
+> _Final Implementation:_
+> >
+>
+> #### 3. Role / Permissions mapping
+> _Original System Design:_
+> > 1. Superadmin permissions: create user, assign roles and privileges, execute SQL queries for database management
+> > 2. Moderator permissions: approve user, delete user profile and data
+> > 3. Astronaut permissions: update and view health records, download data files
+>
+> _Final Implementation:_
+> > The planned roles did not cover system functionality. We also needed to map permissions to user actions / roles explicity in order to ensure that
+> > role-based access controls (RBAC) was implemented robustly.
+> > The updated role matrix maped to permissions and roles is shown in the table below:
+> > | UserAction / Permission Name            | _Superadmin_ | _Moderator_ | _Astronaut_ |
+> > | :-------------------------------------- | :----------: | :---------: | :---------: |
+> > | Add New User / add-user                 | [x]          | [ ]         | [ ]         |
+> > | Delete User / delete-user               | [x]          | [ ]         | [ ]         |
+> > | Add Health Record/ add-health-record    | [x]          | [ ]         | [ ]         |
+> > | View Health Record / view-health-record | [x]          | [ ]         | [ ]         | 
+> > | View Warning Logs/ view-logs            | [x]          | [ ]         | [ ]         |
+> > | View Temperature / view-temperature     | [x]          | [ ]         | [ ]         |
+> > | View Radition Level / view-radiation    | [x]          | [ ]         | [ ]         |
+> > | Update Health Record / update-record    | [x]          | [ ]         | [ ]         |
+> > | Delete Health Record / delete-record    | [x]          | [ ]         | [ ]         |
+
+
+
 ### <a name="10">Testing</a>
 
 
