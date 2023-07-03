@@ -8,7 +8,7 @@ fpath = os.path.join(os.path.dirname(__file__).rstrip('classes'), 'data')
 #print(fpath)
 sys.path.append(fpath)
 from dbmanager import DBManager
-
+import uuid
 
 class Role:
     '''
@@ -23,34 +23,34 @@ class Role:
         # initialise instance of DBManager
         self.db_manager = DBManager()
 
-    def get_role(self, id):
+    def get_role(self, uuid):
       
-        if id:
-            return self.db_manager.do_select('SELECT * FROM roles WHERE id = ?', (id,) )
+        if uuid:
+            return self.db_manager.do_select('SELECT * FROM roles WHERE uuid = ?', (uuid,) )
         else:
             return False
     
     # Creates a record and returns the inserted id
     def add_role(self, name):        
         if name:          
-            return self.db_manager.do_insert("INSERT INTO roles(name) VALUES (?) ", (name,),  False )  
+            return self.db_manager.do_insert("INSERT INTO roles(uuid, name) VALUES (?, ?) ", (str(uuid.uuid4()), name),  False )  
         else:
             return False
 
-    def update_role(self, id, name):
+    def update_role(self, uuid, name):
         # update the 'updated_at' attribute.
         self._updated_at = datetime.datetime.now()
         # perform database query to update permission attributes.
-        query = "UPDATE roles SET name='" + name + "', updated_at= " + self._updated_at + " WHERE role_id=?"
-        values = (id,)
+        query = "UPDATE roles SET name='" + name + "', updated_at= " + self._updated_at + " WHERE uuid=?"
+        values = (uuid,)
 
         # call do_update method from DBmanager.
         self.db_manager.do_update(query, values)
 
-    def delete_role(self, id):
-        # identify records to delete with id
-        query = "DELETE FROM roles WHERE id = ?"
-        where = (id,)
+    def delete_role(self, uuid):
+        # identify records to delete with uuid
+        query = "DELETE FROM roles WHERE uuid = ?"
+        where = (uuid,)
         # call do_delete method from DBManager
         return self.db_manager.do_delete(query, where, False)   
     
