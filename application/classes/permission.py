@@ -8,6 +8,7 @@ fpath = os.path.join(os.path.dirname(__file__).rstrip('classes'), 'data')
 #print(fpath)
 sys.path.append(fpath)
 from dbmanager import DBManager
+import uuid
 
 
 class Permission:
@@ -23,34 +24,34 @@ class Permission:
         # initialise instance of DBManager
         self.db_manager = DBManager()
 
-    def get_permission(self, id):
+    def get_permission(self, uuid):
       
-        if id:
-            return self.db_manager.do_select('SELECT * FROM permissions WHERE id = ?', (id,) )
+        if uuid:
+            return self.db_manager.do_select('SELECT * FROM permissions WHERE uuid = ?', (uuid,) )
         else:
             return False
     
     # Creates a record and returns the inserted id
     def add_permission(self, name):        
         if name:          
-            return self.db_manager.do_insert("INSERT INTO permissions(name) VALUES (?) ", (name,),  False )  
+            return self.db_manager.do_insert("INSERT INTO permissions(uuid, name) VALUES (?, ?) ", (str(uuid.uuid4()), name),  False )  
         else:
             return False
 
-    def update_permission(self, id, name):
+    def update_permission(self, uuid, name):
         # update the 'updated_at' attribute.
         self._updated_at = datetime.datetime.now()
         # perform database query to update permission attributes.
-        query = "UPDATE permissions SET name='" + name + "', updated_at= " + self._updated_at + " WHERE permission_id=?"
-        values = (id,)
+        query = "UPDATE permissions SET name='" + name + "', updated_at= " + self._updated_at + " WHERE uuid=?"
+        values = (uuid,)
 
         # call do_update method from DBmanager.
         self.db_manager.do_update(query, values)
 
-    def delete_permission(self, id):
+    def delete_permission(self, uuid):
         # identify records to delete with id
         query = "DELETE FROM permissions WHERE id = ?"
-        where = (id,)
+        where = (uuid,)
         # call do_delete method from DBManager
         return self.db_manager.do_delete(query, where, False)   
     
@@ -61,8 +62,8 @@ class Permission:
             return False
    
 
-obj_permission = Permission()
-print( obj_permission.add_permission('approve-accounts') )
+#obj_permission = Permission()
+#print( obj_permission.add_permission('approve-accounts') )
 # rows = obj_permission.get_permission() 
 # for row in rows:
 #     print( dict(row) )
