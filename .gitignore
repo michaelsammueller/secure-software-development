@@ -1,0 +1,3 @@
+# Prevent certain files being pushed to the remote git repository
+
+__pycache__
