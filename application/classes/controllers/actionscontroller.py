@@ -160,7 +160,7 @@ class ActionsController(object):
         if not self.assert_params_shape(new_health_record_details, action):
             return {'Error': 'Missing parameters'}
         # assert permission for action
-        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+        if not self.authorisation_service.check_permission(action, self.user_service.get_role()):
             return {'Error': 'Unauthorised action'}
         # perform action
         if self.health_record_service.add_record(new_health_record_details): # TODO
@@ -169,7 +169,7 @@ class ActionsController(object):
             results = {'Error': 'Health Record Not Added'}
         # log action
         json = {
-            'user' : self.user.get_name(),
+            'user' : self.user_service.get_name(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
@@ -203,14 +203,14 @@ class ActionsController(object):
         if not self.assert_params_shape(measurement_details, action):
             return {'Error': 'Invalid parameters'}
         # assert permission for action
-        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+        if not self.authorisation_service.check_permission(action, self.user_service.get_role()):
             return {'Error': 'Unauthorised action'}
         # perform action
         temperature = self.thermometer.read_data(measurement_details['units'])
         units = self.thermometer.get_units()
         # log action
         json = {
-            'user' : self.user.get_name(),
+            'user' : self.user_service.get_name(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
@@ -238,14 +238,14 @@ class ActionsController(object):
         if not self.assert_params_shape(measurement_details, action):
             return {'Error': 'Invalid parameters'}
         # assert permission for action
-        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+        if not self.authorisation_service.check_permission(action, self.user_service.get_role()):
             return {'Error': 'Unauthorised action'}
         # perform action
         radiation = self.geiger_counter.read_data(measurement_details['units'])
         units = self.geiger_counter.get_units()
         # log action
         json = {
-            'user' : self.user.get_name(),
+            'user' : self.user_service.get_name(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
@@ -269,7 +269,7 @@ class ActionsController(object):
             return True
         except KeyError:
             json = {
-                'user' : self.user.get_name(),
+                'user' : self.user_service.get_name(),
                 'activity_type' : 'event',
                 'severity' : 'warning',
                 'event' : {
