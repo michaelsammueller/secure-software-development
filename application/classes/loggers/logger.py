@@ -9,9 +9,8 @@ class Logger(object):
     '''
         A class for encapsulating the generation of logs.
     '''
-    def __init__(self, log_file, auditor, encryption_service):
-        self._log_file = log_file
-        self._auditor = auditor
+    def __init__(self, log_file):
+        self.__log_file = log_file
     
     def log(self, loggable_information): # TODO: needs to assert shape of parameter
         '''
@@ -32,7 +31,7 @@ class Logger(object):
                 }
             }
         '''
-        with open(self._log_file, 'a') as file:
+        with open(self.__log_file, 'a') as file:
             # add timestamp
             timestamp = datetime.now().isoformat() # ISO 8601 format
             loggable_information['timestamp'] = timestamp
@@ -45,7 +44,7 @@ class Logger(object):
             json_line = json.dumps(encrypted_information)
             file.write(f'{json_line}\n') #JSON-lines format
         # audit logfile
-        if additional_information := self._auditor.audit(self.log_file):
+        if additional_information := self.__auditor.audit(self.log_file):
             #handle audit
             self.log(additional_information)
 
@@ -66,3 +65,9 @@ class Logger(object):
             A method for connecting the encryption service.
         '''
         self._encryption_service = encryption_service
+
+    def connect_auditor(self, auditor):
+        '''
+            A method for connecting the auditor.
+        '''
+        self.__auditor = auditor

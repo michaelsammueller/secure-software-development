@@ -10,29 +10,29 @@ class GeigerCounter(Sensor):
         A class for encapsulating a geiger counter component.
     '''
     def __init__(self):
-        self._radiation = abs(gauss(0, 0.0005)) # Random radiation level
-        self._unit = 'Rem'
-        self._RATEOFCHANGE = 1
+        self.__radiation = abs(gauss(0, 0.0005)) # Random radiation level
+        self.__unit = 'Rem'
+        self.__RATEOFCHANGE = 1
 
     def __repr__(self):
-        return f'GeigerCounter({self._radiation} {self._unit})'
+        return f'GeigerCounter({self.__radiation} {self.__unit})'
 
     def read_data(self, unit='Rem'):
         '''
             A method for reading data from the geiger counter.
         '''
         # Random radiation level variation
-        delta = gauss(0, 0.00001 * self._RATEOFCHANGE)
-        self._radiation_rem = max(self.get_converters()['Rem'](self._radiation, self._unit), 0)
-        self._radiation = max(self.get_converters()[unit](self._radiation_rem + delta, 'Rem'), 0)
-        self._unit = unit
-        return self._radiation
+        delta = gauss(0, 0.00001 * self.__RATEOFCHANGE)
+        self.__radiation_rem = max(self.get_converters()['Rem'](self.__radiation, self.__unit), 0)
+        self.__radiation = max(self.get_converters()[unit](self.__radiation_rem + delta, 'Rem'), 0)
+        self.__unit = unit
+        return self.__radiation
     
     def get_units(self):
         '''
             A method for getting the units used for the last reading.
         '''
-        return self._unit
+        return self.__unit
     
     @classmethod
     def convert_to_rem(cls, radiation, unit):

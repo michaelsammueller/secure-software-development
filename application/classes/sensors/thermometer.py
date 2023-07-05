@@ -10,29 +10,29 @@ class Thermometer(Sensor):
         A class for encapsulating a thermometer component.
     '''
     def __init__(self):
-        self._temperature = gauss(25.0, 5.0) # Random temperature
-        self._unit = 'C'
-        self._RATEOFCHANGE = 1
+        self.__temperature = gauss(25.0, 5.0) # Random temperature
+        self.__unit = 'C'
+        self.__RATEOFCHANGE = 1
 
     def __repr__(self):
-        return f'Thermometer({self._temperature} {self._unit})'
+        return f'Thermometer({self.__temperature} {self.__unit})'
 
     def read_data(self, unit='C'):
         '''
             A method for reading data from the thermometer.
         '''
         # Random temperature variation
-        delta = gauss(0.0, 0.5 * self._RATEOFCHANGE)
-        self._temperature_c = self.get_converters()['C'](self._temperature, self._unit)
-        self._temperature = self.get_converters()[unit](self._temperature_c + delta, 'C')
-        self._unit = unit
-        return self._temperature
+        delta = gauss(0.0, 0.5 * self.__RATEOFCHANGE)
+        self.__temperature_c = self.get_converters()['C'](self.__temperature, self.__unit)
+        self.__temperature = self.get_converters()[unit](self.__temperature_c + delta, 'C')
+        self.__unit = unit
+        return self.__temperature
     
     def get_units(self):
         '''
             A method for getting the units used for the last reading.
         '''
-        return self._unit
+        return self.__unit
 
     @classmethod
     def convert_to_celsius(cls, temperature, unit):
