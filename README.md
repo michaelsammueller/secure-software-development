@@ -137,12 +137,12 @@ This project is based on secure design principles, following key vulnerabilites 
 > > | :-------------------------------------- | :----------: | :---------: | :---------: |
 > > | Add New User / add-user                 | [x]          | [ ]         | [ ]         |
 > > | Delete User / delete-user               | [x]          | [ ]         | [ ]         |
-> > | Add Health Record/ add-health-record    | [x]          | [ ]         | [ ]         |
-> > | View Health Record / view-health-record | [x]          | [ ]         | [ ]         | 
+> > | Add Health Record/ add-health-record    | [x]          | [ ]         | [x]         |
+> > | View Health Record / view-health-record | [x]          | [x]         | [x]         | 
 > > | View Warning Logs/ view-logs            | [x]          | [ ]         | [ ]         |
-> > | View Temperature / view-temperature     | [x]          | [ ]         | [ ]         |
-> > | View Radition Level / view-radiation    | [x]          | [ ]         | [ ]         |
-> > | Update Health Record / update-record    | [x]          | [ ]         | [ ]         |
+> > | View Temperature / view-temperature     | [x]          | [x]         | [x]         |
+> > | View Radition Level / view-radiation    | [x]          | [x]         | [x]         |
+> > | Update Health Record / update-record    | [x]          | [x]         | [x]         |
 > > | Delete Health Record / delete-record    | [x]          | [ ]         | [ ]         |
 
 
