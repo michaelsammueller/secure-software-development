@@ -15,7 +15,7 @@ class TestAuthorisation(unittest.TestCase):
         '''
             A method that tests getting the permission id.
         '''
-        self.assertEqual(self.authserv.get_permission_id('Add New User'), 'create-user')
+        self.assertEqual(self.authserv.get_permission_id('Add New User'), '1')
     
 if __name__ == '__main__':
     unittest.main()
