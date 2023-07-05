@@ -67,8 +67,10 @@ UUIDs are use to avoid reveal actual user IDs. We kept the numeric IDs to be abl
 ### Considerations
 In general, constraints are no implemented at this stage but applying the correct SQL statements will generate the necessary structure to handle deleting associated records.
 
+
 Minimum indexation has been applied to ensure the queries run quickly.
 
 ## References
 
 Eessaar, E. (2016) The Database Normalization Theory and the Theory of Normalized Systems: Finding a Common Ground. Baltic J. Modern Computing 4(1): 5-33. Available from: https://www.researchgate.net/publication/297731569_The_Database_Normalization_Theory_and_the_Theory_of_Normalized_Systems_Finding_a_Common_Ground [Accessed 21 June 2023].
+
