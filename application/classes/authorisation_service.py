@@ -1,27 +1,37 @@
 '''
     This file contains the Authorisation Service Class
 '''
-from dbmanager import DBManager
-from permission import Permission
 
 class AuthorisationService:
 
     def __init__(self):
-        # initialise instance of DBManager
-        self.db_manager = DBManager()
-        self.permission = Permission()
-        # a dictionary to store the action-to-permission mappings
+        # a dictionary to store the action-to-permission_id mappings
         self.action_to_permission = {
-            'Add New User': 'create-user'
+            "Add New User": "create-user",
+            "Delete User": "delete-user",
+            "Add Health Record": "add-health-record",
+            "View Health Record": "view-health-record",
+            "View Warning Logs": "view-warning-log",
+            "View Temperature": "view-temperature",
+            "View Radiation Level": "view-radiation",
+            "Update Health Record": "update-health-record",
+            "Delete Health Record": "delete-record"
         }
         
-    def check_permissions(self, action, role):
-        permission_id = self.action_to_permission[action]
-        role_id = role
-        values = (permission_id, role_id) 
-        query = "SELECT * FROM role_to_permission WHERE pe " # select row where permission id is same as permission id given + role id
+    def check_permissions(self, action, role_id):
+        permission = self.action_to_permission[action]
+    
+        # select row where permission matches role id
+        query = "SELECT * FROM role_to_permission WHERE permission = ? AND role_id = ?" 
+        values = (permission, role_id)
+
         result = self.db_manager.do_select(query, [values])
         if len(result) >= 1:
             return True
         else:
             return False
+        
+    def connect_db_manager(self, db_manager):
+        # connects to the db_manager
+        self.db_manager = db_manager
+        
