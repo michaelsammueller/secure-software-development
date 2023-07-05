@@ -11,7 +11,6 @@ class Logger(object):
     '''
     def __init__(self, log_file, auditor, encryption_service):
         self._log_file = log_file
-        self._encryption_service = encryption_service
         self._auditor = auditor
     
     def log(self, loggable_information): # TODO: needs to assert shape of parameter
@@ -61,3 +60,9 @@ class Logger(object):
             encrypted_parameters[key] = self._encryption_service.encrypt(value)
         loggable_information[activity_type]['parameters'] = encrypted_parameters
         return encrypted_parameters
+    
+    def connect_encryption_service(self, encryption_service):
+        '''
+            A method for connecting the encryption service.
+        '''
+        self._encryption_service = encryption_service
