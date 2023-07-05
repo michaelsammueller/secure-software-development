@@ -38,7 +38,7 @@ class ActionsController(object):
         '''
             This returns a list of actions filtered by the role of the user.
         '''
-        user_role = self.user.get_role()
+        user_role = self.user_service.get_role()
         key = lambda action: self.authorisation_service.check_permission(action, user_role)
         filtered_actions = filter(key, self._ACTIONS)
         return list(filtered_actions)
@@ -85,17 +85,16 @@ class ActionsController(object):
         if not self.assert_params_shape(new_user_details, action):
             return {'Error': 'Missing parameters'}
         # assert permission for action
-        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+        if not self.authorisation_service.check_permission(action, self.user_service.get_role()):
             return {'Error': 'Unauthorised action'}
         # perform action
-        user = self.user_factory.create(new_user_details)
-        if user.add_user(): # TODO
+        if self.user_service.add_user(new_user_details): # TODO
             results = {'Confirmation': 'User Added'}
         else:
             results = {'Error': 'User Not Added'}
         # log action
         json = {
-            'user' : self.user.get_name(),
+            'user' : self.user_service.get_name(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
@@ -122,17 +121,16 @@ class ActionsController(object):
         if not self.assert_params_shape(old_user_details, action):
             return {'Error': 'Missing parameters'}
         # assert permission for action
-        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+        if not self.authorisation_service.check_permission(action, self.user_service.get_role()):
             return {'Error': 'Unauthorised action'}
         # perform action
-        user = self.user_factory.get(old_user_details)
-        if user.delete_user(): # TODO
+        if self.user_service.delete_user(old_user_details): # TODO
             results = {'Confirmation': 'User Deleted'}
         else:
             results = {'Error': 'User Not Deleted'}
         # log action
         json = {
-            'user' : self.user.get_name(),
+            'user' : self.user_service.get_name(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
@@ -298,9 +296,9 @@ class ActionsController(object):
         """Connects the authorisation service"""
         self.authorisation_service = authorisation_service
 
-    def connect_user(self, user):
+    def connect_user_service(self, user_service):
         """Connects the loggined in user"""
-        self.user = user
+        self.user_service = user_service
 
     def connect_thermometer(self, thermometer):
         """Connects the thermometer"""
@@ -309,10 +307,6 @@ class ActionsController(object):
     def connect_geiger_counter(self, geiger_counter):
         """Connects the geiger counter"""
         self.geiger_counter = geiger_counter
-    
-    def connect_user_factory(self, user_factory):
-        """Connects the user factory"""
-        self.user_factory = user_factory
 
     def connect_health_record_service(self, health_record_service):
         """Connects the record service"""

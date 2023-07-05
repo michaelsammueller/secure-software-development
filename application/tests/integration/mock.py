@@ -32,7 +32,7 @@ class MockLoginService:
         '''
         return True
     
-class MockUser:
+class MockUserService:
     '''
         A class for mocking a user.
     '''
@@ -60,23 +60,6 @@ class MockUser:
         A method for mocking deleting a user.
         '''
         return True
-    
-class MockUserFactory:
-    '''
-        A class for mocking a user factory.
-    '''
-
-    def create(self, *args, **kwargs):
-        '''
-        A method for mocking creating a user.
-        '''
-        return MockUser()
-    
-    def get(self, *args, **kwargs):
-        '''
-        A method for mocking getting a user.
-        '''
-        return MockUser()
     
 class MockHealthRecordService:
     '''
