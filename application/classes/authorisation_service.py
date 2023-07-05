@@ -6,7 +6,7 @@ class AuthorisationService:
     def __init__(self):
         # a dictionary to store the action-to-permission mappings
         self.action_to_permission = {
-            'Add New User': 'create-user'
+            'Add New User': '1'
         }
 
     def get_permission_id(self, action):
