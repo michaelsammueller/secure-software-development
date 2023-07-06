@@ -273,14 +273,14 @@ class ActionsController(object):
             return {'Error': 'Invalid parameters'}
         # assert permission for action
         user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
-        if not self.__authorisation_service.check_permission(action, self.__user_role):
+        if not self.__authorisation_service.check_permission(action, user_role):
             return {'Error': 'Unauthorised action'}
         # perform action
         radiation = self.__geiger_counter.read_data(measurement_details['units'])
         units = self.__geiger_counter.get_units()
         # log action
         json = {
-            'user' : self.__user_service.get_name(),
+            'user' : self.__login_service.get_loggedin_username(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
