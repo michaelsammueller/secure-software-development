@@ -18,6 +18,7 @@ class ActionsController(object):
             'View Temperature',
             'View Radiation Level',
         ]
+        
         self.__ACTIONPARAMS = {
             'View Temperature': [('units', ['C', 'F', 'K'])],
             'View Radiation Level': [('units', ['Rem', 'SV'])],
@@ -88,7 +89,7 @@ class ActionsController(object):
         if not self.__authorisation_service.check_permission(action, self.__user_service.get_role()):
             return {'Error': 'Unauthorised action'}
         # perform action
-        if self.__user_service.add_user(new_user_details): # TODO
+        if self.__user_service.add_user(new_user_details):
             results = {'Confirmation': 'User Added'}
         else:
             results = {'Error': 'User Not Added'}
