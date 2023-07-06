@@ -2,7 +2,7 @@
     This file contains integration tests for functionality involving sensor components.
 '''
 from context import ActionsController, CommandLineInterface
-from mock import MockAuthorisationService, MockHealthRecordService, MockLoginService, MockLogger, MockUser
+from mock import MockAuthorisationService, MockHealthRecordService, MockLoginService, MockLogger
 import unittest
 
 class TestModeratorActions(unittest.TestCase):
@@ -19,7 +19,6 @@ class TestModeratorActions(unittest.TestCase):
         self.cli.action_controller.connect_authorisation_service(MockAuthorisationService())
         self.cli.action_controller.connect_login_service(login_service)
         self.cli.action_controller.connect_logger(MockLogger())
-        self.cli.action_controller.connect_user(MockUser())
         self.cli.action_controller.connect_health_record_service(MockHealthRecordService())
 
         # monkey patches
