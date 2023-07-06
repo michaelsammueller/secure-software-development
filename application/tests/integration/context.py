@@ -17,4 +17,6 @@ sys.path.insert(0, str(path))
 from classes.controllers.actionscontroller import ActionsController
 from classes.sensors.geigercounter import GeigerCounter
 from classes.sensors.thermometer import Thermometer
+from classes.models.user import User
+from classes.dbmanager import DBManager
 from commandline_interface import CommandLineInterface
