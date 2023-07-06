@@ -16,24 +16,12 @@ class User:
                   user_details['country of employment'], user_details['username'], user_details['password'])
 
         # call do_insert method from DBmanager.
-        self.db_manager.do_insert(query, [values], dry=False)
+        self.__db_manager.do_insert(query, [values], dry=False)
 
 
     def connect_db_manager(self, db_manager):
         '''
             A method for connecting the database manager.
         '''
-        self.db_manager = db_manager
-
-    def connect_role_service(self, role_service):
-        '''
-            A method for connecting the role service.
-        '''
-        self.role_service = role_service
-    
-    def connect_country_service(self, country_service):
-        '''
-            A method for connecting the country service.
-        '''
-        self.country_service = country_service
+        self.__db_manager = db_manager
 
