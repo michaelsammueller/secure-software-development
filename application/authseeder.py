@@ -29,17 +29,10 @@ class AuthSeeder():
         "US":"United States"       
     }
 
-    roles = {"1":"Superadmin",        
-        "2":"Moderator",        
-        "3":"Astronaut"  
-    }
+    roles = ["Superadmin", "Moderator", "Astronaut"]
 
-    permissions = {"1":"create-user",        
-        "2":"aproove-user",        
-        "3":"delete-user",
-        "4":"assign-role",
-        "5":"update-record"  
-    }
+    permissions = ["create-user", "aproove-user", "delete-user", "assign-role", "update-record"]
+    
 
     role_has_permissions = [ (1,1), (1,4), (2,2), (2,3), (3,5) ]
 
@@ -65,7 +58,7 @@ class AuthSeeder():
 
         added_ids = []
 
-        for k, v in self.roles.items():           
+        for v in self.roles:           
             id = self.__role.add_role(v)
             if id:
                 added_ids.append(id) 
@@ -76,7 +69,7 @@ class AuthSeeder():
 
         added_ids = []
 
-        for k, v in self.permissions.items():           
+        for v in self.permissions:           
             id = self.__permission.add_permission(v)
             if id:
                 added_ids.append(id) 
