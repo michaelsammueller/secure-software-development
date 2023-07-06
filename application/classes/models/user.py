@@ -31,6 +31,15 @@ class User:
 
         # call do_select method from DBManager.
         return self.__db_manager.do_select(query, where)
+    
+    def delete_user(self, name): #TODO name or uuid
+        '''
+            Delete a user from the database
+        '''
+        query = "DELETE FROM roles WHERE name = ?"
+        where = (name,)
+        # call do_delete method from DBManager
+        return self.__db_manager.do_delete(query, where, False)   
 
     def connect_db_manager(self, db_manager):
         '''

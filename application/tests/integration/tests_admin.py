@@ -54,5 +54,15 @@ class TestAdminActions(unittest.TestCase):
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
+        # database integration
+        user_service = User()
+        db_manager = DBManager('testdata.db')
+        user_service.connect_db_manager(db_manager)
+        self.cli.action_controller.connect_user_service(user_service)
+
+        mock_selections = (x for x in ['1', '2', 'test_user', 'N', '2'])
+        self.cli.ask_for_selection = lambda: next(mock_selections)
+        self.assertTrue(self.cli.display_main_menu())
+
 if __name__ == '__main__':
     unittest.main()
