@@ -16,8 +16,10 @@ class TestSensors(unittest.TestCase):
         self.cli.action_controller.connect_geiger_counter(GeigerCounter())
 
         # mock classes
-        self.cli.connect_login_service(MockLoginService())
+        login_service = MockLoginService()
+        self.cli.connect_login_service(login_service)
         self.cli.action_controller.connect_authorisation_service(MockAuthorisationService())
+        self.cli.action_controller.connect_login_service(login_service)
         self.cli.action_controller.connect_logger(MockLogger())
         self.cli.action_controller.connect_user_service(MockUserService())
 
