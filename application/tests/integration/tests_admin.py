@@ -29,14 +29,14 @@ class TestAdminActions(unittest.TestCase):
         '''
             A method that tests the add user option.
         '''
-        # selections
+        # test selections
         mock_selections = (x for x in ['1', '1', 'test_user', 'astronaut', '01/01/1971', 'USA', 'username', 'password', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
-        # database integration
+        # test database integration
         user_service = User()
-        db_manager = DBManager('testdata.db')
+        db_manager = DBManager('./tests/integration/testdata.db')
         user_service.connect_db_manager(db_manager)
         self.cli.action_controller.connect_user_service(user_service)
 
@@ -49,12 +49,12 @@ class TestAdminActions(unittest.TestCase):
         '''
             A method that tests the delete user option.
         '''
-        # selections
+        # tests selections
         mock_selections = (x for x in ['1', '2', 'test_user', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
-        # database integration
+        # tests database integration
         user_service = User()
         db_manager = DBManager('testdata.db')
         user_service.connect_db_manager(db_manager)
