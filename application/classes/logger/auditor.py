@@ -8,16 +8,15 @@ class Auditor(object):
     '''
         A class for monitoring logs.
     '''
-    def __init__(self, warning_file, danger_handler):
-        self._warning_file = warning_file
-        self._danger_handler = danger_handler
-        self._severity_level = 'info' # alt states: 'warning', 'danger'
-        self._new_log = {}
-        self._num_lines_read = 0
+    def __init__(self, warning_file):
+        self.__warning_file = warning_file
+        self.__severity_level = 'info' # alt states: 'warning', 'danger'
+        self.__new_log = {}
+        self.__num_lines_read = 0
         # severity parameters
-        self._num_login_attempts = 0
-        self._warning_login_attempts = 3
-        self._danger_login_attempts = 6
+        self.__num_login_attempts = 0
+        self.__warning_login_attempts = 3
+        self.__danger_login_attempts = 6
     
     def audit(self, log_file, reset=False):
         '''
@@ -30,21 +29,21 @@ class Auditor(object):
             containing encrypted sensitive information, accessible only to the superadmin.
         '''
         if reset:
-            self._num_lines_read = 0
+            self.__num_lines_read = 0
         with open(log_file, 'r') as file:
             for i, line in enumerate(file.readlines()):
-                if i < self._num_lines_read:
+                if i < self.__num_lines_read:
                     continue
                 else:
                     log = json.loads(line)
                     self._monitor_login_attempts(log)
-                    if self._severity_level == 'warning':
-                        self._warning_file.write(f'{self._new_log}\n')
-                    if self._new_log:
-                        new_log = self._new_log
-                        self._severity_level = 'info' # reset
-                        self._new_log = {} # reset
-                        self._num_login_attempts = 0 # reset
+                    if self.__severity_level == 'warning':
+                        self.__warning_file.write(f'{self.__new_log}\n')
+                    if self.__new_log:
+                        new_log = self.__new_log
+                        self.__severity_level = 'info' # reset
+                        self.__new_log = {} # reset
+                        self.__num_login_attempts = 0 # reset
                         return new_log
     
     def _monitor_login_attempts(self, log):
@@ -61,10 +60,10 @@ class Auditor(object):
             and reset danger level. 
         '''
         if log['activity_type'] == 'action' and log['action']['type'] == 'login':
-            self._num_login_attempts += 1
-            if self._num_login_attempts >= self._danger_login_attempts:
-                self._severity_level = 'danger'
-                self._new_log = {
+            self.__num_login_attempts += 1
+            if self.__num_login_attempts >= self.__danger_login_attempts:
+                self.__severity_level = 'danger'
+                self.__new_log = {
                     'user' : log['user'],
                     'activity_type' : 'event',
                     'severity' : 'danger',
@@ -76,10 +75,10 @@ class Auditor(object):
                         }
                     }
                 }
-                self._danger_handler.lockdown() # requires superadmin to unlock
-            elif self._num_login_attempts >= self._warning_login_attempts:
-                self._severity_level = 'warning' 
-                self._new_log = {
+                self.__danger_handler.lockdown() # requires superadmin to unlock
+            elif self.__num_login_attempts >= self.__warning_login_attempts:
+                self.__severity_level = 'warning' 
+                self.__new_log = {
                     'user' : log['user'],
                     'activity_type' : 'event',
                     'severity' : 'warning',
@@ -93,4 +92,10 @@ class Auditor(object):
         elif log['activity_type'] == 'event':
             pass
         else:
-            self._num_login_attempts = 0
+            self.__num_login_attempts = 0
+
+    def connect_danger_handler(self, danger_handler):
+        '''
+            A method for connecting the auditor to the danger handler.
+        '''
+        self.__danger_handler = danger_handler

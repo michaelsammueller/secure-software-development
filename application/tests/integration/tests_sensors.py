@@ -2,7 +2,7 @@
     This file contains integration tests for functionality involving sensor components.
 '''
 from context import ActionsController, CommandLineInterface, GeigerCounter, Thermometer
-from mock import MockAuthorisationService, MockLoginService, MockLogger, MockUser
+from mock import MockAuthorisationService, MockLoginService, MockLogger
 import unittest
 
 class TestSensors(unittest.TestCase):
@@ -16,14 +16,15 @@ class TestSensors(unittest.TestCase):
         self.cli.action_controller.connect_geiger_counter(GeigerCounter())
 
         # mock classes
-        self.cli.connect_login_service(MockLoginService())
+        login_service = MockLoginService()
+        self.cli.connect_login_service(login_service)
         self.cli.action_controller.connect_authorisation_service(MockAuthorisationService())
+        self.cli.action_controller.connect_login_service(login_service)
         self.cli.action_controller.connect_logger(MockLogger())
-        self.cli.action_controller.connect_user(MockUser())
 
         # monkey patches
         self.cli.request_login_details = lambda: ('test_name', 'test_password')
-        self.cli.greeting = lambda: "Hello, test_name!"
+        self.cli.greeting = lambda x: f"Hello, {x}!"
 
     def test_view_temperature(self):
         '''

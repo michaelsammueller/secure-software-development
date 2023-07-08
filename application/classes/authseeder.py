@@ -1,13 +1,3 @@
-import os
-import sys
-
-# Dynamically modify the path
-fpath = os.path.join(os.path.dirname(__file__), 'classes')
-sys.path.append(fpath)
-
-from classes.country import Country
-from classes.role import Role
-from classes.permission import Permission
 
 class AuthSeeder():
     """sqlite3 database class to seed the db operations"""  
@@ -35,12 +25,6 @@ class AuthSeeder():
     
 
     role_has_permissions = [ (1,1), (1,4), (2,2), (2,3), (3,5) ]
-
-    def __init__(self):
-       
-        self.__country = Country()   
-        self.__role = Role() 
-        self.__permission = Permission()    
 
     # where is a tuple
     def seed_countries( self ):
@@ -90,9 +74,23 @@ class AuthSeeder():
         c = self.seed_countries()
         r = self.seed_roles()   
         p = self.seed_permissions()  
-        rhp = self.seed_role_has_permissions()     
-    
+        rhp = self.seed_role_has_permissions() 
 
-obj_seeder = AuthSeeder()
-obj_seeder.run_seeder()
+    def connect_role_service(self, role_service):
+        '''
+            Connects the role service
+        '''
+        self.__role = role_service   
+
+    def connect_permission_service(self, permission_service):
+        '''
+            Connects the permission service
+        '''
+        self.__permission = permission_service
+
+    def connect_country_service(self, country_service):
+        '''
+            Connects the country service
+        '''
+        self.__country = country_service
 

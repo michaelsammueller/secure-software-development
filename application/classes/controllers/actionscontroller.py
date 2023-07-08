@@ -7,10 +7,10 @@ class ActionsController(object):
         A class for encapsulating a set of expected actions.
     '''
     def __init__(self):
-        self._ACTIONS = [
+        self.__ACTIONS = [
             'Add New User',
             'Delete User',
-            'Update User', # TODO
+            'View Users',
             'Add Health Record',
             'View Health Record', # TODO
             'Update Health Record', # TODO
@@ -18,7 +18,8 @@ class ActionsController(object):
             'View Temperature',
             'View Radiation Level',
         ]
-        self._ACTIONPARAMS = {
+
+        self.__ACTIONPARAMS = {
             'View Temperature': [('units', ['C', 'F', 'K'])],
             'View Radiation Level': [('units', ['Rem', 'SV'])],
             'Add New User': [('name', []), 
@@ -32,15 +33,16 @@ class ActionsController(object):
                                   ('height', []),
                                   ('weight', []),
                                   ('blood pressure', [])],
+            'View Users': [],
         }
 
     def get_actions(self):
         '''
             This returns a list of actions filtered by the role of the user.
         '''
-        user_role = self.user.get_role()
-        key = lambda action: self.authorisation_service.check_permission(action, user_role)
-        filtered_actions = filter(key, self._ACTIONS)
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        key = lambda action: self.__authorisation_service.check_permission(action, user_role)
+        filtered_actions = filter(key, self.__ACTIONS)
         return list(filtered_actions)
     
     def get_action_params(self, action):
@@ -49,13 +51,13 @@ class ActionsController(object):
             Each field is a tuple of the form (field_name, field_options).
             if field_options is empty, then no options are provided.
         '''
-        return self._ACTIONPARAMS[action]
+        return self.__ACTIONPARAMS[action]
     
     def __call__(self, action, parameters):
         '''
             A method for calling an action.
         '''
-        if action not in self._ACTIONS:
+        if action not in self.__ACTIONS:
             return False
         func_map  = {
             'Add New User': self.add_new_user,
@@ -63,7 +65,8 @@ class ActionsController(object):
             'Add Health Record': self.add_health_record,
             'View Health Record': self.view_health_record,
             'View Temperature': self.view_temperature,
-            'View Radiation Level': self.view_radiation_level
+            'View Radiation Level': self.view_radiation_level,
+            'View Users': self.view_all_users,
         }
         return func_map[action](parameters)
 
@@ -85,17 +88,17 @@ class ActionsController(object):
         if not self.assert_params_shape(new_user_details, action):
             return {'Error': 'Missing parameters'}
         # assert permission for action
-        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
             return {'Error': 'Unauthorised action'}
         # perform action
-        user = self.user_factory.create(new_user_details)
-        if user.add_user(): # TODO
+        if self.__user_service.add_user(new_user_details):
             results = {'Confirmation': 'User Added'}
         else:
             results = {'Error': 'User Not Added'}
         # log action
         json = {
-            'user' : self.user.get_name(),
+            'user' : self.__login_service.get_loggedin_username(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
@@ -105,7 +108,35 @@ class ActionsController(object):
                 'results' : results
             }
         }
-        self.logger.log(json) #TODO
+        self.__logger.log(json) #TODO
+        # return results
+        return results
+    
+    def view_all_users(self, *args, **kwargs):
+        '''
+            A method for viewing all users of the system.
+        '''
+        action = 'View All Users'
+        # assert permission for action
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
+            return {'Error': 'Unauthorised action'}
+        # perform action
+        if self.__user_service.view_all_users():
+            results = {'Confirmation': 'User Added'}
+        else:
+            results = {'Error': 'User Not Added'}
+        # log action
+        json = {
+            'user' : self.__login_service.get_loggedin_username(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : {},
+                'results' : results
+            }
+        }
+        self.__logger.log(json) #TODO
         # return results
         return results
 
@@ -122,17 +153,17 @@ class ActionsController(object):
         if not self.assert_params_shape(old_user_details, action):
             return {'Error': 'Missing parameters'}
         # assert permission for action
-        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
             return {'Error': 'Unauthorised action'}
         # perform action
-        user = self.user_factory.get(old_user_details)
-        if user.delete_user(): # TODO
+        if self.__user_service.delete_user(old_user_details): # TODO
             results = {'Confirmation': 'User Deleted'}
         else:
             results = {'Error': 'User Not Deleted'}
         # log action
         json = {
-            'user' : self.user.get_name(),
+            'user' : self.__login_service.get_loggedin_username(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
@@ -142,7 +173,7 @@ class ActionsController(object):
                 'results' : results
             }
         }
-        self.logger.log(json) # TODO
+        self.__logger.log(json) # TODO
         # return results
         return results
 
@@ -162,16 +193,17 @@ class ActionsController(object):
         if not self.assert_params_shape(new_health_record_details, action):
             return {'Error': 'Missing parameters'}
         # assert permission for action
-        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
             return {'Error': 'Unauthorised action'}
         # perform action
-        if self.health_record_service.add_record(new_health_record_details): # TODO
+        if self.__health_record_service.add_record(new_health_record_details): # TODO
             results = {'Confirmation': 'Health Record Added'}
         else:
             results = {'Error': 'Health Record Not Added'}
         # log action
         json = {
-            'user' : self.user.get_name(),
+            'user' : self.__login_service.get_loggedin_username(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
@@ -181,7 +213,7 @@ class ActionsController(object):
                 'results' : results
             }
         }
-        self.logger.log(json) # TODO
+        self.__logger.log(json) # TODO
         # return results
         return results
 
@@ -205,24 +237,26 @@ class ActionsController(object):
         if not self.assert_params_shape(measurement_details, action):
             return {'Error': 'Invalid parameters'}
         # assert permission for action
-        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
             return {'Error': 'Unauthorised action'}
         # perform action
-        temperature = self.thermometer.read_data(measurement_details['units'])
-        units = self.thermometer.get_units()
+        temperature = self.__thermometer.read_data(measurement_details['units'])
+        units = self.__thermometer.get_units()
         # log action
         json = {
-            'user' : self.user.get_name(),
+            'user' : self.__login_service.get_loggedin_username(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
+                'parameters' : {},
                 'results' : {
                     'temperature' : temperature,
                     'units' : units
                 }
             }
         }
-        self.logger.log(json)
+        self.__logger.log(json)
         # return results
         return json['action']['results']
     
@@ -240,24 +274,26 @@ class ActionsController(object):
         if not self.assert_params_shape(measurement_details, action):
             return {'Error': 'Invalid parameters'}
         # assert permission for action
-        if not self.authorisation_service.check_permission(action, self.user.get_role()):
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
             return {'Error': 'Unauthorised action'}
         # perform action
-        radiation = self.geiger_counter.read_data(measurement_details['units'])
-        units = self.geiger_counter.get_units()
+        radiation = self.__geiger_counter.read_data(measurement_details['units'])
+        units = self.__geiger_counter.get_units()
         # log action
         json = {
-            'user' : self.user.get_name(),
+            'user' : self.__login_service.get_loggedin_username(),
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
+                'parameters' : {},
                 'results' : {
                     'radiation' : radiation,
                     'units' : units
                 }
             }
         }
-        self.logger.log(json)
+        self.__logger.log(json)
         # return results
         return json['action']['results']
 
@@ -266,12 +302,12 @@ class ActionsController(object):
             A method for checking all details were provided for action.
         '''
         try:
-            fields = self._ACTIONPARAMS[action]
+            fields = self.__ACTIONPARAMS[action]
             all(parameters[field[0]] for field in fields)
             return True
         except KeyError:
             json = {
-                'user' : self.user.get_name(),
+                'user' : self.__user_service.get_name(),
                 'activity_type' : 'event',
                 'severity' : 'warning',
                 'event' : {
@@ -288,32 +324,28 @@ class ActionsController(object):
 
     def connect_logger(self, logger):
         """Connects the logger"""
-        self.logger = logger
-
-    def connect_dbms(self, dbms):
-        """Connects the database management service"""
-        self.dbms = dbms
+        self.__logger = logger
 
     def connect_authorisation_service(self, authorisation_service):
         """Connects the authorisation service"""
-        self.authorisation_service = authorisation_service
+        self.__authorisation_service = authorisation_service
 
-    def connect_user(self, user):
+    def connect_user_service(self, user_service):
         """Connects the loggined in user"""
-        self.user = user
+        self.__user_service = user_service
 
     def connect_thermometer(self, thermometer):
         """Connects the thermometer"""
-        self.thermometer = thermometer
+        self.__thermometer = thermometer
     
     def connect_geiger_counter(self, geiger_counter):
         """Connects the geiger counter"""
-        self.geiger_counter = geiger_counter
-    
-    def connect_user_factory(self, user_factory):
-        """Connects the user factory"""
-        self.user_factory = user_factory
+        self.__geiger_counter = geiger_counter
 
     def connect_health_record_service(self, health_record_service):
         """Connects the record service"""
-        self.health_record_service = health_record_service
+        self.__health_record_service = health_record_service
+    
+    def connect_login_service(self, login_service):
+        """Connects the record service"""
+        self.__login_service = login_service

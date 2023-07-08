@@ -2,12 +2,7 @@
     Contains the main function for the program.
 """
 # Imports
-from commandline_interface import CommandLineInterface
-from user import User
-from login_service import Login_Service
-from classes.controllers.actionscontroller import ActionsController
-from input_sanitisation import Input_Sanitisation_Service
-from encryption_service import Encryption_Service
+from imports import CommandLineInterface, User, ActionsController, Input_Sanitisation_Service, Encryption_Service, Login_Service
 
 # Insert test user
 """

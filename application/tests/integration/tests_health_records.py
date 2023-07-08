@@ -2,7 +2,7 @@
     This file contains integration tests for functionality involving sensor components.
 '''
 from context import ActionsController, CommandLineInterface
-from mock import MockAuthorisationService, MockHealthRecordService, MockLoginService, MockLogger, MockUser
+from mock import MockAuthorisationService, MockHealthRecordService, MockLoginService, MockLogger
 import unittest
 
 class TestModeratorActions(unittest.TestCase):
@@ -14,15 +14,16 @@ class TestModeratorActions(unittest.TestCase):
         self.cli.connect_action_controller(ActionsController())
 
         # mock classes
-        self.cli.connect_login_service(MockLoginService())
+        login_service = MockLoginService()
+        self.cli.connect_login_service(login_service)
         self.cli.action_controller.connect_authorisation_service(MockAuthorisationService())
+        self.cli.action_controller.connect_login_service(login_service)
         self.cli.action_controller.connect_logger(MockLogger())
-        self.cli.action_controller.connect_user(MockUser())
         self.cli.action_controller.connect_health_record_service(MockHealthRecordService())
 
         # monkey patches
         self.cli.request_login_details = lambda: ('test_name', 'test_password')
-        self.cli.greeting = lambda: "Hello, test_name!"
+        self.cli.greeting = lambda x: f"Hello, {x}!"
 
     def test_add_health_record(self):
         '''
