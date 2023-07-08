@@ -16,7 +16,7 @@ from classes.controllers.actionscontroller import ActionsController
 # infosec services
 from classes.infosec.login_service import Login_Service
 from classes.infosec.encryption_service import Encryption_Service
-from classes.infosec.authorisation_service import Authorisation_Service
+from classes.infosec.authorisation_service import AuthorisationService
 from classes.infosec.input_sanitisation import Input_Sanitisation_Service
 
 # logging services
@@ -26,6 +26,13 @@ from classes.logger.auditor import Auditor
 # sensor components
 from classes.sensors.geigercounter import GeigerCounter
 from classes.sensors.thermometer import Thermometer
+
+# models
+from classes.models.user import User
+from classes.models.country import Country
+from classes.models.healthrecord import HealthRecord
+from classes.models.permission import Permission
+from classes.models.role import Role
 
 # misc
 from classes.authseeder import AuthSeeder

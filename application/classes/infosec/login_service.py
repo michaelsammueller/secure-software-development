@@ -5,7 +5,6 @@
 # Imports
 import bcrypt
 import datetime
-from input_sanitisation import Input_Sanitisation_Service
 from classes.dbmanager import DBManager
 
 # Login Class
@@ -132,8 +131,7 @@ class Login_Service:
         if self.authenticate_user_credentials():
             if self.check_phrase_required():
                 phrase = input("Enter your secret phrase: ")
-                sanitiser = Input_Sanitisation_Service()
-                sanitised_phrase = sanitiser.sanitise_phrase(phrase)
+                sanitised_phrase = self.__sanitiser.sanitise_phrase(phrase)
                 if self.authenticate_phrase(sanitised_phrase):
                     print("\nLogin successful.\n")
                     # Create logger to log successful login
@@ -181,6 +179,12 @@ class Login_Service:
             print(f"Unable to change secret phrase: {e}\n")
             # Create logger to log error
             return False
+        
+    def connect_input_sanitisation_service(self, sanitiser):
+        """
+            Connects the Input_Sanitisation_Service
+        """
+        self.__sanitiser = sanitiser
     
     def display_password_requirements(self):
         print("Password Requirements\n")
