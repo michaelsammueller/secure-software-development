@@ -166,7 +166,7 @@ class ActionsController(object):
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
-                'parameters' : {},
+                'parameters' : user_identifiers,
                 'results' : results
             }
         }
