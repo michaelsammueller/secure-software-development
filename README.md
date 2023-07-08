@@ -169,6 +169,27 @@ It is assumed that astronaut consent to data processing is sought before any mis
 
 > ### <a name="11c">Data Deletion Policy</a>
 
+<<<<<<< HEAD
 ## <a name="12">References</a>
+=======
+## Database
+
+This solution makes use of a relational database to store data relevant to the system.
+
+Normalisation has been applied to the database design. Applying the normalisation theory aims to reduce data redundancy and avoid potential problems when performing operations on the database (Eessaar, 2016).
+
+As a consequence of applying normalisation, consistency is improved, and maintenance is reduced in complexity.
+
+UUIDs are use to avoid reveal actual user IDs. We kept the numeric IDs to be able to sort as UUIDs do not allow sorting.
+
+### Considerations
+In general, constraints are no implemented at this stage but applying the correct SQL statements will generate the necessary structure to handle deleting associated records.
+
+
+Minimum indexation has been applied to ensure the queries run quickly.
+
+## References
+>>>>>>> main
 
 Eessaar, E. (2016) The Database Normalization Theory and the Theory of Normalized Systems: Finding a Common Ground. Baltic J. Modern Computing 4(1): 5-33. Available from: https://www.researchgate.net/publication/297731569_The_Database_Normalization_Theory_and_the_Theory_of_Normalized_Systems_Finding_a_Common_Ground [Accessed 21 June 2023].
+
