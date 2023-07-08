@@ -3,9 +3,9 @@
 """
 
 # Imports
-from imports import bcrypt, datetime
+import bcrypt
+import datetime
 from classes.dbmanager import DBManager
-from input_sanitisation import Input_Sanitisation_Service
 
 # Login Class
 class Login_Service:
@@ -17,18 +17,17 @@ class Login_Service:
         self.__username = username
 
     def set_password(self, password):
-        encrypted_password = self.encryption_service.encrypt(password)
-        self.__password = encrypted_password
+        self.__password = password
     
     def get_username(self):
         return self.__username
     
     def get_password(self):
-        decrypted_password = self.encryption_service.decrypt(self.__password)
-        return decrypted_password
+        return self.__password
     
     def check_password(self, password):
         """Reauthenticates user by checking password"""
+        username = self.get_username()
         auth_password = self.get_password()
         # Check that password is correct
         if password == auth_password:
@@ -113,6 +112,8 @@ class Login_Service:
             if phrase == secret_phrase:
                 return True
             else:
+                print(f"Entered phrase: {phrase}\n") # TODO: Remove this
+                print(f"Stored phrase: {secret_phrase}\n") # TODO: Remove this
                 print("Invalid phrase.\n")
                 # Create logger to log failed login
                 return False
@@ -130,8 +131,7 @@ class Login_Service:
         if self.authenticate_user_credentials():
             if self.check_phrase_required():
                 phrase = input("Enter your secret phrase: ")
-                sanitiser = Input_Sanitisation_Service()
-                sanitised_phrase = sanitiser.sanitise_phrase(phrase)
+                sanitised_phrase = self.__sanitiser.sanitise_phrase(phrase)
                 if self.authenticate_phrase(sanitised_phrase):
                     print("\nLogin successful.\n")
                     # Create logger to log successful login
@@ -179,16 +179,14 @@ class Login_Service:
             print(f"Unable to change secret phrase: {e}\n")
             # Create logger to log error
             return False
+        
+    def connect_input_sanitisation_service(self, sanitiser):
+        """
+            Connects the Input_Sanitisation_Service
+        """
+        self.__sanitiser = sanitiser
     
     def display_password_requirements(self):
         print("Password Requirements\n")
         print("1. Must be between 8 and 64 characters long\n")
         print("2. Must not contain special characters\n")
-    
-    def connect_encryption_service(self, encryption_service):
-        """Connects the encryption service"""
-        self.encryption_service = encryption_service
-    
-    def connect_input_sanitisation_service(self, input_sanitisation_service):
-        """Connects the input sanitisation service"""
-        self.input_sanitisation_service = input_sanitisation_service
