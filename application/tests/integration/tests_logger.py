@@ -32,7 +32,7 @@ class TestLoggers(unittest.TestCase):
         '''
             A method that tests the view temperature option.
         '''
-        mock_selections = (x for x in ['1', '8', 'C', 'Y', '8', 'F', 'Y', '8', 'K', 'N', '2'])
+        mock_selections = (x for x in ['1', '8', 'C', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
