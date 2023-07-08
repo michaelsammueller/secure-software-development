@@ -45,6 +45,7 @@ class TestAdminActions(unittest.TestCase):
             A method that tests the add user option.
         '''
 
+        print("----Adding user----")
         # test database and logger integration
         mock_selections = (x for x in ['1', '1', 'test_user', 'astronaut', '01/01/1971', 'USA', f'username{randint(0, 2**16)}', 'password', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
@@ -55,6 +56,7 @@ class TestAdminActions(unittest.TestCase):
             A method that tests the view users option.
         '''
 
+        print("----Viewing All Users----")
         # test database and logger integration
         mock_selections = (x for x in ['1', '3', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
@@ -65,29 +67,22 @@ class TestAdminActions(unittest.TestCase):
             A method that tests the view user option.
         '''
 
+        print("----Viewing One User----")
         # test database and logger integration
-        mock_selections = (x for x in ['1', '4', 'd4b259bc-5aff-41df-b9f8-7525b8aebbed', 'N', '2'])
+        mock_selections = (x for x in ['1', '4', 'd4b259', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
-    # def test_delete_user(self):
-    #     '''
-    #         A method that tests the delete user option.
-    #     '''
-    #     # tests selections
-    #     mock_selections = (x for x in ['1', '2', 'test_user', 'N', '2'])
-    #     self.cli.ask_for_selection = lambda: next(mock_selections)
-    #     self.assertTrue(self.cli.display_main_menu())
+    def test_delete_user(self):
+        '''
+            A method that tests the view user option.
+        '''
 
-    #     # tests database integration
-    #     user_service = User()
-    #     db_manager = DBManager('testdata.db')
-    #     user_service.connect_db_manager(db_manager)
-    #     self.cli.action_controller.connect_user_service(user_service)
-
-    #     mock_selections = (x for x in ['1', '2', 'test_user', 'N', '2'])
-    #     self.cli.ask_for_selection = lambda: next(mock_selections)
-    #     self.assertTrue(self.cli.display_main_menu())
+        print("----Deleting a user----")
+        # test database and logger integration
+        mock_selections = (x for x in ['1', '4', '5a08d606-8ed8-434d-8928-e50913ee7134', 'Y', '2', '5a08d606-8ed8-434d-8928-e50913ee7134', 'N', '2'])
+        self.cli.ask_for_selection = lambda: next(mock_selections)
+        self.assertTrue(self.cli.display_main_menu())
 
 if __name__ == '__main__':
     unittest.main()

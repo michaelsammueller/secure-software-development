@@ -44,16 +44,18 @@ class User:
 
         # call do_select method from DBManager.
         result = self.__db_manager.do_select(query, where)
-        print(result)
-        json = {result[0].keys()[i] : value for i, value in enumerate(result[0])}
+        if result:
+            json = {result[0].keys()[i] : value for i, value in enumerate(result[0])}
+        else:
+            json = {}
         return json
     
-    def delete_user(self, name): #TODO name or uuid
+    def delete_user(self, user_identifiers):
         '''
             Delete a user from the database
         '''
-        query = "DELETE FROM roles WHERE name = ?"
-        where = (name,)
+        query = "DELETE FROM users WHERE uuid = ?"
+        where = (user_identifiers['uuid'],)
         # call do_delete method from DBManager
         return self.__db_manager.do_delete(query, where, False)   
 

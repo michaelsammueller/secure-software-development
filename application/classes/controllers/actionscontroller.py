@@ -29,7 +29,7 @@ class ActionsController(object):
                              ('country of employment', []),
                              ('username', []),
                              ('password', [])],
-            'Delete User': [('name', [])],
+            'Delete User': [('uuid', [])],
             'Add Health Record': [('name', []),
                                   ('height', []),
                                   ('weight', []),
@@ -174,24 +174,24 @@ class ActionsController(object):
         # return results
         return results
 
-    def delete_user(self, old_user_details):
+    def delete_user(self, old_user_identifiers):
         '''
             A method for deleting a user from the system.
 
             old_user_details interface:
             {
-                'name': name,
+                'uuid': uuid,
             }
         '''
         action = "Delete User"
-        if not self.assert_params_shape(old_user_details, action):
+        if not self.assert_params_shape(old_user_identifiers, action):
             return {'Error': 'Missing parameters'}
         # assert permission for action
         user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
         if not self.__authorisation_service.check_permission(action, user_role):
             return {'Error': 'Unauthorised action'}
         # perform action
-        if self.__user_service.delete_user(old_user_details): # TODO
+        if self.__user_service.delete_user(old_user_identifiers): #TODO clarify whether user was deleted or not
             results = {'Confirmation': 'User Deleted'}
         else:
             results = {'Error': 'User Not Deleted'}
@@ -201,13 +201,11 @@ class ActionsController(object):
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
-                'parameters' : {
-                    key : value for key, value in old_user_details.items()
-                },
+                'parameters' : old_user_identifiers,
                 'results' : results
             }
         }
-        self.__logger.log(json) # TODO
+        self.__logger.log(json)
         # return results
         return results
 
