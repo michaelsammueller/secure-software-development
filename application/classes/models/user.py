@@ -19,7 +19,7 @@ class User:
                   user_details['country of employment'], user_details['username'], user_details['password'])
 
         # call do_insert method from DBmanager.
-        self.__db_manager.do_insert(query, values, dry=False)
+        return self.__db_manager.do_insert(query, values, dry=False)
 
     def view_all_users(self):
         '''
@@ -31,6 +31,19 @@ class User:
         # call do_select method from DBManager.
         result = self.__db_manager.do_select(query, where)
         json = {row[0] : row[1] for row in result}
+        return json
+    
+    
+    def view_user(self, uuid):
+        '''
+            View a user from the database
+        '''
+        query = "SELECT * FROM users WHERE uuid = ?"
+        where = (uuid,)
+
+        # call do_select method from DBManager.
+        result = self.__db_manager.do_select(query, where)
+        json = {result.keys()[i] : value for i, value in enumerate(result)}
         return json
     
     def delete_user(self, name): #TODO name or uuid

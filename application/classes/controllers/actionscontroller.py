@@ -11,6 +11,7 @@ class ActionsController(object):
             'Add New User',
             'Delete User',
             'View All Users',
+            'View User',
             'Add Health Record',
             'View Health Record', # TODO
             'Update Health Record', # TODO
@@ -34,6 +35,7 @@ class ActionsController(object):
                                   ('weight', []),
                                   ('blood pressure', [])],
             'View All Users': [],
+            'View User': [('uuid', [])],
         }
 
     def get_actions(self):
@@ -124,7 +126,34 @@ class ActionsController(object):
         # perform action
         results = self.__user_service.view_all_users()
         if not results:
-            results = {'Error': 'Now Users Found'}
+            results = {'Error': 'No Users Found'}
+        # log action
+        json = {
+            'user' : self.__login_service.get_loggedin_username(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : {},
+                'results' : results
+            }
+        }
+        self.__logger.log(json)
+        # return results
+        return results
+    
+    def view_user(self, uuid):
+        '''
+            A method for viewing a user of the system.
+        '''
+        action = 'View User'
+        # assert permission for action
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
+            return {'Error': 'Unauthorised action'}
+        # perform action
+        results = self.__user_service.view_users(uuid)
+        if not results:
+            results = {'Error': 'No Users Found'}
         # log action
         json = {
             'user' : self.__login_service.get_loggedin_username(),
