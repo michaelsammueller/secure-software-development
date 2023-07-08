@@ -17,17 +17,18 @@ class Login_Service:
         self.__username = username
 
     def set_password(self, password):
-        self.__password = password
+        encrypted_password = self.encryption_service.encrypt(password)
+        self.__password = encrypted_password
     
     def get_username(self):
         return self.__username
     
     def get_password(self):
-        return self.__password
+        decrypted_password = self.encryption_service.decrypt(self.__password)
+        return decrypted_password
     
     def check_password(self, password):
         """Reauthenticates user by checking password"""
-        username = self.get_username()
         auth_password = self.get_password()
         # Check that password is correct
         if password == auth_password:
@@ -112,8 +113,6 @@ class Login_Service:
             if phrase == secret_phrase:
                 return True
             else:
-                print(f"Entered phrase: {phrase}\n") # TODO: Remove this
-                print(f"Stored phrase: {secret_phrase}\n") # TODO: Remove this
                 print("Invalid phrase.\n")
                 # Create logger to log failed login
                 return False
@@ -185,3 +184,11 @@ class Login_Service:
         print("Password Requirements\n")
         print("1. Must be between 8 and 64 characters long\n")
         print("2. Must not contain special characters\n")
+    
+    def connect_encryption_service(self, encryption_service):
+        """Connects the encryption service"""
+        self.encryption_service = encryption_service
+    
+    def connect_input_sanitisation_service(self, input_sanitisation_service):
+        """Connects the input sanitisation service"""
+        self.input_sanitisation_service = input_sanitisation_service
