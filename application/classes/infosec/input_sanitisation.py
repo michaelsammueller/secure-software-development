@@ -67,6 +67,17 @@ class Input_Sanitisation_Service:
         except Exception as e:
             print(f"An error occured: {e}\n")
             # Create logger to log error
+            json = {
+                'activity_type': 'event',
+                'severity': 'warning',
+                'event': {
+                    'type': 'error',
+                    'details': {
+                        'message': f"An error occured: {e}"
+                    }
+                }
+            }
+            self.__logger.log(json)
     
     def validate_password(self, password): # SHOULD THIS CONTAIN CHARACTER FILTER TO PREVENT EVIL REGEX?
         """Validates user password based on constraints"""
@@ -85,3 +96,18 @@ class Input_Sanitisation_Service:
         except Exception as e:
             print(f"An error occured: {e}\n")
             # Create logger to log error
+            json = {
+                'activity_type': 'event',
+                'severity': 'warning',
+                'event': {
+                    'type': 'error',
+                    'details': {
+                        'message': f"An error occured: {e}"
+                    }
+                }
+            }
+            self.__logger.log(json)
+
+    def connect_logger(self, logger):
+        """Connects the logger"""
+        self.__logger = logger

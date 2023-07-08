@@ -1,7 +1,7 @@
 import sqlite3
 
 # Connect to SQL database or create database if it doesn't exist
-connect = sqlite3.connect('data/securespace.db')
+connect = sqlite3.connect('application/data/securespace.db')
 cursor = connect.cursor()
 
 # Creation of the 'users' table
