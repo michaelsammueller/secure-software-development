@@ -69,6 +69,7 @@ class ActionsController(object):
             'View Temperature': self.view_temperature,
             'View Radiation Level': self.view_radiation_level,
             'View All Users': self.view_all_users,
+            'View User': self.view_user,
         }
         return func_map[action](parameters)
 
@@ -141,9 +142,14 @@ class ActionsController(object):
         # return results
         return results
     
-    def view_user(self, uuid):
+    def view_user(self, user_identifiers):
         '''
             A method for viewing a user of the system.
+
+            user_identifiers interface:
+            {
+                'uuid': uuid,
+            }
         '''
         action = 'View User'
         # assert permission for action
@@ -151,7 +157,7 @@ class ActionsController(object):
         if not self.__authorisation_service.check_permission(action, user_role):
             return {'Error': 'Unauthorised action'}
         # perform action
-        results = self.__user_service.view_users(uuid)
+        results = self.__user_service.view_user(user_identifiers)
         if not results:
             results = {'Error': 'No Users Found'}
         # log action

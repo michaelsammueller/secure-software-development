@@ -12,6 +12,7 @@ class User:
         '''
             Adds a user to the database
         '''
+        
         # perform database query to save user attributes.
         query = "INSERT INTO users (uuid, name, code, dob, role_id, \
             country_id, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
@@ -34,16 +35,17 @@ class User:
         return json
     
     
-    def view_user(self, uuid):
+    def view_user(self, user_identifiers):
         '''
             View a user from the database
         '''
         query = "SELECT * FROM users WHERE uuid = ?"
-        where = (uuid,)
+        where = (user_identifiers['uuid'],)
 
         # call do_select method from DBManager.
         result = self.__db_manager.do_select(query, where)
-        json = {result.keys()[i] : value for i, value in enumerate(result)}
+        print(result)
+        json = {result[0].keys()[i] : value for i, value in enumerate(result[0])}
         return json
     
     def delete_user(self, name): #TODO name or uuid
