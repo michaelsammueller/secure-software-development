@@ -13,13 +13,20 @@ class TestAdminActions(unittest.TestCase):
         A class for encapsulating functionality tests for superadmins.
     '''
     def setUp(self):
+        # set up db
+
+
+        # set up services
         self.cli = CommandLineInterface()
         action_controller = ActionsController()
         self.cli.connect_action_controller(action_controller)
         self.log_path = 'application/tests/integration/testlogs.txt'
         logger = Logger(self.log_path)
+        self.cli.connect_logger(logger)
         action_controller.connect_logger(logger)
         self.db_path = 'application/tests/integration/testdata.db'
+        if not os.path.exists(self.db_path):
+            DBShape(self.db_path)
         self.db_manager = DBManager(self.db_path)
         user = User()
         action_controller.connect_user_service(user)
@@ -36,9 +43,6 @@ class TestAdminActions(unittest.TestCase):
         # monkey patches
         self.cli.request_login_details = lambda: ('test_name', 'test_password')
         self.cli.greeting = lambda x: f"Hello, {x}!"
-
-        if not os.path.exists(self.db_path):
-            DBShape(self.db_path)
 
     def test_add_user(self):
         '''

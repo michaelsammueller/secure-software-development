@@ -31,7 +31,10 @@ class User:
 
         # call do_select method from DBManager.
         result = self.__db_manager.do_select(query, where)
-        json = {row[0] : row[1] for row in result}
+        if result:
+            json = {row[0] : row[1] for row in result}
+        else:
+            json = {}
         return json
     
     

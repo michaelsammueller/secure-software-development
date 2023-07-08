@@ -157,4 +157,4 @@ class DBShape(object):
         print("Database initialised.")
 
 if __name__ == '__main__':
-    DatabaseGen()
+    DBShape()

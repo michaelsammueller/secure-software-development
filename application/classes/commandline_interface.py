@@ -63,7 +63,7 @@ class CommandLineInterface:
         """Display user menu options"""
         self.greeting(username) # Display greeting message
         while True:
-            options = self.action_controller.get_actions()
+            options = self.__action_controller.get_actions()
             for i, option in enumerate(options):
                 print(f"{i + 1}. {option}")
         
@@ -135,7 +135,7 @@ Astronaut Health Monitoring System
                     #self.display_test_menu(username)
                     json = {
                         'user': username,
-                        'activity-type': 'event',
+                        'activity_type': 'event',
                         'severity': 'info',
                         'event': {
                             'type': 'successful login',
@@ -149,7 +149,7 @@ Astronaut Health Monitoring System
                 else:
                     json = {
                         'user': username,
-                        'activity-type': 'event',
+                        'activity_type': 'event',
                         'severity': 'warning',
                         'event': {
                             'type': 'failed login',
@@ -165,7 +165,8 @@ Astronaut Health Monitoring System
                 print("Exiting...\n")
                 # Logging event
                 json = {
-                    'activity-type': 'event',
+                    'user': 'Application',
+                    'activity_type': 'event',
                     'severity': 'info',
                     'event': {
                         'type': 'exit',
@@ -193,7 +194,7 @@ Astronaut Health Monitoring System
             # Create json file
             json = {
                 'user': username,
-                'activity-type': 'event',
+                'activity_type': 'event',
                 'severity': 'info',
                 'event': {
                     'type': 'successful reauthentication',
@@ -215,7 +216,7 @@ Astronaut Health Monitoring System
                     # Log failed password change
                     json = {
                         'user': username,
-                        'activity-type': 'event',
+                        'activity_type': 'event',
                         'severity': 'info',
                         'event': {
                             'type': 'failed password change',
@@ -239,7 +240,7 @@ Astronaut Health Monitoring System
                         # Log failed password change
                         json = {
                             'user': username,
-                            'activity-type': 'event',
+                            'activity_type': 'event',
                             'severity': 'info',
                             'event': {
                                 'type': 'failed password change',
@@ -262,7 +263,7 @@ Astronaut Health Monitoring System
                             # Create logger to log password change
                             json = {
                                 'user': username,
-                                'activity-type': 'event',
+                                'activity_type': 'event',
                                 'severity': 'info',
                                 'event': {
                                     'type': 'successful password change',
@@ -280,7 +281,7 @@ Astronaut Health Monitoring System
                             # Create logger to log failed password change
                             json = {
                                 'user': username,
-                                'activity-type': 'event',
+                                'activity_type': 'event',
                                 'severity': 'warning',
                                 'event': {
                                     'type': 'failed password change',
@@ -300,7 +301,7 @@ Astronaut Health Monitoring System
                     # Create logger to log failed password change
                     json = {
                         'user': username,
-                        'activity-type': 'event',
+                        'activity_type': 'event',
                         'severity': 'info',
                         'event': {
                             'type': 'failed password change',
@@ -319,7 +320,7 @@ Astronaut Health Monitoring System
             # Create logger to log failed password change
             json = {
                 'user': username,
-                'activity-type': 'event',
+                'activity_type': 'event',
                 'severity': 'warning',
                 'event': {
                     'type': 'failed password change',
@@ -346,7 +347,7 @@ Astronaut Health Monitoring System
             # Create json file
             json = {
                 'user': username,
-                'activity-type': 'event',
+                'activity_type': 'event',
                 'severity': 'info',
                 'event': {
                     'type': 'successful reauthentication',
@@ -367,7 +368,7 @@ Astronaut Health Monitoring System
                     # Log failed phrase change
                     json = {
                         'user': username,
-                        'activity-type': 'event',
+                        'activity_type': 'event',
                         'severity': 'info',
                         'event': {
                             'type': 'failed phrase change',
@@ -390,7 +391,7 @@ Astronaut Health Monitoring System
                         # Create logger to log phrase change
                         json = {
                             'user': username,
-                            'activity-type': 'event',
+                            'activity_type': 'event',
                             'severity': 'info',
                             'event': {
                                 'type': 'successful phrase change',
@@ -408,7 +409,7 @@ Astronaut Health Monitoring System
                     # Create logger to log failed phrase change
                     json = {
                         'user': username,
-                        'activity-type': 'event',
+                        'activity_type': 'event',
                         'severity': 'info',
                         'event': {
                             'type': 'failed phrase change',
@@ -427,7 +428,7 @@ Astronaut Health Monitoring System
             # Create logger to log failed login attempt
             json = {
                 'user': username,
-                'activity-type': 'event',
+                'activity_type': 'event',
                 'severity': 'warning',
                 'event': {
                     'type': 'failed password change',
