@@ -8,13 +8,8 @@ import getpass
 # CommandLineInterface class
 # This class will be responsible for handling user input
 class CommandLineInterface:
-    #def __init__(self):
-        #self.login_service = None # Initialise login_service attribute
-        #self.selection = selection
-        #self.confirmation = confirmation
-        #self.user = User()  # Will be an instance of the User class
 
-    def greeting(self, username): # TESTED AND WORKING
+    def greeting(self, username):
         """Display greeting message"""
         print(f"""
         -------------------------
@@ -35,7 +30,7 @@ class CommandLineInterface:
         else:
             return getattr(self.user, attribute)
 
-    def request_login_details(self): # TESTED AND WORKING
+    def request_login_details(self):
         """Request user login details"""
         username = input("Username: ")
         password = getpass.getpass("Password: ", stream=None)
@@ -46,13 +41,13 @@ class CommandLineInterface:
         password = getpass.getpass("Password: ", stream=None)
         return password
 
-    def ask_for_selection(self): # TESTED AND WORKING
+    def ask_for_selection(self):
         """Request user selection"""
         selection = input("Enter your selection: ")
         print("\n")
         return selection
 
-    def ask_for_confirmation(self): # TESTED AND WORKING
+    def ask_for_confirmation(self):
         """Request user confirmation"""
         while True:
             print("Enter Y to confirm or N to cancel.")
@@ -82,7 +77,7 @@ class CommandLineInterface:
                 continue
             if selection <= len(options):
                 # Get additional paramaters from user 
-                params = self.action_controller.get_action_params(options[selection - 1])
+                params = self.__action_controller.get_action_params(options[selection - 1])
                 details = {}
                 print("\nRequesting details...")
                 for param in params:
@@ -90,10 +85,10 @@ class CommandLineInterface:
                         print(f"{param[0]}")
                         details[param[0]] = self.ask_for_selection()
                     else: # field name and options provided
-                        print(f"Options for {param[0]}: {param[1]}")
+                        print(f"\nOptions for {param[0]}: {param[1]}")
                         details[param[0]] = self.ask_for_selection()
                 # Perform action
-                results = self.action_controller(options[selection - 1], details)
+                results = self.__action_controller(options[selection - 1], details)
                 print("\nResults...")
                 print(f"{[f'{key}: {value}' for key, value in results.items()]}")
                 # Ask to continue
@@ -107,7 +102,24 @@ class CommandLineInterface:
 
     def display_main_menu(self): # TESTED AND WORKING
         """Display main menu options"""
+        # Adding color options for user interface
+        COLOR_RED = '\033[31m'
+        COLOR_GREEN = '\033[38;2;0;128;0m'
+        COLOR_RESET = '\033[0m'
         while True:
+            print(COLOR_GREEN + """
+     █████  ██   ██ ███    ███ 
+    ██   ██ ██   ██ ████  ████ 
+    ███████ ███████ ██ ████ ██ 
+    ██   ██ ██   ██ ██  ██  ██ 
+    ██   ██ ██   ██ ██      ██ 
+                """ + COLOR_RESET)
+            print("""
+----------------------------------
+Astronaut Health Monitoring System
+----------------------------------
+    (C) 2023, SecureSpace\n
+""")
             print("\n1. Login")
             print("2. Exit\n")
 
@@ -118,32 +130,104 @@ class CommandLineInterface:
             if selection == '1':
                 username, password = self.request_login_details()  # Request user login details
                 # Handle Login
-                if self.login_service.login(username, password):
+                if self.__login_service.login(username, password):
                     self.display_user_menu(username)
                     #self.display_test_menu(username)
+                    json = {
+                        'user': username,
+                        'activity-type': 'event',
+                        'severity': 'info',
+                        'event': {
+                            'type': 'successful login',
+                            'details': {
+                                'username': username,
+                                'password': password
+                            }
+                        }
+                    }
+                    self.__logger.log(json)
                 else:
-                    # Create logger to log failed login attempt
-                    pass
+                    json = {
+                        'user': username,
+                        'activity-type': 'event',
+                        'severity': 'warning',
+                        'event': {
+                            'type': 'failed login',
+                            'details': {
+                                'username': username,
+                                'password': password
+                            }
+                        }
+                    }
+                    self.__logger.log(json)
             elif selection == '2':
                 # Handle Exit
                 print("Exiting...\n")
+                # Logging event
+                json = {
+                    'activity-type': 'event',
+                    'severity': 'info',
+                    'event': {
+                        'type': 'exit',
+                        'details': {
+                            'event': 'Application was closed from main menu',
+                            'shutdown': 'Planned'
+                        }
+                    }
+                }
+                self.__logger.log(json)
                 return True # Confirms exit
             else:
                 print("Invalid selection.\n")
 
     # Will live in here for now
-    def change_password(self): # TESTED AND WORKING
+    def change_password(self):
         """Changes user password"""
         # Ask user for reauthentication
         password = self.request_password()
         # Authenticate user credentials
-        if self.login_service.check_password(password):
-            self.login_service.display_password_requirements()
+        if self.__login_service.check_password(password):
+            # Log successful reauthentication
+            username = self.__login_service.get_loggedin_username()
+            password = self.__login_service.get_password()
+            # Create json file
+            json = {
+                'user': username,
+                'activity-type': 'event',
+                'severity': 'info',
+                'event': {
+                    'type': 'successful reauthentication',
+                    'details': {
+                        'username': username,
+                        'password': password
+                    }
+                }
+            }
+            # Log event
+            self.__logger.log(json)
+            # Display password requirements
+            self.__login_service.display_password_requirements()
             while True:
                 # Ask user for new password
                 new_password = getpass.getpass("New Password: ", stream=None)
                 # Check that new password is within constraints
-                if not self.sanitisation_service.validate_password(new_password):
+                if not self.__sanitisation_service.validate_password(new_password):
+                    # Log failed password change
+                    json = {
+                        'user': username,
+                        'activity-type': 'event',
+                        'severity': 'info',
+                        'event': {
+                            'type': 'failed password change',
+                            'details': {
+                                'username': username,
+                                'new password': new_password,
+                                'reason': 'Password did not meet requirements'
+                            }
+                        }
+                    }
+                    self.__logger.log(json)
+                    # Display password requirements again and ask user for new password
                     continue
                 # Ask user to confirm new password
                 new_password_confirmation = getpass.getpass("Confirm New Password: ", stream=None)
@@ -152,76 +236,230 @@ class CommandLineInterface:
                     # Check if new password is the same as the old password
                     if new_password == password:
                         print("New password cannot be the same as the old password.\n")
+                        # Log failed password change
+                        json = {
+                            'user': username,
+                            'activity-type': 'event',
+                            'severity': 'info',
+                            'event': {
+                                'type': 'failed password change',
+                                'details': {
+                                    'username': username,
+                                    'new password': new_password,
+                                    'reason': 'New password cannot be the same as the old password'
+                                }
+                            }
+                        }
+                        self.__logger.log(json)
                     else:
                         # Ask user for phrase
                         phrase = input("Enter your phrase: ")
                         # Authenticate phrase
-                        if self.login_service.authenticate_phrase(phrase):
+                        if self.__login_service.authenticate_phrase(phrase):
                             # Change password
-                            self.login_service.change_password(new_password)
-                            self.login_service.set_password(new_password)
+                            self.__login_service.change_password(new_password)
+                            self.__login_service.set_password(new_password)
                             # Create logger to log password change
+                            json = {
+                                'user': username,
+                                'activity-type': 'event',
+                                'severity': 'info',
+                                'event': {
+                                    'type': 'successful password change',
+                                    'details': {
+                                        'username': username,
+                                        'old password': password,
+                                        'new password': new_password
+                                    }
+                                }
+                            }
+                            self.__logger.log(json)
                             return True
                         else:
                             print("Phrase incorrect.\n")
                             # Create logger to log failed password change
+                            json = {
+                                'user': username,
+                                'activity-type': 'event',
+                                'severity': 'warning',
+                                'event': {
+                                    'type': 'failed password change',
+                                    'details': {
+                                        'username': username,
+                                        'old password': password,
+                                        'new password': new_password,
+                                        'phrase': phrase,
+                                        'reason': 'Phrase did not match stored phrase.'
+                                    }
+                                }
+                            }
+                            self.__logger.log(json)
                             return False
                 else:
                     print("Passwords do not match.\n")
                     # Create logger to log failed password change
+                    json = {
+                        'user': username,
+                        'activity-type': 'event',
+                        'severity': 'info',
+                        'event': {
+                            'type': 'failed password change',
+                            'details': {
+                                'username': username,
+                                'new password': new_password,
+                                'new password confirmation': new_password_confirmation,
+                                'reason': 'New password did not match confirmation'
+                            }
+                        }
+                    }
+                    self.__logger.log(json)
                     return False
         else:
             print("Password incorrect.\n")
             # Create logger to log failed password change
+            json = {
+                'user': username,
+                'activity-type': 'event',
+                'severity': 'warning',
+                'event': {
+                    'type': 'failed password change',
+                    'details': {
+                        'username': username,
+                        'password': password,
+                        'reason': 'Password did not match stored password'
+                    }
+                }
+            }
+            self.__logger.log(json)
             return False
 
     # Will live in here for now
-    def change_phrase(self): # TESTED AND WORKING
+    def change_phrase(self):
         """Changes user phrase"""
         # Ask user for reauthentication
         password = self.request_password()
         # Authenticate user credentials
-        if self.login_service.check_password(password):
+        if self.__login_service.check_password(password):
+            # Log successful reauthentication
+            username = self.__login_service.get_loggedin_username()
+            password = self.__login_service.get_password()
+            # Create json file
+            json = {
+                'user': username,
+                'activity-type': 'event',
+                'severity': 'info',
+                'event': {
+                    'type': 'successful reauthentication',
+                    'details': {
+                        'username': username,
+                        'password': password
+                    }
+                }
+            }
+            # Log event
+            self.__logger.log(json)
             while True:
                 # Ask user for new phrase
                 new_phrase = input("New Phrase: ")
                 # Check new phrase against stored phrase
-                if not self.login_service.check_phrase(new_phrase):
+                if not self.__login_service.check_phrase(new_phrase):
                     print("New phrase cannot be the same as the old phrase.\n")
+                    # Log failed phrase change
+                    json = {
+                        'user': username,
+                        'activity-type': 'event',
+                        'severity': 'info',
+                        'event': {
+                            'type': 'failed phrase change',
+                            'details': {
+                                'username': username,
+                                'new phrase': new_phrase,
+                                'reason': 'New phrase cannot be the same as the old phrase'
+                            }
+                        }
+                    }
+                    self.__logger.log(json)
                     continue
                 # Ask user to confirm new phrase
                 new_phrase_confirmation = input("Confirm New Phrase: ")
                 # Check if new phrase matches confirmation
                 if new_phrase == new_phrase_confirmation:
-                        sanitised_phrase = self.sanitisation_service.sanitise_phrase(new_phrase)
-                        self.login_service.change_phrase(sanitised_phrase)
+                        sanitised_phrase = self.__sanitisation_service.sanitise_phrase(new_phrase)
+                        self.__login_service.change_phrase(sanitised_phrase)
                         print("Phrase changed successfully.\n")
                         # Create logger to log phrase change
+                        json = {
+                            'user': username,
+                            'activity-type': 'event',
+                            'severity': 'info',
+                            'event': {
+                                'type': 'successful phrase change',
+                                'details': {
+                                    'username': username,
+                                    'old phrase': self.__login_service.get_phrase(),
+                                    'new phrase': sanitised_phrase
+                                }
+                            }
+                        }
+                        self.__logger.log(json)
                         return True
                 else:
                     print("Phrases do not match.\n")
                     # Create logger to log failed phrase change
+                    json = {
+                        'user': username,
+                        'activity-type': 'event',
+                        'severity': 'info',
+                        'event': {
+                            'type': 'failed phrase change',
+                            'details': {
+                                'username': username,
+                                'new phrase': new_phrase,
+                                'new phrase confirmation': new_phrase_confirmation,
+                                'reason': 'New phrase did not match confirmation'
+                            }
+                        }
+                    }
+                    self.__logger.log(json)
                     return False
         else:
             print("Incorrect password.\n")
             # Create logger to log failed login attempt
+            json = {
+                'user': username,
+                'activity-type': 'event',
+                'severity': 'warning',
+                'event': {
+                    'type': 'failed password change',
+                    'details': {
+                        'username': username,
+                        'password': password,
+                        'reason': 'Password did not match stored password'
+                    }
+                }
+            }
+            self.__logger.log(json)
             return False
         
-    def connect_login_service(self, login_service): # TESTED AND WORKING
+    def connect_login_service(self, login_service):
         """Connects the login service"""
-        self.login_service = login_service
+        self.__login_service = login_service
 
-    def connect_action_controller(self, action_controller): # TESTED AND WORKING
+    def connect_action_controller(self, action_controller):
         """Connects the action controller"""
-        self.action_controller = action_controller
+        self.__action_controller = action_controller
     
-    def connect_sanitisation_service(self, sanitisation_service): # TESTED AND WORKING
+    def connect_sanitisation_service(self, sanitisation_service):
         """Connects the sanitisation service"""
-        self.sanitisation_service = sanitisation_service
+        self.__sanitisation_service = sanitisation_service
     
     def connect_encryption_service(self, encryption_service):
         """Connects the encryption service"""
-        self.encryption_service = encryption_service
+        self.__encryption_service = encryption_service
+    
+    def connect_logger(self, logger):
+        """Connects the logger"""
+        self.__logger = logger
     
     def display_test_menu(self, username): # FOR TESTING ONLY: TODO REMOVE THIS
         print("Test Menu")
