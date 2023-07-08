@@ -14,16 +14,20 @@ class Login_Service:
         self.__password = ''
     
     def set_username(self, username):
+        """Sets username"""
         self.__username = username
 
     def set_password(self, password):
+        """Encrypts password and sets it"""
         encrypted_password = self.__encryption_service.encrypt(password)
         self.__password = encrypted_password
     
     def get_loggedin_username(self):
+        """Returns username of logged in user"""
         return self.__username
     
     def get_password(self):
+        """Decrypts password and returns it"""
         decrypted_password = self.__encryption_service.decrypt(self.__password)
         return decrypted_password
     
