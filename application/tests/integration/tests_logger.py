@@ -1,7 +1,7 @@
 '''
     This file contains integration tests for functionality involving loggers.
 '''
-from context import ActionsController, CommandLineInterface, GeigerCounter, Thermometer, Logger
+from context import ActionsController, CommandLineInterface, Thermometer, Logger
 from mock import MockAuthorisationService, MockLoginService, MockEncryptionService, MockAuditor
 import unittest
 
