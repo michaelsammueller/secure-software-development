@@ -10,12 +10,13 @@ cursor.execute('''
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         uuid TEXT NOT NULL,
         name TEXT NOT NULL,
-        code TEXT NOT NULL,
+        code TEXT UNIQUE NOT NULL,
         dob INTEGER,
         role_id INTEGER,        
         country_id INTEGER,
-        username TEXT,
-        password TEXT,        
+        username TEXT UNIQUE,
+        password TEXT,     
+        phrase TEXT,   
         last_login_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -30,7 +31,8 @@ cursor.execute('''
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS roles (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
+        uuid TEXT NOT NULL,
+        name TEXT UNIQUE,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
@@ -40,7 +42,8 @@ cursor.execute('''
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS permissions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
+        uuid TEXT NOT NULL,
+        name TEXT UNIQUE,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
@@ -90,6 +93,7 @@ cursor.execute('''
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS checks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uuid TEXT NOT NULL,
         name TEXT NOT NULL       
     )
 ''')
@@ -125,6 +129,7 @@ cursor.execute('''
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS countries (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uuid TEXT NOT NULL,
         code TEXT,
         name TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -134,13 +139,13 @@ cursor.execute('''
 
 # Seed the check table
 
-checks = [('Temperature',),
-          ('Radiation',)]
+# checks = [('Temperature',),
+#           ('Radiation',)]
 
-cursor.executemany(''' 
-        INSERT INTO checks(name) 
-        VALUES(?)
-''', checks)
+# cursor.executemany(''' 
+#         INSERT INTO checks(name) 
+#         VALUES(?)
+# ''', checks)
 
 # Commit changes and close the connection
 connect.commit()

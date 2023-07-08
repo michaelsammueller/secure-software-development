@@ -2,12 +2,12 @@
     This file contains integration tests for functionality involving sensor components.
 '''
 from context import ActionsController, CommandLineInterface
-from mock import MockAuthorisationService, MockLoginService, MockLogger, MockUser, MockUserFactory
+from mock import MockAuthorisationService, MockHealthRecordService, MockLoginService, MockLogger, MockUser
 import unittest
 
-class TestAdminActions(unittest.TestCase):
+class TestModeratorActions(unittest.TestCase):
     '''
-        A class for encapsulating functionality tests for superadmins.
+        A class for encapsulating functionality tests for moderators.
     '''
     def setUp(self):
         self.cli = CommandLineInterface()
@@ -18,25 +18,17 @@ class TestAdminActions(unittest.TestCase):
         self.cli.action_controller.connect_authorisation_service(MockAuthorisationService())
         self.cli.action_controller.connect_logger(MockLogger())
         self.cli.action_controller.connect_user(MockUser())
-        self.cli.action_controller.connect_user_factory(MockUserFactory())
+        self.cli.action_controller.connect_health_record_service(MockHealthRecordService())
 
         # monkey patches
         self.cli.request_login_details = lambda: ('test_name', 'test_password')
         self.cli.greeting = lambda: "Hello, test_name!"
 
-    def test_add_user(self):
+    def test_add_health_record(self):
         '''
-            A method that tests the add user option.
+            A method that tests the add health record option.
         '''
-        mock_selections = (x for x in ['1', '1', 'test_user', 'astronaut', '01/01/1971', 'USA', 'username', 'password', 'N', '2'])
-        self.cli.ask_for_selection = lambda: next(mock_selections)
-        self.assertTrue(self.cli.display_main_menu())
-
-    def test_delete_user(self):
-        '''
-            A method that tests the delete user option.
-        '''
-        mock_selections = (x for x in ['1', '2', 'test_user', 'N', '2'])
+        mock_selections = (x for x in ['1', '4', 'test_user', '180', '80', '90', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
