@@ -2,3 +2,5 @@
 
 __pycache__
 testlogs.txt
+testdb.db
+securespace.db
