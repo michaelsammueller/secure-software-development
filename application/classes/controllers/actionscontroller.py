@@ -10,7 +10,7 @@ class ActionsController(object):
         self.__ACTIONS = [
             'Add New User',
             'Delete User',
-            'View Users',
+            'View All Users',
             'Add Health Record',
             'View Health Record', # TODO
             'Update Health Record', # TODO
@@ -33,7 +33,7 @@ class ActionsController(object):
                                   ('height', []),
                                   ('weight', []),
                                   ('blood pressure', [])],
-            'View Users': [],
+            'View All Users': [],
         }
 
     def get_actions(self):
@@ -66,7 +66,7 @@ class ActionsController(object):
             'View Health Record': self.view_health_record,
             'View Temperature': self.view_temperature,
             'View Radiation Level': self.view_radiation_level,
-            'View Users': self.view_all_users,
+            'View All Users': self.view_all_users,
         }
         return func_map[action](parameters)
 
@@ -108,7 +108,7 @@ class ActionsController(object):
                 'results' : results
             }
         }
-        self.__logger.log(json) #TODO
+        self.__logger.log(json)
         # return results
         return results
     
@@ -122,10 +122,9 @@ class ActionsController(object):
         if not self.__authorisation_service.check_permission(action, user_role):
             return {'Error': 'Unauthorised action'}
         # perform action
-        if self.__user_service.view_all_users():
-            results = {'Confirmation': 'User Added'}
-        else:
-            results = {'Error': 'User Not Added'}
+        results = self.__user_service.view_all_users()
+        if not results:
+            results = {'Error': 'Now Users Found'}
         # log action
         json = {
             'user' : self.__login_service.get_loggedin_username(),
@@ -136,7 +135,7 @@ class ActionsController(object):
                 'results' : results
             }
         }
-        self.__logger.log(json) #TODO
+        self.__logger.log(json)
         # return results
         return results
 

@@ -1,9 +1,10 @@
 '''
     This file contains integration tests for functionality involving sensor components.
 '''
-from context import ActionsController, CommandLineInterface, DBManager, User
+from context import ActionsController, CommandLineInterface, DBManager, User, DBShape
 from mock import MockAuthorisationService, MockLoginService, MockLogger, MockUserService
 import unittest
+from random import randint
 
 class TestAdminActions(unittest.TestCase):
     '''
@@ -35,12 +36,14 @@ class TestAdminActions(unittest.TestCase):
         self.assertTrue(self.cli.display_main_menu())
 
         # test database integration
+        db_path = 'application/tests/integration/testdata.db'
+        DBShape(db_path)
         user_service = User()
-        db_manager = DBManager('./tests/integration/testdata.db')
+        db_manager = DBManager(db_path)
         user_service.connect_db_manager(db_manager)
         self.cli.action_controller.connect_user_service(user_service)
 
-        mock_selections = (x for x in ['1', '1', 'test_user', 'astronaut', '01/01/1971', 'USA', 'username', 'password', 'Y', '3', 'N', '2'])
+        mock_selections = (x for x in ['1', '1', 'test_user', 'astronaut', '01/01/1971', 'USA', f'username{randint(0, 2**16)}', 'password', 'Y', '3', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 

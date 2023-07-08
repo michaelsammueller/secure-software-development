@@ -25,12 +25,13 @@ class User:
         '''
             View users from the database
         '''
-        # perform database query to view user attributes.
-        query = "SELECT * FROM users"
+        query = "SELECT username, uuid FROM users"
         where = ()
 
         # call do_select method from DBManager.
-        return self.__db_manager.do_select(query, where)
+        result = self.__db_manager.do_select(query, where)
+        json = {row[0] : row[1] for row in result}
+        return json
     
     def delete_user(self, name): #TODO name or uuid
         '''
