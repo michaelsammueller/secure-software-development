@@ -3,7 +3,7 @@
 """
 
 # Imports
-from imports import re
+import re
 
 # Input Sanitisation Service Class
 class Input_Sanitisation_Service:

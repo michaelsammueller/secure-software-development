@@ -3,7 +3,7 @@
 """
 
 # Imports
-from imports import Fernet
+from cryptography.fernet import Fernet
 
 # Encryption Service Class
 class Encryption_Service:
