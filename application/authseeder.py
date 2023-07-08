@@ -29,30 +29,17 @@ class AuthSeeder():
         "US":"United States"       
     }
 
-    roles = {"1":"Superadmin",        
-        "2":"Moderator",        
-        "3":"Astronaut"  
+    roles = ["Superadmin", "Moderator", "Astronaut"]
+
+    permissions = {"1":"create-user",        
+        "2":"aproove-user",        
+        "3":"delete-user",
+        "4":"assign-role",
+        "5":"update-record"  
     }
 
-    permissions = {"create-user",        
-        "delete-user",        
-        "add-health-record",
-        "view-health-record",
-        "view-warning-log",
-        "view-temperature",
-        "view-radiation",
-        "update-health-record",
-        "delete-record"
-    }
+    role_has_permissions = [ (1,1), (1,4), (2,2), (2,3), (3,5) ]
 
-    role_has_permissions = [ (1,"create-user"), (1,"delete-user"), (1,"add-health-record"), (1,"view-health-record"),
-                             (1,"view-warning-log"), (1,"view-temperature"), (1,"view-radiation"), 
-                             (1,"update-health-record"), (1,"delete-record"),
-                             (2,"view-health-record"), (2,"view-temperature"), (2,"view-radiation"),
-                             (3,"add-health-record"), (3,"view-health-record"), (3,"view-temperature"), (3,"view-radiation"), 
-                             (3,"update-health-record")
-    ]
-    
     def __init__(self):
        
         self.__country = Country()   

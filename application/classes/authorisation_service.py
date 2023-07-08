@@ -1,10 +1,13 @@
 '''
     This file contains the Authorisation Service Class
 '''
+from dbmanager import DBManager
+from permission import Permission
 
 class AuthorisationService:
 
     def __init__(self):
+        # a dictionary to store the action-to-permission_id mappings
         # a dictionary to store the action-to-permission_id mappings
         self.action_to_permission = {
             "Add New User": "create-user",
@@ -30,8 +33,3 @@ class AuthorisationService:
             return True
         else:
             return False
-        
-    def connect_db_manager(self, db_manager):
-        # connects to the db_manager
-        self.db_manager = db_manager
-        
