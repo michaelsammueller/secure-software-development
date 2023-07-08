@@ -17,6 +17,7 @@ class TestSensors(unittest.TestCase):
         action_controller.connect_geiger_counter(GeigerCounter())
         self.log_path = "application/tests/integration/testlogs.txt"
         logger = Logger(self.log_path)
+        self.cli.connect_logger(logger)
         action_controller.connect_logger(logger)
 
         # mock classes
