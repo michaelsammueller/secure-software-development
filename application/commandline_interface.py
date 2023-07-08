@@ -107,7 +107,24 @@ class CommandLineInterface:
 
     def display_main_menu(self): # TESTED AND WORKING
         """Display main menu options"""
+        # Adding color options for user interface
+        COLOR_RED = '\033[31m'
+        COLOR_GREEN = '\033[38;2;0;128;0m'
+        COLOR_RESET = '\033[0m'
         while True:
+            print(COLOR_GREEN + """
+     █████  ██   ██ ███    ███ 
+    ██   ██ ██   ██ ████  ████ 
+    ███████ ███████ ██ ████ ██ 
+    ██   ██ ██   ██ ██  ██  ██ 
+    ██   ██ ██   ██ ██      ██ 
+                """ + COLOR_RESET)
+            print("""
+----------------------------------
+Astronaut Health Monitoring System
+----------------------------------
+    (C) 2023, SecureSpace\n
+""")
             print("\n1. Login")
             print("2. Exit\n")
 
