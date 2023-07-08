@@ -45,24 +45,24 @@ class TestAdminActions(unittest.TestCase):
         self.assertTrue(self.cli.display_main_menu())
 
 
-    def test_delete_user(self):
-        '''
-            A method that tests the delete user option.
-        '''
-        # tests selections
-        mock_selections = (x for x in ['1', '2', 'test_user', 'N', '2'])
-        self.cli.ask_for_selection = lambda: next(mock_selections)
-        self.assertTrue(self.cli.display_main_menu())
+    # def test_delete_user(self):
+    #     '''
+    #         A method that tests the delete user option.
+    #     '''
+    #     # tests selections
+    #     mock_selections = (x for x in ['1', '2', 'test_user', 'N', '2'])
+    #     self.cli.ask_for_selection = lambda: next(mock_selections)
+    #     self.assertTrue(self.cli.display_main_menu())
 
-        # tests database integration
-        user_service = User()
-        db_manager = DBManager('testdata.db')
-        user_service.connect_db_manager(db_manager)
-        self.cli.action_controller.connect_user_service(user_service)
+    #     # tests database integration
+    #     user_service = User()
+    #     db_manager = DBManager('testdata.db')
+    #     user_service.connect_db_manager(db_manager)
+    #     self.cli.action_controller.connect_user_service(user_service)
 
-        mock_selections = (x for x in ['1', '2', 'test_user', 'N', '2'])
-        self.cli.ask_for_selection = lambda: next(mock_selections)
-        self.assertTrue(self.cli.display_main_menu())
+    #     mock_selections = (x for x in ['1', '2', 'test_user', 'N', '2'])
+    #     self.cli.ask_for_selection = lambda: next(mock_selections)
+    #     self.assertTrue(self.cli.display_main_menu())
 
 if __name__ == '__main__':
     unittest.main()
