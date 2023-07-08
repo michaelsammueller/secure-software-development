@@ -31,10 +31,23 @@ class AuthSeeder():
 
     roles = ["Superadmin", "Moderator", "Astronaut"]
 
-    permissions = ["create-user", "aproove-user", "delete-user", "assign-role", "update-record"]
-    
+    permissions = ["create-user", "delete-user", "add-health-record", 
+                   "view-health-record", "view-warning-log", 
+                   "view-temperature", "view-radiation", 
+                   "update-health-record", "delete-record",
+                   "download-record"
+    ]
 
-    role_has_permissions = [ (1,1), (1,4), (2,2), (2,3), (3,5) ]
+    role_has_permissions = [(1,"create-user"), (1,"delete-user"),
+                            (1,"add-health-record"), (1,"view-health-record"),
+                            (1,"view-warning-log"), (1,"view-temperature"), 
+                            (1,"view-radiation"), (1,"update-health-record"), 
+                            (1,"delete-record"), (1,"download-record"), 
+                            (2,"view-health-record"), (2,"view-temperature"),
+                            (2,"view-radiation"), (2,"update-record"),
+                            (3,"add-health-record"), (3,"view-health-record"),
+                            (3,"view-temperature"), (3,"view-radiation"),
+                            (3,"update-record"), (3,"download-record")]
 
     def __init__(self):
        
@@ -58,7 +71,7 @@ class AuthSeeder():
 
         added_ids = []
 
-        for v in self.roles:           
+        for k, v in self.roles.items():           
             id = self.__role.add_role(v)
             if id:
                 added_ids.append(id) 
@@ -69,7 +82,7 @@ class AuthSeeder():
 
         added_ids = []
 
-        for v in self.permissions:           
+        for k, v in self.permissions.items():           
             id = self.__permission.add_permission(v)
             if id:
                 added_ids.append(id) 
