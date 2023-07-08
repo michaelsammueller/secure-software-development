@@ -3,9 +3,10 @@
 """
 
 # Imports
-from imports import bcrypt, datetime
-from classes.dbmanager import DBManager
+import bcrypt
+import datetime
 from input_sanitisation import Input_Sanitisation_Service
+from classes.dbmanager import DBManager
 
 # Login Class
 class Login_Service:

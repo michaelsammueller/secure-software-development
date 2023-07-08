@@ -20,4 +20,4 @@ from classes.sensors.thermometer import Thermometer
 from classes.logger.logger import Logger
 from classes.models.user import User
 from classes.dbmanager import DBManager
-from commandline_interface import CommandLineInterface
+from classes.commandline_interface import CommandLineInterface
