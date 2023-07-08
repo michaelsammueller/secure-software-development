@@ -90,7 +90,7 @@ class CommandLineInterface:
                         print(f"{param[0]}")
                         details[param[0]] = self.ask_for_selection()
                     else: # field name and options provided
-                        print(f"\nOptions for {param[0]}: {param[1]}")
+                        print(f"Options for {param[0]}: {param[1]}")
                         details[param[0]] = self.ask_for_selection()
                 # Perform action
                 results = self.action_controller(options[selection - 1], details)
