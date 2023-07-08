@@ -3,9 +3,9 @@
 """
 
 # Imports
-import bcrypt
-import datetime
+from imports import bcrypt, datetime
 from classes.dbmanager import DBManager
+from input_sanitisation import Input_Sanitisation_Service
 
 # Login Class
 class Login_Service:
@@ -17,17 +17,18 @@ class Login_Service:
         self.__username = username
 
     def set_password(self, password):
-        self.__password = password
+        encrypted_password = self.__encryption_service.encrypt(password)
+        self.__password = encrypted_password
     
-    def get_username(self):
+    def get_loggedin_username(self):
         return self.__username
     
     def get_password(self):
-        return self.__password
+        decrypted_password = self.__encryption_service.decrypt(self.__password)
+        return decrypted_password
     
     def check_password(self, password):
         """Reauthenticates user by checking password"""
-        username = self.get_username()
         auth_password = self.get_password()
         # Check that password is correct
         if password == auth_password:
@@ -61,9 +62,20 @@ class Login_Service:
         except Exception as e:
             print(f"An error occured: {e}\n")
             # Create logger to log error
+            json = {
+                'activity_type': 'event',
+                'severity': 'warning',
+                'event': {
+                    'type': 'error',
+                    'details': {
+                        'message': f"An error occured: {e}"
+                    }
+                }
+            }
+            self.__logger.log(json)
             return True
     
-    def check_phrase(self, new_phrase): # TESTED AND WORKS
+    def check_phrase(self, new_phrase):
         """Checks new phrase against stored phrase"""
         try:
             dbman = DBManager()  # Create DBManager instance
@@ -78,6 +90,17 @@ class Login_Service:
         except Exception as e:
             print(f"An error occured: {e}\n")
             # Create logger to log error
+            json = {
+                'activity_type': 'event',
+                'severity': 'warning',
+                'event': {
+                    'type': 'error',
+                    'details': {
+                        'message': f"An error occured: {e}"
+                    }
+                }
+            }
+            self.__logger.log(json)
             return True
 
     def authenticate_user_credentials(self):
@@ -93,13 +116,23 @@ class Login_Service:
                     return True
                 else:
                     print("Invalid username or password.\n")
-                    # Create logger to log failed login
                     return False
             else:
                 print("No such user.\n")
         except Exception as e:
             print(f"An error occured: {e}\n")
             # Create logger to log error
+            json = {
+                'activity_type': 'event',
+                'severity': 'warning',
+                'event': {
+                    'type': 'error',
+                    'details': {
+                        'message': f"An error occured: {e}"
+                    }
+                }
+            }
+            self.__logger.log(json)
             return False
 
     def authenticate_phrase(self, phrase):
@@ -112,41 +145,45 @@ class Login_Service:
             if phrase == secret_phrase:
                 return True
             else:
-                print(f"Entered phrase: {phrase}\n") # TODO: Remove this
-                print(f"Stored phrase: {secret_phrase}\n") # TODO: Remove this
                 print("Invalid phrase.\n")
-                # Create logger to log failed login
                 return False
         except Exception as e:
             print(f"Unable to authenticate phrase: {e}\n")
             # Create logger to log error
+            json = {
+                'activity_type': 'event',
+                'severity': 'warning',
+                'event': {
+                    'type': 'error',
+                    'details': {
+                        'message': f"An error occured: {e}"
+                    }
+                }
+            }
+            self.__logger.log(json)
             return False
 
     def login(self, username, password):
         """Calls upon the other methods to login the user"""
         # Set username and password
-        self.__username = username
-        self.__password = password
+        self.set_username(username)
+        self.set_password(password)
         # Authenticate user credentials
         if self.authenticate_user_credentials():
             if self.check_phrase_required():
                 phrase = input("Enter your secret phrase: ")
-                sanitised_phrase = self.__sanitiser.sanitise_phrase(phrase)
+                sanitised_phrase = self.__input_sanitisation_service.sanitise_phrase(phrase)
                 if self.authenticate_phrase(sanitised_phrase):
                     print("\nLogin successful.\n")
-                    # Create logger to log successful login
                     return True
                 else:
                     print("\nLogin failed.\n")
-                    # Create logger to log failed login
                     return False
             else:
                 print("\nLogin successful.\n")
-                # Create logger to log successful login
                 return True
         else:
             print("\nLogin failed.\n")
-            # Create logger to log failed login
             return False
 
     # Changes password in database
@@ -158,11 +195,21 @@ class Login_Service:
             dbman.do_update('UPDATE users SET password = ? WHERE username = ?',
                             (hashed_password, self.__username), dry=False)
             print("Password changed successfully.\n")
-            # Create logger to log successful password change
             return True
         except Exception as e:
             print(f"Unable to change password: {e}\n")
             # Create logger to log error
+            json = {
+                'activity_type': 'event',
+                'severity': 'warning',
+                'event': {
+                    'type': 'error',
+                    'details': {
+                        'message': f"An error occured: {e}"
+                    }
+                }
+            }
+            self.__logger.log(json)
             return False
     
     # Changes secret phrase in database
@@ -173,20 +220,36 @@ class Login_Service:
             dbman.do_update('UPDATE users SET phrase = ? WHERE username = ?',
                              (new_phrase, self.__username), dry=False)
             print("Secret phrase changed successfully.\n")
-            # Create logger to log successful phrase change
             return True
         except Exception as e:
             print(f"Unable to change secret phrase: {e}\n")
             # Create logger to log error
+            json = {
+                'activity_type': 'event',
+                'severity': 'warning',
+                'event': {
+                    'type': 'error',
+                    'details': {
+                        'message': f"An error occured: {e}"
+                    }
+                }
+            }
+            self.__logger.log(json)
             return False
-        
-    def connect_input_sanitisation_service(self, sanitiser):
-        """
-            Connects the Input_Sanitisation_Service
-        """
-        self.__sanitiser = sanitiser
     
     def display_password_requirements(self):
         print("Password Requirements\n")
         print("1. Must be between 8 and 64 characters long\n")
         print("2. Must not contain special characters\n")
+    
+    def connect_encryption_service(self, encryption_service):
+        """Connects the encryption service"""
+        self.__encryption_service = encryption_service
+    
+    def connect_input_sanitisation_service(self, input_sanitisation_service):
+        """Connects the input sanitisation service"""
+        self.__input_sanitisation_service = input_sanitisation_service
+    
+    def connect_logger(self, logger):
+        """Connects the logger"""
+        self.__logger = logger
