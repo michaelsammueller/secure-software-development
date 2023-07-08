@@ -90,7 +90,7 @@ class CommandLineInterface:
                         print(f"{param[0]}")
                         details[param[0]] = self.ask_for_selection()
                     else: # field name and options provided
-                        print(f"\nOptions for {param[0]}: {param[1]}")
+                        print(f"Options for {param[0]}: {param[1]}")
                         details[param[0]] = self.ask_for_selection()
                 # Perform action
                 results = self.action_controller(options[selection - 1], details)
@@ -107,24 +107,7 @@ class CommandLineInterface:
 
     def display_main_menu(self): # TESTED AND WORKING
         """Display main menu options"""
-        # Adding color options for user interface
-        COLOR_RED = '\033[31m'
-        COLOR_GREEN = '\033[38;2;0;128;0m'
-        COLOR_RESET = '\033[0m'
         while True:
-            print(COLOR_GREEN + """
-     █████  ██   ██ ███    ███ 
-    ██   ██ ██   ██ ████  ████ 
-    ███████ ███████ ██ ████ ██ 
-    ██   ██ ██   ██ ██  ██  ██ 
-    ██   ██ ██   ██ ██      ██ 
-                """ + COLOR_RESET)
-            print("""
-----------------------------------
-Astronaut Health Monitoring System
-----------------------------------
-    (C) 2023, SecureSpace\n
-""")
             print("\n1. Login")
             print("2. Exit\n")
 
