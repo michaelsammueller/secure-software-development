@@ -132,6 +132,7 @@ class ActionsController(object):
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
+                'parameters' : {},
                 'results' : results
             }
         }
@@ -248,6 +249,7 @@ class ActionsController(object):
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
+                'parameters' : {},
                 'results' : {
                     'temperature' : temperature,
                     'units' : units
@@ -284,6 +286,7 @@ class ActionsController(object):
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
+                'parameters' : {},
                 'results' : {
                     'radiation' : radiation,
                     'units' : units

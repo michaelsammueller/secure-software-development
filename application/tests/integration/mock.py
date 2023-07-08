@@ -27,6 +27,16 @@ class MockLogger:
         A method for mocking logging.
         '''
         return True
+    
+class MockAuditor:
+    '''
+        A class for mocking the logger.
+    '''
+    def audit(self, *args, **kwargs):
+        '''
+        A method for mocking logging.
+        '''
+        return False
 
 class MockLoginService:
     '''
@@ -43,6 +53,16 @@ class MockLoginService:
         A method for mocking a username.
         '''
         return "Brad"
+    
+class MockEncryptionService:
+    '''
+        A class for mocking the encryption service.
+    '''
+    def encrypt(self, *args, **kwargs):
+        '''
+        A method for mocking a login.
+        '''
+        return "ENCRYPTED"
     
 class MockUserService:
     '''

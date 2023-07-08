@@ -12,11 +12,11 @@ class Logger(object):
     def __init__(self, log_file):
         self.__log_file = log_file
     
-    def log(self, loggable_information): # TODO: needs to assert shape of parameter
+    def log(self, loggable_information):
         '''
             A method for writing information about an action into a log file.
 
-            loggable_information interface:
+            loggable_information interfaces:
             {
                 'user': user_name,
                 'activity_type' : 'event' or 'action',
@@ -24,10 +24,17 @@ class Logger(object):
                 'action' : {
                     'type' : type,
                     'parameters' : action_parameters
-                },
+                    'results' : action_results
+                }
+            }
+            or
+            {
+                'user': user_name,
+                'activity_type' : 'event' or 'action',
+                'severity' : 'info' or 'warning' or 'danger',
                 'event' : {
                     'type' : type,
-                    'parameters' : event_parameters
+                    'details' : {}
                 }
             }
         '''
@@ -36,35 +43,44 @@ class Logger(object):
             timestamp = datetime.now().isoformat() # ISO 8601 format
             loggable_information['timestamp'] = timestamp
             # add severity
-            if not loggable_information['severity']:
+            if not 'severity' in loggable_information.keys():
                 loggable_information['severity'] = 'info'
             # encrypt sensitive data
-            encrypted_information = self._encrypt(loggable_information)
+            encrypted_information = self.encrypt(loggable_information)
             # store log
             json_line = json.dumps(encrypted_information)
             file.write(f'{json_line}\n') #JSON-lines format
         # audit logfile
-        if additional_information := self.__auditor.audit(self.log_file):
+        if additional_information := self.__auditor.audit(self.__log_file):
             #handle audit
             self.log(additional_information)
 
-    def _encrypt(self, loggable_information):
+    def encrypt(self, loggable_information):
         '''
             A method for encrypting sensitive data.
         '''
         activity_type = loggable_information['activity_type']
         # encrypt all parameters as might be sensitive 
-        encrypted_parameters = {}
-        for key, value in loggable_information[activity_type]['parameters']:
-            encrypted_parameters[key] = self._encryption_service.encrypt(value)
-        loggable_information[activity_type]['parameters'] = encrypted_parameters
-        return encrypted_parameters
+        encrypted_information = {'parameters': {}, 'results': {}}
+        if activity_type == 'action':
+            for key, value in loggable_information['action']['parameters'].items():
+                encrypted_information['parameters'][key] = self.__encryption_service.encrypt(value)
+            loggable_information[activity_type]['parameters'] = encrypted_information['parameters']
+            print(loggable_information['action']['results'])
+            for key, value in loggable_information['action']['results'].items():
+                encrypted_information['results'][key] = self.__encryption_service.encrypt(value)
+            loggable_information['action']['results'] = encrypted_information['results']
+        elif activity_type == 'event':
+            for key, value in loggable_information['event']['details']:
+                encrypted_information['details'][key] = self.__encryption_service.encrypt(value)
+            loggable_information[activity_type]['details'] = encrypted_information['details']
+        return loggable_information
     
     def connect_encryption_service(self, encryption_service):
         '''
             A method for connecting the encryption service.
         '''
-        self._encryption_service = encryption_service
+        self.__encryption_service = encryption_service
 
     def connect_auditor(self, auditor):
         '''
