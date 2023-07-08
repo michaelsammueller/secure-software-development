@@ -286,7 +286,7 @@ class ActionsController(object):
         }
         self.__logger.log(json)
         # return results
-        return json['action']['results']
+        return {"temperature": temperature, "units": units}
     
     def view_radiation_level(self, measurement_details):
         '''
@@ -323,7 +323,7 @@ class ActionsController(object):
         }
         self.__logger.log(json)
         # return results
-        return json['action']['results']
+        return {"radiation": radiation, "units": units}
 
     def assert_params_shape(self, parameters, action):
         '''
