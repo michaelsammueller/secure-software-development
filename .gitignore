@@ -4,3 +4,4 @@ __pycache__
 testlogs.txt
 testdata.db
 securespace.db
+*.pyc
