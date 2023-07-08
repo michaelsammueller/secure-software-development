@@ -19,7 +19,7 @@ class Logger(object):
             loggable_information interfaces:
             {
                 'user': user_name,
-                'activity_type' : 'event' or 'action',
+                'activity_type' : 'action',
                 'severity' : 'info' or 'warning' or 'danger',
                 'action' : {
                     'type' : type,
@@ -30,7 +30,7 @@ class Logger(object):
             or
             {
                 'user': user_name,
-                'activity_type' : 'event' or 'action',
+                'activity_type' : 'event',
                 'severity' : 'info' or 'warning' or 'danger',
                 'event' : {
                     'type' : type,
