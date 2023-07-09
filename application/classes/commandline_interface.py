@@ -81,12 +81,17 @@ class CommandLineInterface:
                 details = {}
                 print("\nRequesting details...")
                 for param in params:
-                    if not param[1]: # only field name provided
-                        print(f"{param[0]}")
-                        details[param[0]] = self.ask_for_selection()
-                    else: # field name and options provided
-                        print(f"Options for {param[0]}: {param[1]}")
-                        details[param[0]] = self.ask_for_selection()
+                    while True:
+                        if not param[1]: # only field name provided
+                            print(f"{param[0]}")
+                        else: # field name and options provided
+                            print(f"Options for {param[0]}: {param[1]}")
+                        response = self.ask_for_selection()
+                        if param[2]:
+                            if not self.__sanitisation_service.validate(response, param[2]):
+                                continue
+                        details[param[0]] = response
+                        break
                 # Perform action
                 results = self.__action_controller(options[selection - 1], details)
                 print("\nResults...")

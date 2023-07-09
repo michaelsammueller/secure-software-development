@@ -20,24 +20,24 @@ class ActionsController(object):
         ]
 
         self.__ACTIONPARAMS = {
-            'View Temperature': [('units', ['C', 'F', 'K'])],
-            'View Radiation Level': [('units', ['Rem', 'SV'])],
-            'Add New User': [('name', []), 
-                             ('role', ['astronaut', 'moderator', 'superadmin']),
-                             ('date of birth', ['DD-MM-YYYY']),
-                             ('country of employment', []),
-                             ('username', []),
-                             ('password', [])],
-            'Delete User': [('uuid', [])],
-            'Add Health Record': [('uuid', []),
-                                  ('complains', []),
-                                  ('height', ['cm']),
-                                  ('weight', ['kg']),
-                                  ('blood_pressure', ['mmHg'])],
+            'View Temperature': [('units', ['C', 'F', 'K'], '')],
+            'View Radiation Level': [('units', ['Rem', 'SV'], '')],
+            'Add New User': [('name', [], ''), 
+                             ('role', ['astronaut', 'moderator', 'superadmin'], 'ROLE'),
+                             ('date of birth', ['DD-MM-YYYY'], 'DATE'),
+                             ('country of employment', [], 'COUNTRY'),
+                             ('username', [], ''),
+                             ('password', [], 'PASSWORD')],
+            'Delete User': [('uuid', [], '')],
+            'Add Health Record': [('uuid', [], ''),
+                                  ('complains', [], ''),
+                                  ('height', ['cm'], ''),
+                                  ('weight', ['kg'], ''),
+                                  ('blood_pressure', ['mmHg'], '')],
             'View All Users': [],
-            'View User Details': [('uuid', [])],
-            'View User Health Records': [('uuid', [])],
-            'Delete User Health Records': [('uuid', [])]
+            'View User Details': [('uuid', [], '')],
+            'View User Health Records': [('uuid', [], '')],
+            'Delete User Health Records': [('uuid', [], '')]
         }
 
     def get_actions(self):
