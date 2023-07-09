@@ -11,11 +11,10 @@ class ActionsController(object):
             'Add New User',
             'Delete User',
             'View All Users',
-            'View User',
+            'View User Details',
             'Add Health Record',
-            'View Health Record', # TODO
-            'Update Health Record', # TODO
-            'Delete Health Record', # TODO
+            'View User Health Records',
+            'Delete User Health Records', # TODO
             'View Temperature',
             'View Radiation Level',
         ]
@@ -36,7 +35,8 @@ class ActionsController(object):
                                   ('weight', ['kg']),
                                   ('blood_pressure', ['mmHg'])],
             'View All Users': [],
-            'View User': [('uuid', [])],
+            'View User Details': [('uuid', [])],
+            'View User Health Records': [('uuid', [])],
         }
 
     def get_actions(self):
@@ -66,11 +66,11 @@ class ActionsController(object):
             'Add New User': self.add_new_user,
             'Delete User': self.delete_user,
             'Add Health Record': self.add_health_record,
-            'View Health Record': self.view_health_record,
             'View Temperature': self.view_temperature,
             'View Radiation Level': self.view_radiation_level,
             'View All Users': self.view_all_users,
-            'View User': self.view_user,
+            'View User Details': self.view_user,
+            'View User Health Records': self.view_users_health_records,
         }
         return func_map[action](parameters)
 
@@ -152,7 +152,7 @@ class ActionsController(object):
                 'uuid': uuid,
             }
         '''
-        action = 'View User'
+        action = 'View User Details'
         # assert permission for action
         user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
         if not self.__authorisation_service.check_permission(action, user_role):
@@ -216,10 +216,11 @@ class ActionsController(object):
 
             new_user_details interface:
             {
-                'name': name,
+                'uuid': uuid,
+                'complains' : complaints
                 'height': height,
                 'weight': weight,
-                'blood_pressure'?: blood_pressure,
+                'blood_pressure': blood_pressure,
             }
         '''
         action = 'Add Health Record'
@@ -248,11 +249,37 @@ class ActionsController(object):
         # return results
         return results
 
-    def view_health_record(self, request_details): # TODO
+    def view_users_health_records(self, user_identifiers):
         '''
             A method for viewing the health records about a user.
+
+            user_identifiers interface:
+            {
+                'uuid': uuid,
+            }
         '''
-        pass
+        action = 'View User Health Records'
+        # assert permission for action
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
+            return {'Error': 'Unauthorised action'}
+        # perform action
+        results = self.__health_record_service.view_user_health_records(user_identifiers)
+        if not results:
+            results = {'Error': 'No Users Found'}
+        # log action
+        json = {
+            'user' : self.__login_service.get_loggedin_username(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : user_identifiers,
+                'results' : results
+            }
+        }
+        self.__logger.log(json)
+        # return results
+        return results
 
     def view_temperature(self, measurement_details):
         '''

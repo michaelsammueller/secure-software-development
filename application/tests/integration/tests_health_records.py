@@ -49,9 +49,20 @@ class TestAdminActions(unittest.TestCase):
             A method that tests the add user option.
         '''
 
-        print("----Adding user----")
+        print("----Adding health record----")
         # test database and logger integration
         mock_selections = (x for x in ['1', '5', '5a08d606-8ed8-434d-8928-e50913ee7134', 'headache', '170', '80', '100', 'N', '2'])
+        self.cli.ask_for_selection = lambda: next(mock_selections)
+        self.assertTrue(self.cli.display_main_menu())
+
+    def test_view_user_health_records(self):
+        '''
+            A method that tests the view user health records option.
+        '''
+
+        print("----Viewing One Users Health Records----")
+        # test database and logger integration
+        mock_selections = (x for x in ['1', '6', '5a08d606-8ed8-434d-8928-e50913ee7134', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
