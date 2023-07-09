@@ -11,9 +11,9 @@ import pyAesCrypt
 # DownloadService Class
 class DownloadService:
     
-    def download(self, uuid, format, password):
+    def download(self, user_id, format, password):
         """Downloads health records for logged-in user in requested format"""
-        records = self.__db_manager.do_select('SELECT * FROM records WHERE uuid = ?', (uuid,))
+        records = self.__db_manager.do_select('SELECT * FROM records WHERE user_id = ?', (user_id,))
 
         # If no records found, inform user
         if len(records) == 0:
