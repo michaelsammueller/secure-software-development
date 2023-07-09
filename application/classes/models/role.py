@@ -8,6 +8,12 @@ class Role:
     '''
         A parent class for the system roles.
     '''
+
+    def get_roles(self):
+       
+        return self.db_manager.do_select('SELECT * FROM roles')
+       
+
     def get_role(self, id):
       
         if id:
