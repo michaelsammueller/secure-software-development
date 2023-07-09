@@ -1,8 +1,8 @@
 '''
     This file contains integration tests for functionality involving sensor components.
 '''
-from context import ActionsController, CommandLineInterface, DBManager, User, DBShape, Logger
-from mock import MockAuthorisationService, MockLoginService, MockAuditor, MockEncryptionService
+from context import ActionsController, CommandLineInterface, DBManager, User, DBShape, Logger, Encryption_Service
+from mock import MockAuthorisationService, MockLoginService, MockAuditor
 
 import unittest
 from random import randint
@@ -21,6 +21,7 @@ class TestAdminActions(unittest.TestCase):
         logger = Logger(self.log_path)
         self.cli.connect_logger(logger)
         action_controller.connect_logger(logger)
+        logger.connect_encryption_service(Encryption_Service())
         self.db_path = 'application/tests/integration/testdata.db'
         if not os.path.exists(self.db_path):
             DBShape(self.db_path)
@@ -35,7 +36,6 @@ class TestAdminActions(unittest.TestCase):
         action_controller.connect_login_service(login_service)
         action_controller.connect_authorisation_service(MockAuthorisationService())
         logger.connect_auditor(MockAuditor())
-        logger.connect_encryption_service(MockEncryptionService())
 
         # monkey patches
         self.cli.request_login_details = lambda: ('test_name', 'test_password')
