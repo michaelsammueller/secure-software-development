@@ -60,9 +60,9 @@ def main():
     user.connect_db_manager(db_manager)
     health_record.connect_db_manager(db_manager)
 
-    authseeder.connect_country_service(country)
-    authseeder.connect_role_service(role)
-    authseeder.connect_permission_service(permission)
+    authseeder.connect_country(country)
+    authseeder.connect_role(role)
+    authseeder.connect_permission(permission)
 
     commandline_interface.display_main_menu()
 

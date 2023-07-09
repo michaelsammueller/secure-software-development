@@ -81,12 +81,17 @@ class CommandLineInterface:
                 details = {}
                 print("\nRequesting details...")
                 for param in params:
-                    if not param[1]: # only field name provided
-                        print(f"{param[0]}")
-                        details[param[0]] = self.ask_for_selection()
-                    else: # field name and options provided
-                        print(f"Options for {param[0]}: {param[1]}")
-                        details[param[0]] = self.ask_for_selection()
+                    while True:
+                        if not param[1]: # only field name provided
+                            print(f"{param[0]}")
+                        else: # field name and options provided
+                            print(f"Options for {param[0]}: {param[1]}")
+                        response = self.ask_for_selection()
+                        if param[2]:
+                            if not self.__sanitisation_service.validate(response, param[2]):
+                                continue
+                        details[param[0]] = response
+                        break
                 # Perform action
                 results = self.__action_controller(options[selection - 1], details)
                 print("\nResults...")
@@ -125,41 +130,48 @@ Astronaut Health Monitoring System
 
             # Request user selection
             selection = self.ask_for_selection()
+            # Login attempt counter
+            login_attempts = 0
 
             # Handle user selection
             if selection == '1':
-                username, password = self.request_login_details()  # Request user login details
-                # Handle Login
-                if self.__login_service.login(username, password):
-                    self.display_user_menu(username)
-                    #self.display_test_menu(username)
-                    json = {
-                        'user': username,
-                        'activity_type': 'event',
-                        'severity': 'info',
-                        'event': {
-                            'type': 'successful login',
-                            'details': {
-                                'username': username,
-                                'password': password
+                if login_attempts < 6:
+                    username, password = self.request_login_details()  # Request user login details
+                    # Handle Login
+                    if self.__login_service.login(username, password):
+                        self.display_user_menu(username)
+                        #self.display_test_menu(username)
+                        json = {
+                            'user': username,
+                            'activity_type': 'event',
+                            'severity': 'info',
+                            'event': {
+                                'type': 'successful login',
+                                'details': {
+                                    'username': username,
+                                    'password': password
+                                }
                             }
                         }
-                    }
-                    self.__logger.log(json)
+                        self.__logger.log(json)
+                    else:
+                        login_attempts += 1
+                        json = {
+                            'user': username,
+                            'activity_type': 'event',
+                            'severity': 'warning',
+                            'event': {
+                                'type': 'failed login',
+                                'details': {
+                                    'username': username,
+                                    'password': password
+                                }
+                            }
+                        }
+                        self.__logger.log(json)
                 else:
-                    json = {
-                        'user': username,
-                        'activity_type': 'event',
-                        'severity': 'warning',
-                        'event': {
-                            'type': 'failed login',
-                            'details': {
-                                'username': username,
-                                'password': password
-                            }
-                        }
-                    }
-                    self.__logger.log(json)
+                    # Add lockdown method
+                    pass
             elif selection == '2':
                 # Handle Exit
                 print("Exiting...\n")

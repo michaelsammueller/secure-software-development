@@ -61,14 +61,6 @@ class User:
         where = (user_identifiers['uuid'],)
         # call do_delete method from DBManager
         return self.__db_manager.do_delete(query, where, False)   
-    
-    def get_user_role(self, username):
-        '''
-            Get the role of a user from the database
-        '''
-        query ='SELECT role_id FROM users WHERE username = ?'
-        where = (username, )
-        return self.__db_manager.do_select(query, where)[0][0]
 
     def connect_db_manager(self, db_manager):
         '''
@@ -76,3 +68,8 @@ class User:
         '''
         self.__db_manager = db_manager
 
+    def get_user_role(self, username):
+        query ='''SELECT r.name FROM roles as r INNER JOIN users as u ON u.role_id = r.id
+        WHERE username = ?'''
+        where = (username, )
+        return self.__db_manager.do_select(query, where)

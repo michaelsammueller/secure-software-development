@@ -4,6 +4,7 @@
 
 # Imports
 import re
+import datetime
 
 # Input Sanitisation Service Class
 class Input_Sanitisation_Service:
@@ -96,6 +97,50 @@ class Input_Sanitisation_Service:
                 }
             }
             self.__logger.log(json)
+    
+    def validate_country(self, country):
+        """Validates country input"""
+        countries = ["CA", "DK", "FR", "DE", "IT", "JP", "NL", "NO", "RU", "ES", "SE", "SZ", "GB", "US"]
+        if country in countries:
+            return True
+        else:
+            print(f"Invalid country. Please select from: \n{countries} ")
+            return False
+    
+    def validate_role(self, role):
+        """Validates roles input"""
+        roles = ["Superadmin", "Moderator", "Astronaut"]
+        if role.lower().capitalize() in roles:
+            return True
+        else:
+            print("Invalid role.")
+            return False
+    
+    def validate_dob(self, dob):
+        """Validates date of birth input"""
+        try:
+            datetime.datetime.strptime(dob, '%d-%m-%Y')
+            return True
+        except ValueError:
+            print("Incorrect data format, should be DD-MM-YYYY")
+            return False
+        
+    def validate(self, user_input, type, *args, **kwargs):
+        '''
+            Validates user input based on type. Returns True if validation passes,
+            False otherwise.
+        '''
+        if type == 'PASSWORD':
+            return self.validate_password(user_input)
+        elif type == 'COUNTRY':
+            return self.validate_country(user_input)
+        elif type == 'ROLE':
+            return self.validate_role(user_input)
+        elif type == 'DATE':
+            return self.validate_dob(user_input)
+        else:
+            print("Invalid type.")
+            return False
 
     def connect_logger(self, logger):
         """Connects the logger"""

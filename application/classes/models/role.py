@@ -28,7 +28,14 @@ class Role:
         # call do_delete method from DBManager
         return self.db_manager.do_delete(query, where, False)   
     
-
+    def get_role_name(self, role_id):
+        '''
+            Get the role of a user from the database
+        '''
+        query ='SELECT name FROM roles WHERE role_id = ?'
+        where = (role_id, )
+        return self.__db_manager.do_select(query, where)[0][0]
+    
     def connect_db_manager(self, db_manager):
         '''
             A method for connecting the database manager.

@@ -45,6 +45,14 @@ class Permission:
         else:
             return False
         
+    def get_permission_id(self, permission_name):
+        '''
+            Get the permission_id of a permission from the database
+        '''
+        query ='SELECT permission_id FROM permissions WHERE name = ?'
+        where = (permission_name, )
+        return self.__db_manager.do_select(query, where)[0][0]
+        
     def connect_db_manager(self, db_manager):
         '''
             A method for connecting the database manager.
