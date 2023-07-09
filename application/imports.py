@@ -38,3 +38,4 @@ from classes.models.role import Role
 from classes.authseeder import AuthSeeder
 from classes.dbmanager import DBManager
 from classes.commandline_interface import CommandLineInterface
+from database import DBShape

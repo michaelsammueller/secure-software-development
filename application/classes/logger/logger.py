@@ -19,7 +19,7 @@ class Logger(object):
             loggable_information interfaces:
             {
                 'user': user_name,
-                'activity_type' : 'event' or 'action',
+                'activity_type' : 'action',
                 'severity' : 'info' or 'warning' or 'danger',
                 'action' : {
                     'type' : type,
@@ -30,7 +30,7 @@ class Logger(object):
             or
             {
                 'user': user_name,
-                'activity_type' : 'event' or 'action',
+                'activity_type' : 'event',
                 'severity' : 'info' or 'warning' or 'danger',
                 'event' : {
                     'type' : type,
@@ -61,17 +61,17 @@ class Logger(object):
         '''
         activity_type = loggable_information['activity_type']
         # encrypt all parameters as might be sensitive 
-        encrypted_information = {'parameters': {}, 'results': {}}
         if activity_type == 'action':
+            encrypted_information = {'parameters': {}, 'results': {}}
             for key, value in loggable_information['action']['parameters'].items():
                 encrypted_information['parameters'][key] = self.__encryption_service.encrypt(value)
             loggable_information[activity_type]['parameters'] = encrypted_information['parameters']
-            print(loggable_information['action']['results'])
             for key, value in loggable_information['action']['results'].items():
                 encrypted_information['results'][key] = self.__encryption_service.encrypt(value)
             loggable_information['action']['results'] = encrypted_information['results']
         elif activity_type == 'event':
-            for key, value in loggable_information['event']['details']:
+            encrypted_information = {'details': {}}
+            for key, value in loggable_information['event']['details'].items():
                 encrypted_information['details'][key] = self.__encryption_service.encrypt(value)
             loggable_information[activity_type]['details'] = encrypted_information['details']
         return loggable_information

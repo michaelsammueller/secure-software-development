@@ -1,8 +1,8 @@
 '''
     This file contains integration tests for functionality involving sensor components.
 '''
-from context import ActionsController, CommandLineInterface, GeigerCounter, Thermometer
-from mock import MockAuthorisationService, MockLoginService, MockLogger
+from context import ActionsController, CommandLineInterface, Logger, GeigerCounter, Thermometer
+from mock import MockAuthorisationService, MockLoginService, MockEncryptionService, MockAuditor
 import unittest
 
 class TestSensors(unittest.TestCase):
@@ -11,16 +11,22 @@ class TestSensors(unittest.TestCase):
     '''
     def setUp(self):
         self.cli = CommandLineInterface()
-        self.cli.connect_action_controller(ActionsController())
-        self.cli.action_controller.connect_thermometer(Thermometer())
-        self.cli.action_controller.connect_geiger_counter(GeigerCounter())
+        action_controller = ActionsController()
+        self.cli.connect_action_controller(action_controller)
+        action_controller.connect_thermometer(Thermometer())
+        action_controller.connect_geiger_counter(GeigerCounter())
+        self.log_path = "application/tests/integration/testlogs.txt"
+        logger = Logger(self.log_path)
+        self.cli.connect_logger(logger)
+        action_controller.connect_logger(logger)
 
         # mock classes
         login_service = MockLoginService()
         self.cli.connect_login_service(login_service)
-        self.cli.action_controller.connect_authorisation_service(MockAuthorisationService())
-        self.cli.action_controller.connect_login_service(login_service)
-        self.cli.action_controller.connect_logger(MockLogger())
+        action_controller.connect_login_service(login_service)
+        action_controller.connect_authorisation_service(MockAuthorisationService())
+        logger.connect_auditor(MockAuditor())
+        logger.connect_encryption_service(MockEncryptionService())
 
         # monkey patches
         self.cli.request_login_details = lambda: ('test_name', 'test_password')

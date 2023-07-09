@@ -12,13 +12,17 @@ class Encryption_Service:
 
     def encrypt(self, data):
         """Encrypt data"""
+        if not isinstance(data, str):
+            data = str(data)
         cipher_suite = Fernet(self._secret_key)
         encrypted_data = cipher_suite.encrypt(data.encode('utf-8'))
-        # Create logger to log successful encryption
-        return encrypted_data
+        encrypted_string = encrypted_data.decode('utf-8')
+        return encrypted_string
 
-    def decrypt(self, encrypted_data):
+    def decrypt(self, encrypted_string):
         """Decrypt data"""
+        if isinstance(encrypted_string, str):
+            encrypted_data = encrypted_string.encode('utf-8')
         cipher_suite = Fernet(self._secret_key)
         decrypted_data = cipher_suite.decrypt(encrypted_data)
         # Create logger to log successful decryption
