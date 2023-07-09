@@ -68,3 +68,8 @@ class User:
         '''
         self.__db_manager = db_manager
 
+    def get_user_role(self, username):
+        query ='''SELECT r.name FROM roles as r INNER JOIN users as u ON u.role_id = r.id
+        WHERE username = ?'''
+        where = (username, )
+        return self.__db_manager.do_select(query, where)

@@ -5,9 +5,9 @@ import sys
 fpath = os.path.join(os.path.dirname(__file__), 'classes')
 sys.path.append(fpath)
 
-from classes.country import Country
-from classes.role import Role
-from classes.permission import Permission
+from classes.models.country import Country
+from classes.models.role import Role
+from classes.models.permission import Permission
 
 class AuthSeeder():
     """sqlite3 database class to seed the db operations"""  
