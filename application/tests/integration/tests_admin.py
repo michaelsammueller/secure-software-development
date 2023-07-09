@@ -76,7 +76,7 @@ class TestAdminActions(unittest.TestCase):
 
     def test_delete_user(self):
         '''
-            A method that tests the view user option.
+            A method that tests the delete user option.
         '''
 
         print("----Deleting a user----")
