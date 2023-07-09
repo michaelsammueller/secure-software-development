@@ -48,7 +48,7 @@ class DBManager():
         else:
             return False
     
-    
+
     
     # where is a list of tuples
     # we need to return the id of the inserted row
@@ -100,7 +100,7 @@ class DBManager():
 # mono = dbman.do_select('SELECT * FROM checks WHERE id = ?', (2,) ) 
 # print(mono['name'])
 
-#print( dbman.do_insert("INSERT INTO roles(name) VALUES (?) ", ('Astronaut2',),  False ) )
+#yyyyyyyyprint( dbman.do_insert("INSERT INTO roles(name) VALUES (?) ", ('Astronaut2',),  False ) )
 
 # print( dbman.do_select("SELECT * FROM checks") )
 

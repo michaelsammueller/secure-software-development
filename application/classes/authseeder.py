@@ -1,3 +1,6 @@
+from models.country import Country
+from models.role import Role
+from models.permission import Permission
 
 class AuthSeeder():
     """sqlite3 database class to seed the db operations"""  
@@ -25,6 +28,13 @@ class AuthSeeder():
     
 
     role_has_permissions = [ (1,1), (1,4), (2,2), (2,3), (3,5) ]
+
+    # constructor
+    def __init__(self):
+
+        self.__country = Country()   
+        self.__role = Role() 
+        self.__permission = Permission()    
 
     # where is a tuple
     def seed_countries( self ):
@@ -94,3 +104,6 @@ class AuthSeeder():
         '''
         self.__country = country_service
 
+
+mono = AuthSeeder()
+mono.run_seeder()

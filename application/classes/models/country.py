@@ -9,7 +9,7 @@ class Country:
     '''
         A parent class for the system countries.
     '''
-
+    
     def get_country(self, id):
         if id:
             return self.db_manager.do_select('SELECT * FROM countries WHERE id = ?', (id,) )
@@ -42,7 +42,7 @@ class Country:
 
     def delete_country(self, id):
         # identify records to delete with id
-        query = "DELETE FROM countries WHERE id = ?"
+        query = "DELETE FROM countries WHERE id = ? returning id"
         where = (id,)
         # call do_delete method from DBManager
         return self.db_manager.do_delete(query, where, False)     
@@ -52,3 +52,7 @@ class Country:
             A method for connecting the database manager.
         '''
         self.db_manager = db_manager 
+
+
+
+#country = Country()

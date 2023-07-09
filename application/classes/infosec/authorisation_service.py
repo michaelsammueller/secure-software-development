@@ -16,7 +16,7 @@ class AuthorisationService:
         permission_id = self.action_to_permission[action]
         role_id = role
         values = (permission_id, role_id) 
-        query = "SELECT * FROM role_to_permission WHERE permission_id=?, role_id=?"
+        query = "SELECT * FROM role_has_permissions WHERE permission_id=?, role_id=?"
         result = self.db_manager.do_select(query, [values])
         if len(result) >= 1:
             return True
