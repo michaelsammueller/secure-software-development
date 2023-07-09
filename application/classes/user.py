@@ -1,47 +1,75 @@
 '''
     This file contains the User class.
 '''
-# leave imports in for now
 import uuid
-import os
-import sys
-fpath = os.path.join(os.path.dirname(__file__).rstrip('classes'), 'data')
-sys.path.append(fpath)
-from dbmanager import DBManager
 
 class User:
     '''
         A class to create user objects.
     '''
 
-    def add_user(self, name, code, dob, role_id, country_id, username, password):
+    def add_user(self, user_details):
+        '''
+            Adds a user to the database
+        '''
+        
         # perform database query to save user attributes.
         query = "INSERT INTO users (uuid, name, code, dob, role_id, \
-            country_id, username, password, updated_at) \
-                VALUES ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        values = (str(uuid.uuid4()), name, code, dob, role_id,
-                  country_id, username, password)
+            country_id, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
+        values = (str(uuid.uuid4()), user_details['name'], user_details['username'], user_details['date of birth'], user_details['role'],
+                  user_details['country of employment'], user_details['username'], user_details['password'])
 
         # call do_insert method from DBmanager.
-        self.__db_manager.do_insert(query, [values], dry=False)
+        return self.__db_manager.do_insert(query, values, dry=False)
 
-    def update_user(self):
-        # update the 'updated_at' attribute.
-        self.__updated_at = self.__current_time
+    def view_all_users(self):
+        '''
+            View users from the database
+        '''
+        query = "SELECT username, uuid FROM users"
+        where = ()
 
-        # perform database query to update user attributes.
-        query = "UPDATE users SET name=?, code=?, dob=?, role_id=?, \
-            country_id=?, username=?, password=?, updated_at=? WHERE uuid=?"
-        values = (self.__name, self.__code, self.__dob, self.__role_id, self.__country_id,
-                  self.__username, self.__password, self.__updated_at, str(self.__uuid))
+        # call do_select method from DBManager.
+        result = self.__db_manager.do_select(query, where)
+        if result:
+            json = {row[0] : row[1] for row in result}
+        else:
+            json = {}
+        return json
+    
+    
+    def view_user(self, user_identifiers):
+        '''
+            View a user from the database
+        '''
+        query = "SELECT * FROM users WHERE uuid = ?"
+        where = (user_identifiers['uuid'],)
 
-        # call do_update method from DBmanager.
-        self.__db_manager.do_update(query, values)
+        # call do_select method from DBManager.
+        result = self.__db_manager.do_select(query, where)
+        if result:
+            json = {result[0].keys()[i] : value for i, value in enumerate(result[0])}
+        else:
+            json = {}
+        return json
+    
+    def delete_user(self, user_identifiers):
+        '''
+            Delete a user from the database
+        '''
+        query = "DELETE FROM users WHERE uuid = ?"
+        where = (user_identifiers['uuid'],)
+        # call do_delete method from DBManager
+        return self.__db_manager.do_delete(query, where, False)   
 
-    def delete_user(self, uuid):
-        # perform database query to identify row to delete
-        query = "DELETE FROM users WHERE uuid=?"
-        values = uuid
-        
-        # call do_delete method from DBmanager
-        self.__db_manager.do_delete(query, values)
+    def connect_db_manager(self, db_manager):
+        '''
+            A method for connecting the database manager.
+        '''
+        self.__db_manager = db_manager
+
+    def get_user_role(self, username):
+        query ='''SELECT r.name FROM roles as r INNER JOIN users as u ON u.role_id = r.id
+        WHERE username = ?'''
+        where = (username, )
+        return self.__db_manager.do_select(query, where)
