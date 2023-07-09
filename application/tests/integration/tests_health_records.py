@@ -66,6 +66,17 @@ class TestAdminActions(unittest.TestCase):
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
+    def test_delete_user_health_records(self):
+        '''
+            A method that tests the delete user health records option.
+        '''
+
+        print("----Deleting a users Health Records----")
+        # test database and logger integration
+        mock_selections = (x for x in ['1', '6', '5a08d606-8ed8-434d-8928-e50913ee7134', 'Y', '7', '5a08d606-8ed8-434d-8928-e50913ee7134', 'N', '2'])
+        self.cli.ask_for_selection = lambda: next(mock_selections)
+        self.assertTrue(self.cli.display_main_menu())
+
 if __name__ == '__main__':
     unittest.main()
 

@@ -36,7 +36,16 @@ class HealthRecord:
             json = {result[0].keys()[i] : value for i, value in enumerate(result[0])}
         else:
             json = {}
-        return json   
+        return json
+    
+    def delete_user_health_records(self, user_identifiers):
+        '''
+            Delete a user from the database
+        '''
+        query = "DELETE FROM record_items WHERE uuid = ?"
+        where = (user_identifiers['uuid'],)
+        # call do_delete method from DBManager
+        return self.__db_manager.do_delete(query, where, False)  
 
     def connect_db_manager(self, db_manager):
         '''

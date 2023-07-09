@@ -14,7 +14,7 @@ class ActionsController(object):
             'View User Details',
             'Add Health Record',
             'View User Health Records',
-            'Delete User Health Records', # TODO
+            'Delete User Health Records',
             'View Temperature',
             'View Radiation Level',
         ]
@@ -37,6 +37,7 @@ class ActionsController(object):
             'View All Users': [],
             'View User Details': [('uuid', [])],
             'View User Health Records': [('uuid', [])],
+            'Delete User Health Records': [('uuid', [])]
         }
 
     def get_actions(self):
@@ -71,6 +72,7 @@ class ActionsController(object):
             'View All Users': self.view_all_users,
             'View User Details': self.view_user,
             'View User Health Records': self.view_users_health_records,
+            'Delete User Health Records': self.delete_user_health_records
         }
         return func_map[action](parameters)
 
@@ -89,6 +91,7 @@ class ActionsController(object):
             }
         '''
         action = 'Add New User'
+        # assert shape of parameter
         if not self.assert_params_shape(new_user_details, action):
             return {'Error': 'Missing parameters'}
         # assert permission for action
@@ -153,6 +156,9 @@ class ActionsController(object):
             }
         '''
         action = 'View User Details'
+        # assert shape of parameter
+        if not self.assert_params_shape(user_identifiers, action):
+            return {'Error': 'Invalid parameters'}
         # assert permission for action
         user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
         if not self.__authorisation_service.check_permission(action, user_role):
@@ -185,6 +191,7 @@ class ActionsController(object):
             }
         '''
         action = "Delete User"
+        # assert shape of parameter
         if not self.assert_params_shape(old_user_identifiers, action):
             return {'Error': 'Missing parameters'}
         # assert permission for action
@@ -259,6 +266,9 @@ class ActionsController(object):
             }
         '''
         action = 'View User Health Records'
+        # assert shape of parameter
+        if not self.assert_params_shape(user_identifiers, action):
+            return {'Error': 'Invalid parameters'}
         # assert permission for action
         user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
         if not self.__authorisation_service.check_permission(action, user_role):
@@ -266,7 +276,43 @@ class ActionsController(object):
         # perform action
         results = self.__health_record_service.view_user_health_records(user_identifiers)
         if not results:
-            results = {'Error': 'No Users Found'}
+            results = {'Error': 'No Health Records Found'}
+        # log action
+        json = {
+            'user' : self.__login_service.get_loggedin_username(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : user_identifiers,
+                'results' : results
+            }
+        }
+        self.__logger.log(json)
+        # return results
+        return results
+    
+    def delete_user_health_records(self, user_identifiers):
+        '''
+            A method for deleting the health records about a user.
+
+            user_identifiers interface:
+            {
+                'uuid': uuid,
+            }
+        '''
+        action = 'Delete User Health Records'
+        # assert shape of parameter
+        if not self.assert_params_shape(user_identifiers, action):
+            return {'Error': 'Invalid parameters'}
+        # assert permission for action
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
+            return {'Error': 'Unauthorised action'}
+        # perform action
+        if self.__health_record_service.delete_user_health_records(user_identifiers):
+            results = {'Confirmation': 'Health Records Deleted'}
+        else:
+            results = {'Error': 'Health Records Not Deleted'}
         # log action
         json = {
             'user' : self.__login_service.get_loggedin_username(),
