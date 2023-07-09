@@ -167,6 +167,8 @@ class ActionsController(object):
         results = self.__user_service.view_user(user_identifiers)
         if not results:
             results = {'Error': 'No Users Found'}
+        else:
+            results = {key: str(value) for key, value in results.items()}
         # log action
         json = {
             'user' : self.__login_service.get_loggedin_username(),
@@ -277,6 +279,8 @@ class ActionsController(object):
         results = self.__health_record_service.view_user_health_records(user_identifiers)
         if not results:
             results = {'Error': 'No Health Records Found'}
+        else:
+            results = {key: str(value) for key, value in results.items()}
         # log action
         json = {
             'user' : self.__login_service.get_loggedin_username(),
