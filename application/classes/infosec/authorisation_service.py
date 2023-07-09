@@ -21,12 +21,10 @@ class AuthorisationService:
         '''
             Get the role of a user from the database
         '''
-        role_id = self.__user_service.get_user_role(username)
-        role_name = self.__role_service.get_role_name(role_id)
-        return role_name
+        return self.__user_service.get_user_role(username)
 
     # Check if role has permission: 
-    def check_permissions(self, action, user_role):
+    def check_permission(self, action, user_role):
         permission = self.action_to_permission[action]
         permission_id = self.__permission_service.get_permission_id(permission)
         role_id = self.__role_service.get_role_id(user_role)

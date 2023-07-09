@@ -17,7 +17,7 @@ class Permission:
             return False
     
     # Creates a record and returns the inserted id
-    def add_permission(self, name):        
+    def add_permission(self, name):   
         if name:          
             return self.__db_manager.do_insert("INSERT INTO permissions(uuid, name) VALUES (?, ?) ", (str(uuid.uuid4()), name),  False )  
         else:
@@ -49,7 +49,7 @@ class Permission:
         '''
             Get the permission_id of a permission from the database
         '''
-        query ='SELECT permission_id FROM permissions WHERE name = ?'
+        query ='SELECT id FROM permissions WHERE name = ?'
         where = (permission_name, )
         return self.__db_manager.do_select(query, where)[0][0]
         
