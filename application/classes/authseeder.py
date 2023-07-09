@@ -31,23 +31,17 @@ class AuthSeeder():
 
     roles = ["Superadmin", "Moderator", "Astronaut"]
 
-    permissions = ["create-user", "delete-user", "add-health-record", 
-                   "view-health-record", "view-warning-log", 
+    permissions = ["create-user", "delete-user", "update-user", 
+                   "add-health-record", "view-health-record",
+                   "update-health-record", "delete-health-record"
                    "view-temperature", "view-radiation", 
-                   "update-health-record", "delete-record",
-                   "download-record"
     ]
 
-    role_has_permissions = [(1,"create-user"), (1,"delete-user"),
-                            (1,"add-health-record"), (1,"view-health-record"),
-                            (1,"view-warning-log"), (1,"view-temperature"), 
-                            (1,"view-radiation"), (1,"update-health-record"), 
-                            (1,"delete-record"), (1,"download-record"), 
-                            (2,"view-health-record"), (2,"view-temperature"),
-                            (2,"view-radiation"), (2,"update-record"),
-                            (3,"add-health-record"), (3,"view-health-record"),
-                            (3,"view-temperature"), (3,"view-radiation"),
-                            (3,"update-record"), (3,"download-record")]
+    role_has_permissions = [(1,1), (1,2), (1,3), (1,4), (1,5), (1,6)
+                            (1,7), (1,8), (1,9),
+                            (2,5), (2,6), (2,8), (2,9),
+                            (3,4), (3,5), (3,6), (3,7), (3,8), (3,9)
+    ]
 
     def __init__(self):
        

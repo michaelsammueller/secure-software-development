@@ -8,9 +8,9 @@ class DBManager():
     """sqlite3 database class to manage db operations"""  
     pass
 
-    def __init__(self):
+    def __init__(self, db_path='data/securespace.db'):
        
-        self.__db_connection = sqlite3.connect('data/securespace.db')
+        self.__db_connection = sqlite3.connect(db_path)
         self.__db_connection.row_factory = sqlite3.Row # associative array
         self.__db_cursor = self.__db_connection.cursor()
         

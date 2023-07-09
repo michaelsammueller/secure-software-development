@@ -12,6 +12,12 @@ class MockAuthorisationService:
         '''
         return True
     
+    def get_user_role(self, *args, **kwargs):
+        '''
+        A method for mocking a user role.
+        '''
+        return "developer"
+    
 class MockLogger:
     '''
         A class for mocking the logger.
@@ -21,6 +27,16 @@ class MockLogger:
         A method for mocking logging.
         '''
         return True
+    
+class MockAuditor:
+    '''
+        A class for mocking the logger.
+    '''
+    def audit(self, *args, **kwargs):
+        '''
+        A method for mocking logging.
+        '''
+        return False
 
 class MockLoginService:
     '''
@@ -32,22 +48,26 @@ class MockLoginService:
         '''
         return True
     
-class MockUser:
+    def get_loggedin_username(self, *args, **kwargs):
+        '''
+        A method for mocking a username.
+        '''
+        return "Brad"
+    
+class MockEncryptionService:
+    '''
+        A class for mocking the encryption service.
+    '''
+    def encrypt(self, *args, **kwargs):
+        '''
+        A method for mocking a login.
+        '''
+        return "ENCRYPTED"
+    
+class MockUserService:
     '''
         A class for mocking a user.
     '''
-
-    def get_name(self, *args, **kwargs):
-        '''
-        A method for mocking a user name.
-        '''
-        return "Brad"
-
-    def get_role(self, *args, **kwargs):
-        '''
-        A method for mocking a user role.
-        '''
-        return "developer"
     
     def add_user(self, *args, **kwargs):
         '''
@@ -60,23 +80,6 @@ class MockUser:
         A method for mocking deleting a user.
         '''
         return True
-    
-class MockUserFactory:
-    '''
-        A class for mocking a user factory.
-    '''
-
-    def create(self, *args, **kwargs):
-        '''
-        A method for mocking creating a user.
-        '''
-        return MockUser()
-    
-    def get(self, *args, **kwargs):
-        '''
-        A method for mocking getting a user.
-        '''
-        return MockUser()
     
 class MockHealthRecordService:
     '''

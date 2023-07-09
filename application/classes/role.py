@@ -1,68 +1,73 @@
-""" This file contains the Role class and associated methods."""
-
-import os
-import sys
+'''
+    This file contains the Role class.
+'''
 import datetime
-from dbmanager import DBManager
-
-# Modify search path for module imports:
-fpath = os.path.join(os.path.dirname(__file__).rstrip('classes'), 'data')
-sys.path.append(fpath)
-
+import time
 
 class Role:
-    """
-    A class for encapsulating all methods which
-    interact with the database roles table. 
-    """
+    '''
+        A parent class for the system roles.
+    '''
 
-    def __init__(self, name = ''):
-        self._name = name
-        self._created_at = datetime.datetime.now()
-        self._updated_at = datetime.datetime.now()
-        # Initialise an instance of DBManager (connect to database):
-        self.db_manager = DBManager()
+    def get_roles(self):
+       
+        return self.db_manager.do_select('SELECT * FROM roles')
+       
 
     def get_role(self, id):
-        # If id is true, retrieve row in roles table:
+      
         if id:
-            return self.db_manager.do_select('SELECT * FROM roles \
-                                             WHERE id = ?', (id,))
+            return self.db_manager.do_select('SELECT * FROM roles WHERE id = ?', (id,) )
         else:
             return False
+        
+    def get_role_id(self, name):
+        result = self.db_manager.do_select('SELECT id FROM roles WHERE name = ?', (name,) )
+        if len(result) >= 1:        
+            return result[0]['name'] # TODO
+        else:
+            return 0
     
+    # Creates a record and returns the inserted id
     def add_role(self, name):
-        # If name is true, create a record in the roles table:
+        '''
+            Add a new role to the database
+        '''        
         if name:          
-            return self.db_manager.do_insert("INSERT INTO roles(name) \
-                                             VALUES (?) ", 
-                                             (name,), False)  
+            return self.db_manager.do_insert("INSERT INTO roles(name) VALUES (?) ", (name,),  False )  
         else:
             return False
 
-    def update_role(self, id, name):
-        # Update the 'updated_at' attribute with current date/ time:
-        self._updated_at = datetime.datetime.now()
-        # Perform database query to update name/ updated_ at attributes:
-        query = "UPDATE roles SET name='" + name + "', \
-            updated_at= " + self._updated_at + " WHERE role_id=?"
-        values = (id,)
-        # Call the do_update method and update the roles table:
-        self.db_manager.do_update(query, values)
-
-    def delete_role(self, id):
-        # Query rows to delete from roles table using id attribute:
+    def delete_role(self, name):
+        '''
+            Delete a role from the database
+        '''
         query = "DELETE FROM roles WHERE id = ?"
-        where = (id,)
-        # Call the 'do_delete' method to delete the record:
-        return self.db_manager.do_delete(query, where, False)   
+        where = (name,)
+        # call do_delete method from DBManager
+        return self.db_manager.do_delete(query, where, False) 
+      
     
-    def role_has_permissions():
-        pass
+    def update_role(self, id, name):
+        # update the 'updated_at' attribute.
+        self._updated_at = time.mktime(datetime.datetime.now().timetuple())
+        # perform database query to update permission attributes.
+        query = "UPDATE roles SET name='" + name + "', updated_at= " + self._updated_at + " WHERE role_id=?"
+        values = (id,)
+
+        # call do_update method from DBmanager.
+        self.db_manager.do_update(query, values)
+    
+
+    def connect_db_manager(self, db_manager):
+        '''
+            A method for connecting the database manager.
+        '''
+        self.db_manager = db_manager
 
 
-#obj_role = Role()
-#print( obj_role.add_role('Pedrito8'))
-#rows = obj_role.get_role() 
-#for row in rows:
-#    print( dict(row))
+# obj_role = Role()
+# print( obj_role.add_role('Pedrito8') )
+# rows = obj_role.get_role() 
+# for row in rows:
+#     print( dict(row) )
