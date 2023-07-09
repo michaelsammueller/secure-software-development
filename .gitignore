@@ -6,4 +6,4 @@ testdata.db
 securespace.db
 *.pyc
 data.db
-log.txt
+logs.txt
