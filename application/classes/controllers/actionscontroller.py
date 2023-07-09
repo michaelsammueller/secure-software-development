@@ -30,10 +30,11 @@ class ActionsController(object):
                              ('username', []),
                              ('password', [])],
             'Delete User': [('uuid', [])],
-            'Add Health Record': [('name', []),
-                                  ('height', []),
-                                  ('weight', []),
-                                  ('blood pressure', [])],
+            'Add Health Record': [('uuid', []),
+                                  ('complains', []),
+                                  ('height', ['cm']),
+                                  ('weight', ['kg']),
+                                  ('blood_pressure', ['mmHg'])],
             'View All Users': [],
             'View User': [('uuid', [])],
         }
@@ -209,7 +210,7 @@ class ActionsController(object):
         # return results
         return results
 
-    def add_health_record(self, new_health_record_details): #TODO
+    def add_health_record(self, new_health_record_details):
         '''
             A method for adding health record details to the system about a user.
 
@@ -239,13 +240,11 @@ class ActionsController(object):
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
-                'parameters' : {
-                    key : value for key, value in new_health_record_details.items()
-                },
+                'parameters' : new_health_record_details,
                 'results' : results
             }
         }
-        self.__logger.log(json) # TODO
+        self.__logger.log(json)
         # return results
         return results
 
