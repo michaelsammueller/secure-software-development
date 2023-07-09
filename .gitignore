@@ -5,3 +5,5 @@ testlogs.txt
 testdata.db
 securespace.db
 *.pyc
+data.db
+log.txt
