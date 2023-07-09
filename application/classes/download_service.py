@@ -7,16 +7,13 @@
 from fpdf import FPDF
 import os
 import pyAesCrypt
-from classes.dbmanager import DBManager
 
 # DownloadService Class
 class DownloadService:
     
-    def download(self, user_id, format, password):
+    def download(self, uuid, format, password):
         """Downloads health records for logged-in user in requested format"""
-        # Create an instance of the DatabaseManager
-        dbman = DBManager()
-        records = dbman.do_select('SELECT * FROM records WHERE user_id = ?', (user_id,))
+        records = self.__db_manager.do_select('SELECT * FROM records WHERE uuid = ?', (uuid,))
 
         # If no records found, inform user
         if len(records) == 0:
@@ -61,13 +58,11 @@ class DownloadService:
     
     def prepare_records_as_txt(self, records):
         """Prepares records in txt format"""
-        # Connect to the database
-        dbman = DBManager()
         # Prepare health records in text format
         # Iterate over the records and retrieve associated record items
         text_records = "Health Records:\n\n"
         for record in records:
-            record_items = dbman.do_select('SELECT * FROM record_items WHERE record_id = ?', (record["id"],))
+            record_items = self.__db_manager.do_select('SELECT * FROM record_items WHERE record_id = ?', (record["id"],))
             text_records += f"Record ID: {record['id']}\n"
             text_records += f"Date: {record['created_at']}\n"
             text_records += f"Record Items:\n"
@@ -82,8 +77,6 @@ class DownloadService:
     
     def prepare_records_as_pdf(self, records):
         """Prepare health records in pdf format"""
-        # Connect to the database
-        dbman = DBManager()
         # Prepare health records in pdf format
         # Iterate over the records and retrieve associated record items
         pdf = FPDF()
@@ -92,7 +85,7 @@ class DownloadService:
         pdf.cell(0, 10, "Health Records", ln=True)
         pdf.ln(10)
         for record in records:
-            record_items = dbman.do_select('SELECT * FROM record_items WHERE record_id = ?', (record["id"],))
+            record_items = self.__db_manager.do_select('SELECT * FROM record_items WHERE record_id = ?', (record["id"],))
             pdf.cell(0, 10, f"Record ID: {record['id']}", ln=True)
             pdf.cell(0, 10, f"Date: {record['created_at']}", ln=True)
             pdf.cell(0, 10, "Record Items:", ln=True)
@@ -118,3 +111,7 @@ class DownloadService:
         encrypted_file_path = file_path + '.aes'
         bufferSize = 64 * 1024 # 64kb
         pyAesCrypt.encryptFile(file_path, encrypted_file_path, password, bufferSize)
+
+    def connect_db_manager(self, db_manager):
+        """Connects the db manager"""
+        self.__db_manager = db_manager
