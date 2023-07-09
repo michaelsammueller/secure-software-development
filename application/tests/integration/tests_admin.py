@@ -13,9 +13,6 @@ class TestAdminActions(unittest.TestCase):
         A class for encapsulating functionality tests for superadmins.
     '''
     def setUp(self):
-        # set up db
-
-
         # set up services
         self.cli = CommandLineInterface()
         action_controller = ActionsController()
