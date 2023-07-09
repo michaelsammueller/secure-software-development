@@ -1,3 +1,13 @@
+import os
+import sys
+
+# Dynamically modify the path
+fpath = os.path.join(os.path.dirname(__file__), 'classes')
+sys.path.append(fpath)
+
+from classes.country import Country
+from classes.role import Role
+from classes.permission import Permission
 
 class AuthSeeder():
     """sqlite3 database class to seed the db operations"""  
@@ -21,10 +31,23 @@ class AuthSeeder():
 
     roles = ["Superadmin", "Moderator", "Astronaut"]
 
-    permissions = ["create-user", "aproove-user", "delete-user", "assign-role", "update-record"]
-    
+    permissions = ["create-user", "delete-user", "update-user", 
+                   "add-health-record", "view-health-record",
+                   "update-health-record", "delete-health-record"
+                   "view-temperature", "view-radiation", 
+    ]
 
-    role_has_permissions = [ (1,1), (1,4), (2,2), (2,3), (3,5) ]
+    role_has_permissions = [(1,1), (1,2), (1,3), (1,4), (1,5), (1,6)
+                            (1,7), (1,8), (1,9),
+                            (2,5), (2,6), (2,8), (2,9),
+                            (3,4), (3,5), (3,6), (3,7), (3,8), (3,9)
+    ]
+
+    def __init__(self):
+       
+        self.__country = Country()   
+        self.__role = Role() 
+        self.__permission = Permission()    
 
     # where is a tuple
     def seed_countries( self ):
@@ -42,7 +65,7 @@ class AuthSeeder():
 
         added_ids = []
 
-        for v in self.roles:           
+        for k, v in self.roles.items():           
             id = self.__role.add_role(v)
             if id:
                 added_ids.append(id) 
@@ -53,7 +76,7 @@ class AuthSeeder():
 
         added_ids = []
 
-        for v in self.permissions:           
+        for k, v in self.permissions.items():           
             id = self.__permission.add_permission(v)
             if id:
                 added_ids.append(id) 
@@ -74,23 +97,8 @@ class AuthSeeder():
         c = self.seed_countries()
         r = self.seed_roles()   
         p = self.seed_permissions()  
-        rhp = self.seed_role_has_permissions() 
+        rhp = self.seed_role_has_permissions()     
+    
 
-    def connect_role_service(self, role_service):
-        '''
-            Connects the role service
-        '''
-        self.__role = role_service   
-
-    def connect_permission_service(self, permission_service):
-        '''
-            Connects the permission service
-        '''
-        self.__permission = permission_service
-
-    def connect_country_service(self, country_service):
-        '''
-            Connects the country service
-        '''
-        self.__country = country_service
-
+obj_seeder = AuthSeeder()
+obj_seeder.run_seeder()

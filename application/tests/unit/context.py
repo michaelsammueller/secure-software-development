@@ -16,5 +16,9 @@ sys.path.insert(0, str(path))
 
 from classes.commandline_interface import CommandLineInterface
 from classes.sensors.geigercounter import GeigerCounter
+<<<<<<< HEAD
+from classes.sensors.thermometer import Thermometer
+=======
 from classes.sensors.thermometer import Thermometer
 from classes.infosec.authorisation_service import AuthorisationService
+>>>>>>> main
