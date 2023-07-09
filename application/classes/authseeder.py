@@ -1,3 +1,5 @@
+import bcrypt
+
 class AuthSeeder():
     """sqlite3 database class to seed the db operations"""  
     def __init__(self):
@@ -44,7 +46,11 @@ class AuthSeeder():
             }
         ]
 
-    def __call__(self): 
+    def __call__(self):
+        # encrypt user passwords
+        for i in range(len(self.users)):
+            self.users[i]['password'] = bcrypt.hashpw(self.users[i]['password'].encode('utf-8'), bcrypt.gensalt())
+        # seed database
         self.run_seeder()  
 
     # where is a tuple
@@ -123,3 +129,7 @@ class AuthSeeder():
     def connect_user(self, user):
         """Connects the user"""
         self.__user = user
+
+    def connect_encryption(self, encryption):
+        """Connects the encryption"""
+        self.__encryption_service = encryption

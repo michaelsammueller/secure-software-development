@@ -32,19 +32,14 @@ class Role:
         '''
         query ='SELECT name FROM roles WHERE id = ?'
         where = (role_id, )
-        result = self.__db_manager.do_select(query, where)[0][0]
-        print('role_name result', result)
-        return result
+        return self.__db_manager.do_select(query, where)[0][0]
     
     def get_role_id(self, role_name):
         '''
             Get the role of a user from the database
         '''
-        print(role_name)
         query ='SELECT id FROM roles WHERE name = ?'
         where = (role_name, )
-        result = self.__db_manager.do_select(query, where)
-        print(result)
         return self.__db_manager.do_select(query, where)[0][0]
     
     def connect_db_manager(self, db_manager):
@@ -52,10 +47,3 @@ class Role:
             A method for connecting the database manager.
         '''
         self.__db_manager = db_manager
-
-
-# obj_role = Role()
-# print( obj_role.add_role('Pedrito8') )
-# rows = obj_role.get_role() 
-# for row in rows:
-#     print( dict(row) )
