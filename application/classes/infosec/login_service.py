@@ -5,7 +5,6 @@
 # Imports
 import bcrypt
 import datetime
-from classes.dbmanager import DBManager
 
 # Login Class
 class Login_Service:
@@ -43,8 +42,7 @@ class Login_Service:
     def check_phrase_required(self):
         """Check last login"""
         try:
-            dbman = DBManager()  # Create DBManager instance
-            last_login = dbman.do_select(
+            last_login = self.__db_manager.do_select(
                 'SELECT last_login_at FROM users WHERE username = ?', (self.__username,))
             last_login = last_login[0][0]
 
@@ -82,8 +80,7 @@ class Login_Service:
     def check_phrase(self, new_phrase):
         """Checks new phrase against stored phrase"""
         try:
-            dbman = DBManager()  # Create DBManager instance
-            stored_phrase = dbman.do_select('SELECT phrase FROM users WHERE username = ?', (self.__username,))
+            stored_phrase = self.__db_manager.do_select('SELECT phrase FROM users WHERE username = ?', (self.__username,))
             stored_phrase = stored_phrase[0][0] # Get stored phrase from tuple
 
             # Check if new phrase matches stored phrase
@@ -110,8 +107,7 @@ class Login_Service:
     def authenticate_user_credentials(self):
         """Authenticate user credentials"""
         try:
-            dbman = DBManager()  # Create DBManager instance
-            result = dbman.do_select(
+            result = self.__db_manager.do_select(
                 'SELECT password FROM users WHERE username = ?', (self.__username,))
             if result:
                 stored_password = result[0][0]
@@ -142,8 +138,7 @@ class Login_Service:
     def authenticate_phrase(self, phrase):
         """Authenticate phrase"""
         try:
-            dbman = DBManager()  # Create DBManager instance
-            secret_phrase = dbman.do_select(
+            secret_phrase = self.__db_manager.do_select(
                 'SELECT phrase FROM users WHERE username = ?', (self.__username,))
             secret_phrase = secret_phrase[0][0] # Get secret phrase from tuple
             if phrase == secret_phrase:
@@ -195,8 +190,7 @@ class Login_Service:
         """Change user password"""
         try:
             hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())  # Hash password
-            dbman = DBManager()  # Create DBManager instance
-            dbman.do_update('UPDATE users SET password = ? WHERE username = ?',
+            self.__db_manager.do_update('UPDATE users SET password = ? WHERE username = ?',
                             (hashed_password, self.__username), dry=False)
             print("Password changed successfully.\n")
             return True
@@ -220,8 +214,7 @@ class Login_Service:
     def change_phrase(self, new_phrase):
         """Change secret phrase"""
         try:
-            dbman = DBManager()  # Create DBManager instance
-            dbman.do_update('UPDATE users SET phrase = ? WHERE username = ?',
+            self.__db_manager.do_update('UPDATE users SET phrase = ? WHERE username = ?',
                              (new_phrase, self.__username), dry=False)
             print("Secret phrase changed successfully.\n")
             return True
@@ -262,3 +255,7 @@ class Login_Service:
     def connect_logger(self, logger):
         """Connects the logger"""
         self.__logger = logger
+    
+    def connect_db_manager(self, db_manager):
+        """Connects the db manager"""
+        self.__db_manager = db_manager
