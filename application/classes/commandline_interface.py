@@ -125,41 +125,48 @@ Astronaut Health Monitoring System
 
             # Request user selection
             selection = self.ask_for_selection()
+            # Login attempt counter
+            login_attempts = 0
 
             # Handle user selection
             if selection == '1':
-                username, password = self.request_login_details()  # Request user login details
-                # Handle Login
-                if self.__login_service.login(username, password):
-                    self.display_user_menu(username)
-                    #self.display_test_menu(username)
-                    json = {
-                        'user': username,
-                        'activity_type': 'event',
-                        'severity': 'info',
-                        'event': {
-                            'type': 'successful login',
-                            'details': {
-                                'username': username,
-                                'password': password
+                if login_attempts < 6:
+                    username, password = self.request_login_details()  # Request user login details
+                    # Handle Login
+                    if self.__login_service.login(username, password):
+                        self.display_user_menu(username)
+                        #self.display_test_menu(username)
+                        json = {
+                            'user': username,
+                            'activity_type': 'event',
+                            'severity': 'info',
+                            'event': {
+                                'type': 'successful login',
+                                'details': {
+                                    'username': username,
+                                    'password': password
+                                }
                             }
                         }
-                    }
-                    self.__logger.log(json)
+                        self.__logger.log(json)
+                    else:
+                        login_attempts += 1
+                        json = {
+                            'user': username,
+                            'activity_type': 'event',
+                            'severity': 'warning',
+                            'event': {
+                                'type': 'failed login',
+                                'details': {
+                                    'username': username,
+                                    'password': password
+                                }
+                            }
+                        }
+                        self.__logger.log(json)
                 else:
-                    json = {
-                        'user': username,
-                        'activity_type': 'event',
-                        'severity': 'warning',
-                        'event': {
-                            'type': 'failed login',
-                            'details': {
-                                'username': username,
-                                'password': password
-                            }
-                        }
-                    }
-                    self.__logger.log(json)
+                    # Add lockdown method
+                    pass
             elif selection == '2':
                 # Handle Exit
                 print("Exiting...\n")
