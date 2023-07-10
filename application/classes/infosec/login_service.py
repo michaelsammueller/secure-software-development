@@ -17,7 +17,22 @@ class Login_Service:
         self.__username = username
 
     def set_password(self, password):
-        self.__password = password
+        encrypted_password = self.__encryption_service.encrypt(password)
+        self.__password = encrypted_password
+    
+    def get_password(self):
+        """Decrypts password and returns it"""
+        decrypted_password = self.__encryption_service.decrypt(self.__password)
+        return decrypted_password
+    
+    def check_password(self, password):
+        """Reauthenticates user by checking password"""
+        auth_password = self.get_password()
+        # Check that password is correct
+        if password == auth_password:
+            return True
+        else:
+            return False
     
     def get_loggedin_username(self):
         """Returns username of logged in user"""
@@ -95,9 +110,10 @@ class Login_Service:
                 'SELECT password FROM users WHERE username = ?', (self.__username,))
             if result:
                 stored_password = result[0][0]
-                print('db password', stored_password)
+                # Get current password
+                password = self.get_password()
                 # Compare entered password with stored password
-                if bcrypt.checkpw(self.__password.encode('utf-8'), stored_password):
+                if bcrypt.checkpw(password.encode('utf-8'), stored_password):
                     return True
                 else:
                     print("Invalid username or password.\n")

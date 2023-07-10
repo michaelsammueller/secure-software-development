@@ -3,14 +3,8 @@
 """
 # Imports
 from imports import AuthSeeder, DBShape, DBManager, CommandLineInterface, ActionsController, Input_Sanitisation_Service, Encryption_Service, Login_Service, Logger
-from imports import Thermometer, GeigerCounter, User, Role, Permission, HealthRecord, Country, AuthorisationService, Login_Service
+from imports import Thermometer, GeigerCounter, User, Role, Permission, HealthRecord, Country, AuthorisationService
 from tests.integration.mock import MockAuditor
-
-# Insert test user
-
-# john_doe = User('john doe', '1', '30061998', '1', '1', 'john.doe', b'$2b$12$1sloC3lxVFlrwguDUNmT8O.QAKu6uSxUtyd1EkvsduH7ov9Oyqm.O', 'tryme')
-
-# john_doe.add_user()
 
 
 # Main Function
