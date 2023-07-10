@@ -4,6 +4,7 @@
 
 import datetime
 import time
+import uuid
 
 class Country:
     '''
@@ -12,12 +13,12 @@ class Country:
 
     def get_country(self, id):
         if id:
-            return self.db_manager.do_select('SELECT * FROM countries WHERE id = ?', (id,) )
+            return self.__db_manager.do_select('SELECT * FROM countries WHERE id = ?', (id,) )
         else:
             return False
         
     def get_country_id(self, name):
-        result = self.db_manager.do_select('SELECT id FROM roles WHERE name = ?', (name,) )
+        result = self.__db_manager.do_select('SELECT id FROM roles WHERE name = ?', (name,) )
         if len(result) >= 1:        
             return result[0]['name'] # TODO
         else:
@@ -26,7 +27,7 @@ class Country:
     # Creates a record and returns the inserted id
     def add_country(self, code, name):        
         if code and name:          
-            return self.db_manager.do_insert("INSERT INTO countries(code, name) VALUES (?, ?) ", (code, name),  False )  
+            return self.__db_manager.do_insert("INSERT INTO countries(uuid, code, name) VALUES (?, ?, ?) ", (str(uuid.uuid4()), code, name),  False )  
         else:
             return False
 
@@ -38,17 +39,17 @@ class Country:
         values = (id,)
 
         # call do_update method from DBmanager.
-        self.db_manager.do_update(query, values)
+        self.__db_manager.do_update(query, values)
 
     def delete_country(self, id):
         # identify records to delete with id
         query = "DELETE FROM countries WHERE id = ?"
         where = (id,)
         # call do_delete method from DBManager
-        return self.db_manager.do_delete(query, where, False)     
+        return self.__db_manager.do_delete(query, where, False)     
 
     def connect_db_manager(self, db_manager):
         '''
             A method for connecting the database manager.
         '''
-        self.db_manager = db_manager 
+        self.__db_manager = db_manager 

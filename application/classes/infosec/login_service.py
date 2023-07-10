@@ -17,13 +17,8 @@ class Login_Service:
         self.__username = username
 
     def set_password(self, password):
-        """Encrypts password and sets it"""
         encrypted_password = self.__encryption_service.encrypt(password)
         self.__password = encrypted_password
-    
-    def get_loggedin_username(self):
-        """Returns username of logged in user"""
-        return self.__username
     
     def get_password(self):
         """Decrypts password and returns it"""
@@ -38,6 +33,10 @@ class Login_Service:
             return True
         else:
             return False
+    
+    def get_loggedin_username(self):
+        """Returns username of logged in user"""
+        return self.__username
 
     def check_phrase_required(self):
         """Check last login"""
@@ -111,8 +110,10 @@ class Login_Service:
                 'SELECT password FROM users WHERE username = ?', (self.__username,))
             if result:
                 stored_password = result[0][0]
+                # Get current password
+                password = self.get_password()
                 # Compare entered password with stored password
-                if bcrypt.checkpw(self.__password.encode('utf-8'), stored_password):
+                if bcrypt.checkpw(password.encode('utf-8'), stored_password):
                     return True
                 else:
                     print("Invalid username or password.\n")
@@ -233,12 +234,6 @@ class Login_Service:
             }
             self.__logger.log(json)
             return False
-        
-    def connect_input_sanitisation_service(self, sanitiser):
-        """
-            Connects the Input_Sanitisation_Service
-        """
-        self.__sanitiser = sanitiser
     
     def display_password_requirements(self):
         print("Password Requirements\n")

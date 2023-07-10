@@ -61,10 +61,25 @@ class User:
         where = (user_identifiers['uuid'],)
         # call do_delete method from DBManager
         return self.__db_manager.do_delete(query, where, False)   
+    
+    def get_user_role(self, username):
+        '''
+            Get the role of a user from the database
+        '''
+        query ='SELECT role_id FROM users WHERE username = ?'
+        where = (username, )
+        role_id = self.__db_manager.do_select(query, where)[0][0]
+        return self.__role_service.get_role_name(role_id)
 
     def connect_db_manager(self, db_manager):
         '''
             A method for connecting the database manager.
         '''
         self.__db_manager = db_manager
+
+    def connect_role_service(self, role_service):
+        '''
+            A method for connecting the role service.
+        '''
+        self.__role_service = role_service
 
