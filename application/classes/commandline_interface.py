@@ -139,8 +139,8 @@ Astronaut Health Monitoring System
                     username, password = self.request_login_details()  # Request user login details
                     # Handle Login
                     if self.__login_service.login(username, password):
-                        #self.display_user_menu(username)
-                        self.display_test_menu(username)
+                        self.display_user_menu(username)
+                        #self.display_test_menu(username)
                         json = {
                             'user': username,
                             'activity_type': 'event',

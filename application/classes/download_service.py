@@ -21,7 +21,7 @@ class DownloadService:
         #records = self.__db_manager.do_select('SELECT * FROM records WHERE uuid = ?', (uuid,))
         record_items = self.__db_manager.do_select('SELECT * FROM record_items WHERE uuid = ?', (uuid,))
         #print(records)
-        print(record_items)
+        #print(record_items)
 
         # If no records found, inform the user
         if len(record_items) == 0:
