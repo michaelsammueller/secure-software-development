@@ -23,3 +23,4 @@ from classes.models.healthrecord import HealthRecord
 from classes.dbmanager import DBManager
 from classes.commandline_interface import CommandLineInterface
 from database import DBShape
+from classes.infosec.encryption_service import Encryption_Service

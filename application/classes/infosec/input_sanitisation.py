@@ -104,13 +104,13 @@ class Input_Sanitisation_Service:
         if country in countries:
             return True
         else:
-            print("Invalid country.")
+            print(f"Invalid country. Please select from: \n{countries} ")
             return False
     
     def validate_role(self, role):
         """Validates roles input"""
         roles = ["Superadmin", "Moderator", "Astronaut"]
-        if role in roles:
+        if role.lower().capitalize() in roles:
             return True
         else:
             print("Invalid role.")
@@ -123,6 +123,23 @@ class Input_Sanitisation_Service:
             return True
         except ValueError:
             print("Incorrect data format, should be DD-MM-YYYY")
+            return False
+        
+    def validate(self, user_input, type, *args, **kwargs):
+        '''
+            Validates user input based on type. Returns True if validation passes,
+            False otherwise.
+        '''
+        if type == 'PASSWORD':
+            return self.validate_password(user_input)
+        elif type == 'COUNTRY':
+            return self.validate_country(user_input)
+        elif type == 'ROLE':
+            return self.validate_role(user_input)
+        elif type == 'DATE':
+            return self.validate_dob(user_input)
+        else:
+            print("Invalid type.")
             return False
 
     def connect_logger(self, logger):

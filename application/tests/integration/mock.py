@@ -52,7 +52,7 @@ class MockLoginService:
         '''
         A method for mocking a username.
         '''
-        return "Brad"
+        return "Braddarb"
     
 class MockEncryptionService:
     '''

@@ -3,25 +3,19 @@
 """
 # Imports
 from imports import AuthSeeder, DBShape, DBManager, CommandLineInterface, ActionsController, Input_Sanitisation_Service, Encryption_Service, Login_Service, Logger
-from imports import Thermometer, GeigerCounter, User, Role, Permission, HealthRecord, Country
-from tests.integration.mock import MockAuditor, MockLoginService, MockAuthorisationService
-
-# Insert test user
-
-# john_doe = User('john doe', '1', '30061998', '1', '1', 'john.doe', b'$2b$12$1sloC3lxVFlrwguDUNmT8O.QAKu6uSxUtyd1EkvsduH7ov9Oyqm.O', 'tryme')
-
-# john_doe.add_user()
+from imports import Thermometer, GeigerCounter, User, Role, Permission, HealthRecord, Country, AuthorisationService
+from tests.integration.mock import MockAuditor
 
 
 # Main Function
 def main():
     # Create services
     commandline_interface = CommandLineInterface()
-    login_service = MockLoginService()
+    login_service = Login_Service()
     action_controller = ActionsController()
     sanitisation_service = Input_Sanitisation_Service()
     encryption_service = Encryption_Service()
-    authorisation_service = MockAuthorisationService
+    authorisation_service = AuthorisationService()
     log_path = 'application/logs.txt'
     logger = Logger(log_path)
     auditor = MockAuditor()
@@ -36,6 +30,7 @@ def main():
     permission = Permission()
     health_record = HealthRecord()
     country = Country()
+
     # connect services
     commandline_interface.connect_action_controller(action_controller)
     commandline_interface.connect_login_service(login_service)
@@ -51,18 +46,34 @@ def main():
     action_controller.connect_geiger_counter(geiger_counter)
     action_controller.connect_health_record_service(health_record)
 
+    login_service.connect_input_sanitisation_service(sanitisation_service)
+    login_service.connect_encryption_service(encryption_service)
+    login_service.connect_logger(logger)
+    login_service.connect_db_manager(db_manager)
+
     sanitisation_service.connect_logger(logger)
+
     logger.connect_auditor(auditor)
     logger.connect_encryption_service(encryption_service)
+
     country.connect_db_manager(db_manager)
     role.connect_db_manager(db_manager)
     permission.connect_db_manager(db_manager)
     user.connect_db_manager(db_manager)
+    user.connect_role_service(role)
     health_record.connect_db_manager(db_manager)
 
-    authseeder.connect_country_service(country)
-    authseeder.connect_role_service(role)
-    authseeder.connect_permission_service(permission)
+    authorisation_service.connect_db_manager(db_manager)
+    authorisation_service.connect_permission_service(permission)
+    authorisation_service.connect_user_service(user)
+    authorisation_service.connect_role_service(role)
+
+    authseeder.connect_country(country)
+    authseeder.connect_role(role)
+    authseeder.connect_permission(permission)
+    authseeder.connect_user(user)
+    authseeder.connect_encryption(encryption_service)
+    authseeder()
 
     commandline_interface.display_main_menu()
 
