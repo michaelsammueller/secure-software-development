@@ -8,7 +8,7 @@ import unittest
 from random import randint
 import os
 
-class TestAdminActions(unittest.TestCase):
+class TestModeratorActions(unittest.TestCase):
     '''
         A class for encapsulating functionality tests for superadmins.
     '''
