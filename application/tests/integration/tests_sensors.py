@@ -36,7 +36,7 @@ class TestSensors(unittest.TestCase):
         '''
             A method that tests the view temperature option.
         '''
-        mock_selections = (x for x in ['1', '9', 'C', 'Y', '9', 'F', 'Y', '9', 'K', 'N', '2'])
+        mock_selections = (x for x in ['1', '10', 'C', 'Y', '10', 'F', 'Y', '10', 'K', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections) # comment line for demo
         self.assertTrue(self.cli.display_main_menu())
 
@@ -44,7 +44,7 @@ class TestSensors(unittest.TestCase):
         '''
             A method that tests the view radiation level option.
         '''
-        mock_selections = (x for x in ['1', '10', 'Rem', 'Y', '10', 'SV', 'N', '2'])
+        mock_selections = (x for x in ['1', '11', 'Rem', 'Y', '11', 'SV', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections) # comment line for demo
         self.cli.display_main_menu()
 

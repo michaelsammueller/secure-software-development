@@ -1,8 +1,8 @@
 '''
     This file contains integration tests for functionality involving sensor components.
 '''
-from context import ActionsController, CommandLineInterface, DBManager, User, HealthRecord, DBShape, Logger
-from mock import MockAuthorisationService, MockLoginService, MockAuditor, MockEncryptionService
+from context import ActionsController, CommandLineInterface, DBManager, User, HealthRecord, DBShape, Logger, Encryption_Service
+from mock import MockAuthorisationService, MockLoginService, MockAuditor
 
 import unittest
 from random import randint
@@ -38,7 +38,7 @@ class TestModeratorActions(unittest.TestCase):
         action_controller.connect_login_service(login_service)
         action_controller.connect_authorisation_service(MockAuthorisationService())
         logger.connect_auditor(MockAuditor())
-        logger.connect_encryption_service(MockEncryptionService())
+        logger.connect_encryption_service(Encryption_Service())
 
         # monkey patches
         self.cli.request_login_details = lambda: ('test_name', 'test_password')
@@ -51,7 +51,7 @@ class TestModeratorActions(unittest.TestCase):
 
         print("----Adding health record----")
         # test database and logger integration
-        mock_selections = (x for x in ['1', '5', '5a08d606-8ed8-434d-8928-e50913ee7134', 'headache', '170', '80', '100', 'N', '2'])
+        mock_selections = (x for x in ['1', '6', '5a08d606-8ed8-434d-8928-e50913ee7134', 'headache', '170', '80', '100', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
@@ -62,7 +62,7 @@ class TestModeratorActions(unittest.TestCase):
 
         print("----Viewing One Users Health Records----")
         # test database and logger integration
-        mock_selections = (x for x in ['1', '6', '5a08d606-8ed8-434d-8928-e50913ee7134', 'N', '2'])
+        mock_selections = (x for x in ['1', '7', '5a08d606-8ed8-434d-8928-e50913ee7134', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
@@ -73,7 +73,18 @@ class TestModeratorActions(unittest.TestCase):
 
         print("----Deleting a users Health Records----")
         # test database and logger integration
-        mock_selections = (x for x in ['1', '6', '5a08d606-8ed8-434d-8928-e50913ee7134', 'Y', '7', '5a08d606-8ed8-434d-8928-e50913ee7134', 'N', '2'])
+        mock_selections = (x for x in ['1', '8', '5a08d606-8ed8-434d-8928-e50913ee7134', 'Y', '7', '5a08d606-8ed8-434d-8928-e50913ee7134', 'N', '2'])
+        self.cli.ask_for_selection = lambda: next(mock_selections)
+        self.assertTrue(self.cli.display_main_menu())
+
+    def test_update_health_record(self):
+        '''
+            A method that tests the update user information option.
+        '''
+
+        print("----Updating a health record----")
+        # test database and logger integration
+        mock_selections = (x for x in ['1', '9', '1', 'complains', 'test condition', 'Y', '7', '5a08d606-8ed8-434d-8928-e50913ee7134', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 

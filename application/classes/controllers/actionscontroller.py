@@ -16,6 +16,7 @@ class ActionsController(object):
             'Add Health Record',
             'View User Health Records',
             'Delete User Health Records',
+            'Edit Health Record',
             'View Temperature',
             'View Radiation Level',
         ]
@@ -41,7 +42,10 @@ class ActionsController(object):
             'Delete User Health Records': [('uuid', [], '')],
             'Update User Details': [('uuid', [], ''),
                                     ('field', ['name', 'role', 'date of birth', 'country of employment'], ''),
-                                    ('new value', [], '')] # VULNERABILITY (bypasses sanitisation)
+                                    ('new value', [], '')], # VULNERABILITY (bypasses sanitisation)
+            'Edit Health Record': [('record id', [], ''),
+                                    ('field', ['complains', 'weight', 'height', 'blood pressure'], ''),
+                                    ('new value', [], '')], # VULNERABILITY (bypasses sanitisation)
         }
 
     def get_actions(self):
@@ -77,7 +81,8 @@ class ActionsController(object):
             'View User Details': self.view_user,
             'View User Health Records': self.view_users_health_records,
             'Delete User Health Records': self.delete_user_health_records,
-            'Update User Details': self.update_user_information
+            'Update User Details': self.update_user_information,
+            'Edit Health Record': self.update_health_record
         }
         return func_map[action](parameters)
 
@@ -373,6 +378,44 @@ class ActionsController(object):
         self.__logger.log(json)
         # return results
         return results
+    
+    def update_health_record(self, new_information):
+            '''
+                A method for deleting a user from the system.
+
+                old_user_details interface:
+                {
+                    'record id': id,
+                    'field': ['complains', 'height', 'weight', 'blood_pressure],
+                    'new value': 'new value'
+                }
+            '''
+            action = "Edit Health Record"
+            # assert shape of parameter
+            if not self.assert_params_shape(new_information, action):
+                return {'Error': 'Missing parameters'}
+            # assert permission for action
+            user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+            if not self.__authorisation_service.check_permission(action, user_role):
+                return {'Error': 'Unauthorised action'}
+            # perform action
+            if self.__health_record_service.update_health_record(new_information):
+                results = {'Confirmation': 'Health Record Updated'}
+            else:
+                results = {'Error': 'Health Record Not Updated'}
+            # log action
+            json = {
+                'user' : self.__login_service.get_loggedin_username(),
+                'activity_type' : 'action',
+                'action' : {
+                    'type' : action,
+                    'parameters' : new_information,
+                    'results' : results
+                }
+            }
+            self.__logger.log(json)
+            # return results
+            return results
 
     def view_temperature(self, measurement_details):
         '''
@@ -458,7 +501,7 @@ class ActionsController(object):
             return True
         except KeyError:
             json = {
-                'user' : self.__user_service.get_name(),
+                'user' : self.__login_service.get_loggedin_username(),
                 'activity_type' : 'event',
                 'severity' : 'warning',
                 'event' : {
