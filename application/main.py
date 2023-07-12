@@ -73,6 +73,7 @@ def main():
     authseeder.connect_permission(permission)
     authseeder.connect_user(user)
     authseeder.connect_encryption(encryption_service)
+    authseeder.connect_health_record(health_record)
     authseeder()
 
     commandline_interface.display_main_menu()

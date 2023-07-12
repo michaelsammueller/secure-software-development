@@ -36,6 +36,16 @@ class AuthSeeder():
                                 (3,6), (3,10), (3,11)
         ]
 
+        self.records = [
+            {
+                'uuid': '12345',
+                'complains' : 'headache',
+                'height': '180',
+                'weight': '180',
+                'blood_pressure': '180',
+            }
+        ]
+
         self.users = [
             {
                 'name': 'Brad',
@@ -62,6 +72,17 @@ class AuthSeeder():
 
         for k, v in self.countries.items():           
             id = self.__country.add_country(k, v)
+            if id:
+                added_ids.append(id) 
+        return added_ids
+    
+    # where is a tuple
+    def seed_health_records( self ):
+
+        added_ids = []
+
+        for record in self.records:        
+            id = self.__health_record.add_record(record)
             if id:
                 added_ids.append(id) 
         return added_ids
@@ -115,6 +136,7 @@ class AuthSeeder():
         p = self.seed_permissions()  
         rhp = self.seed_role_has_permissions()
         u = self.seed_users()
+        hr = self.seed_health_records()
 
     def connect_country(self, country):
         """Connects the country"""
@@ -131,6 +153,10 @@ class AuthSeeder():
     def connect_user(self, user):
         """Connects the user"""
         self.__user = user
+
+    def connect_health_record(self, health_record):
+        """Connects the health_record"""
+        self.__health_record = health_record
 
     def connect_encryption(self, encryption):
         """Connects the encryption"""
