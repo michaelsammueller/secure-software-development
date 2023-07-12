@@ -95,7 +95,6 @@ class Login_Service:
                 'SELECT password FROM users WHERE username = ?', (self.__username,))
             if result:
                 stored_password = result[0][0]
-                print('db password', stored_password)
                 # Compare entered password with stored password
                 if bcrypt.checkpw(self.__password.encode('utf-8'), stored_password):
                     return True
