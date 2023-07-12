@@ -139,8 +139,8 @@ Astronaut Health Monitoring System
                     username, password = self.request_login_details()  # Request user login details
                     # Handle Login
                     if self.__login_service.login(username, password):
-                        self.display_user_menu(username)
-                        #self.display_test_menu(username)
+                        #self.display_user_menu(username)
+                        self.display_test_menu(username)
                         json = {
                             'user': username,
                             'activity_type': 'event',
@@ -474,6 +474,10 @@ Astronaut Health Monitoring System
         """Connects the logger"""
         self.__logger = logger
     
+    def connect_download_service(self, download_service):
+        """Connects the download service"""
+        self.__download_service = download_service
+    
     def display_test_menu(self, username): # FOR TESTING ONLY: TODO REMOVE THIS
         print("Test Menu")
         self.greeting(username)
@@ -481,7 +485,7 @@ Astronaut Health Monitoring System
             print("\n1. Change Password")
             print("\n2. Change Phrase")
             print("\n3. Ask for confirmation")
-            print("\n4. Retrieve user attributes")
+            print("\n4. Download")
             print("\n99. Exit\n")
 
             # Request user selection
@@ -495,11 +499,7 @@ Astronaut Health Monitoring System
             elif selection == '3':
                 self.ask_for_confirmation()
             elif selection == '4':
-                attribute = input("Attribute: ")
-                if attribute is not None:
-                    print(self.get_user_information(attribute))
-                elif attribute == "":
-                    print(self.get_user_information())
+                self.__download_service.download()
             elif selection == '99':
                 # Handle Exit
                 print("Exiting...\n")

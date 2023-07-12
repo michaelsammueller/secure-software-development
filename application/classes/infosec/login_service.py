@@ -38,6 +38,18 @@ class Login_Service:
         """Returns username of logged in user"""
         return self.__username
 
+    def get_loggedin_user_id(self):
+        """Returns user id of logged in user"""
+        user_id = self.__db_manager.do_select('SELECT id FROM users WHERE username = ?', (self.__username,))
+        user_id = user_id[0][0]
+        return user_id
+    
+    def get_loggedin_user_uuid(self):
+        """Returns uuid of logged in user"""
+        uuid = self.__db_manager.do_select('SELECT uuid FROM users WHERE username = ?', (self.__username,))
+        uuid = uuid[0][0]
+        return uuid
+
     def check_phrase_required(self):
         """Check last login"""
         try:
