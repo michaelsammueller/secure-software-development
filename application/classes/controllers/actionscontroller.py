@@ -12,6 +12,7 @@ class ActionsController(object):
             'Delete User',
             'View All Users',
             'View User Details',
+            'Update User Details',
             'Add Health Record',
             'View User Health Records',
             'Delete User Health Records',
@@ -37,7 +38,10 @@ class ActionsController(object):
             'View All Users': [],
             'View User Details': [('uuid', [], '')],
             'View User Health Records': [('uuid', [], '')],
-            'Delete User Health Records': [('uuid', [], '')]
+            'Delete User Health Records': [('uuid', [], '')],
+            'Update User Details': [('uuid', [], ''),
+                                    ('field', ['name', 'role', 'date of birth', 'country of employment'], ''),
+                                    ('new value', [], '')] # VULNERABILITY (bypasses sanitisation)
         }
 
     def get_actions(self):
@@ -72,7 +76,8 @@ class ActionsController(object):
             'View All Users': self.view_all_users,
             'View User Details': self.view_user,
             'View User Health Records': self.view_users_health_records,
-            'Delete User Health Records': self.delete_user_health_records
+            'Delete User Health Records': self.delete_user_health_records,
+            'Update User Details': self.update_user_information
         }
         return func_map[action](parameters)
 
@@ -212,6 +217,44 @@ class ActionsController(object):
             'action' : {
                 'type' : action,
                 'parameters' : old_user_identifiers,
+                'results' : results
+            }
+        }
+        self.__logger.log(json)
+        # return results
+        return results
+    
+    def update_user_information(self, new_information):
+        '''
+            A method for deleting a user from the system.
+
+            old_user_details interface:
+            {
+                'uuid': uuid,
+                'field': ['name', 'role', 'date of birth', 'country of employment'],
+                'new value': 'new value'
+            }
+        '''
+        action = "Update User Details"
+        # assert shape of parameter
+        if not self.assert_params_shape(new_information, action):
+            return {'Error': 'Missing parameters'}
+        # assert permission for action
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
+            return {'Error': 'Unauthorised action'}
+        # perform action
+        if self.__user_service.update_user(new_information):
+            results = {'Confirmation': 'User Details Updated'}
+        else:
+            results = {'Error': 'User Details Not Updated'}
+        # log action
+        json = {
+            'user' : self.__login_service.get_loggedin_username(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : new_information,
                 'results' : results
             }
         }

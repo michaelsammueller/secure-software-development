@@ -90,3 +90,21 @@ class MockHealthRecordService:
         A method for mocking a login.
         '''
         return True
+    
+class MockRoleService:
+    '''
+        A class for mocking a role.
+    '''
+    def get_role_id(self, *args, **kwargs):
+        '''
+        A method for getting a role id.
+        '''
+        return 1
+    
+    def get_role_name(self, *args, **kwargs):
+        '''
+        A method forgetting a role name.
+        '''
+        return "bugfixer"
+    
+    

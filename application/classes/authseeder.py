@@ -23,16 +23,16 @@ class AuthSeeder():
         self.roles = ["Superadmin", "Moderator", "Astronaut"]
 
         self.permissions = ["create-user", "delete-user", "view-all-users",
-                    "view-user-details", 
+                    "view-user-details", "update-user-details",
                     "add-health-record", "view-user-health-records",
                     "delete-user-health-records",
                     "view-temperature", "view-radiation", 
         ]
 
         self.role_has_permissions = [(1,1), (1,2), (1,3), (1,4), (1,5), (1,6),
-                                (1,7), (1,8), (1,9),
-                                (2,5), (2,6), (2,8), (2,9),
-                                (3,5), (3,8), (3,9)
+                                (1,7), (1,8), (1,9), (1,10),
+                                (2,6), (2,7), (2,9), (2,10),
+                                (3,6), (3,9), (3,10)
         ]
 
         self.users = [
@@ -42,7 +42,8 @@ class AuthSeeder():
                 'date of birth': '09-09-1989',
                 'country of employment': 'GB',
                 'username': 'Braddarb',
-                'password': 'password123'
+                'password': 'password123',
+                'uuid' : '12345'
             }
         ]
 
