@@ -400,7 +400,7 @@ class ActionsController(object):
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
-                'parameters' : {},
+                'parameters' : measurement_details,
                 'results' : {
                     'temperature' : temperature,
                     'units' : units
@@ -437,7 +437,7 @@ class ActionsController(object):
             'activity_type' : 'action',
             'action' : {
                 'type' : action,
-                'parameters' : {},
+                'parameters' : measurement_details,
                 'results' : {
                     'radiation' : radiation,
                     'units' : units
