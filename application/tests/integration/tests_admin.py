@@ -1,8 +1,8 @@
 '''
     This file contains integration tests for functionality involving sensor components.
 '''
-from context import ActionsController, CommandLineInterface, DBManager, User, DBShape, Logger, Encryption_Service
-from mock import MockAuthorisationService, MockLoginService, MockAuditor
+from context import ActionsController, CommandLineInterface, DBManager, User, DBShape, Logger, Encryption_Service, Input_Sanitisation_Service
+from mock import MockAuthorisationService, MockLoginService, MockAuditor, MockRoleService
 
 import unittest
 from random import randint
@@ -15,6 +15,7 @@ class TestAdminActions(unittest.TestCase):
     def setUp(self):
         # set up services
         self.cli = CommandLineInterface()
+        self.cli.connect_sanitisation_service(Input_Sanitisation_Service())
         action_controller = ActionsController()
         self.cli.connect_action_controller(action_controller)
         self.log_path = 'application/tests/integration/testlogs.txt'
@@ -27,6 +28,7 @@ class TestAdminActions(unittest.TestCase):
             DBShape(self.db_path)
         self.db_manager = DBManager(self.db_path)
         user = User()
+        user.connect_role_service(MockRoleService())
         action_controller.connect_user_service(user)
         user.connect_db_manager(self.db_manager)
 
@@ -48,7 +50,7 @@ class TestAdminActions(unittest.TestCase):
 
         print("----Adding user----")
         # test database and logger integration
-        mock_selections = (x for x in ['1', '1', 'test_user', 'astronaut', '01/01/1971', 'USA', f'username{randint(0, 2**16)}', 'password', 'N', '2'])
+        mock_selections = (x for x in ['1', '1', 'test_user', 'astronaut', '01-01-1971', 'US', f'username{randint(0, 2**16)}', 'password', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
@@ -82,6 +84,17 @@ class TestAdminActions(unittest.TestCase):
         print("----Deleting a user----")
         # test database and logger integration
         mock_selections = (x for x in ['1', '4', '5a08d606-8ed8-434d-8928-e50913ee7134', 'Y', '2', '5a08d606-8ed8-434d-8928-e50913ee7134', 'N', '2'])
+        self.cli.ask_for_selection = lambda: next(mock_selections)
+        self.assertTrue(self.cli.display_main_menu())
+
+    def test_update_user(self):
+        '''
+            A method that tests the update user information option.
+        '''
+
+        print("----Updating a user----")
+        # test database and logger integration
+        mock_selections = (x for x in ['1', '5', '77432281-1a57-4de2-83c8-57d5e1997287', 'role', 'Astronaut', 'Y', '4', '77432281-1a57-4de2-83c8-57d5e1997287', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
