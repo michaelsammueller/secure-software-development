@@ -3,7 +3,7 @@
 """
 # Imports
 from imports import AuthSeeder, DBShape, DBManager, CommandLineInterface, ActionsController, Input_Sanitisation_Service, Encryption_Service, Login_Service, Logger
-from imports import Thermometer, GeigerCounter, User, Role, Permission, HealthRecord, Country, AuthorisationService
+from imports import Thermometer, GeigerCounter, User, Role, Permission, HealthRecord, Country, AuthorisationService, DownloadService
 from tests.integration.mock import MockAuditor
 
 
@@ -30,6 +30,7 @@ def main():
     permission = Permission()
     health_record = HealthRecord()
     country = Country()
+    download_service = DownloadService()
 
     # connect services
     commandline_interface.connect_action_controller(action_controller)
@@ -37,6 +38,7 @@ def main():
     commandline_interface.connect_sanitisation_service(sanitisation_service)
     commandline_interface.connect_encryption_service(encryption_service)
     commandline_interface.connect_logger(logger)
+    commandline_interface.connect_download_service(download_service)
 
     action_controller.connect_login_service(login_service)
     action_controller.connect_authorisation_service(authorisation_service)
@@ -50,6 +52,11 @@ def main():
     login_service.connect_encryption_service(encryption_service)
     login_service.connect_logger(logger)
     login_service.connect_db_manager(db_manager)
+
+    download_service.connect_db_manager(db_manager)
+    download_service.connect_logger(logger)
+    download_service.connect_encryption_service(encryption_service)
+    download_service.connect_login_service(login_service)
 
     sanitisation_service.connect_logger(logger)
 
