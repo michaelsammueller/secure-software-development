@@ -28,13 +28,13 @@ class AuthSeeder():
                     "view-own-health-records",
                     "update-user-health-record",
                     "delete-user-health-records",
-                    "view-temperature", "view-radiation", 
+                    "view-temperature", "view-radiation", "change-password"
         ]
 
         self.role_has_permissions = [(1,1), (1,2), (1,3), (1,4), (1,5), (1,6),
-                                (1,7), (1,8), (1,9), (1,10), (1, 11), (1,12), (1,13),
-                                (2,6), (2,7), (2,8), (2,9), (2,10), (2,12), (2,13),
-                                (3,7), (3,9), (3,12), (3,13)
+                                (1,7), (1,8), (1,9), (1,10), (1, 11), (1,12), (1,13), (1,14),
+                                (2,6), (2,7), (2,8), (2,9), (2,10), (2,12), (2,13), (2,14),
+                                (3,7), (3,9), (3,12), (3,13), (3, 14)
         ]
 
         self.records = [
@@ -55,6 +55,7 @@ class AuthSeeder():
                 'country of employment': 'GB',
                 'username': 'Braddarb',
                 'password': 'password123',
+                'secret phrase': 'ok',
                 'uuid' : '12345'
             },
             {
@@ -64,6 +65,7 @@ class AuthSeeder():
                 'country of employment': 'DE',
                 'username': 'michael.sammueller',
                 'password': 'michael123',
+                'secret phrase': 'ok',
                 'uuid': '987654'
             },
         ]

@@ -334,7 +334,7 @@ class Login_Service:
                     print("This user does not exist.\n")
     
     def display_password_requirements(self):
-        print("Password Requirements\n")
+        print("\nNew Password Requirements")
         print("1. Must be between 8 and 64 characters long\n")
     
     def connect_encryption_service(self, encryption_service):

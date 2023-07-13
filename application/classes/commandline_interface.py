@@ -42,7 +42,7 @@ class CommandLineInterface:
     
     def request_password(self):
         """Requests user to re-enter password"""
-        password = getpass.getpass("Password: ", stream=None)
+        password = getpass.getpass("Old password: ", stream=None)
         return password
 
     def ask_for_selection(self):
@@ -111,12 +111,13 @@ class CommandLineInterface:
                         
                 # Perform action
                 results = self.__action_controller(options[selection - 1], details)
-                print("\nResults...")
-                try:
-                    print(f"{[f'{key}: {value}' for key, value in results.items()]}") # dict results
-                except:
-                    for result in results:
-                        print(f"{[f'{key}: {value}' for key, value in result.items()]}")
+                if results:
+                    print("\nResults...")
+                    try:
+                        print(f"{[f'{key}: {value}' for key, value in results.items()]}") # dict results
+                    except:
+                        for result in results:
+                            print(f"{[f'{key}: {value}' for key, value in result.items()]}")
                 # Ask to continue
                 print("\nWould you like to continue?")
                 if self.ask_for_confirmation():
@@ -194,7 +195,6 @@ Astronaut Health Monitoring System
                 username, password = self.request_login_details()  # Request user login details
                 # Handle Login
                 if self.__login_service.login(username, password):
-                    self.display_user_menu(username)
                     #self.display_test_menu(username)
                     json = {
                         'user': username,
@@ -209,6 +209,7 @@ Astronaut Health Monitoring System
                         }
                     }
                     self.__logger.log(json)
+                    self.display_user_menu(username)
                 else:
                     self.__login_service.increment_attempts()
                     json = {
@@ -383,13 +384,13 @@ Astronaut Health Monitoring System
             print("Password incorrect.\n")
             # Create logger to log failed password change
             json = {
-                'user': username,
+                'user': self.__login_service.get_loggedin_username(),
                 'activity_type': 'event',
                 'severity': 'warning',
                 'event': {
                     'type': 'failed password change',
                     'details': {
-                        'username': username,
+                        'username': self.__login_service.get_loggedin_username(),
                         'password': password,
                         'reason': 'Password did not match stored password'
                     }

@@ -21,6 +21,7 @@ class ActionsController(object):
             'Edit Health Record',
             'View Temperature',
             'View Radiation Level',
+            'Change Password'
         ]
 
         self.__ACTIONPARAMS = {
@@ -30,6 +31,7 @@ class ActionsController(object):
                              ('role', ['Astronaut', 'Moderator', 'Superadmin'], 'ROLE'),
                              ('date of birth', ['DD-MM-YYYY'], 'DATE'),
                              ('country of employment', [], 'COUNTRY'),
+                             ('secret phrase', [], ''),
                              ('username', [], ''),
                              ('password', [], 'PASSWORD')],
             'Delete User': [('uuid', [], '')],
@@ -53,6 +55,7 @@ class ActionsController(object):
             'Edit Health Record': [('record id', [], ''),
                                     ('field', ['complains', 'weight', 'height', 'blood pressure'], 'ENUM'),
                                     ('new value', [], '')], # VULNERABILITY (bypasses sanitisation)
+            'Change Password': [],
         }
 
     def get_actions(self):
@@ -91,7 +94,8 @@ class ActionsController(object):
             'View User Health Records': self.view_users_health_records,
             'Delete User Health Records': self.delete_user_health_records,
             'Update User Details': self.update_user_information,
-            'Edit Health Record': self.update_health_record
+            'Edit Health Record': self.update_health_record,
+            'Change Password': self.change_password
         }
         return func_map[action](parameters)
 
@@ -105,6 +109,7 @@ class ActionsController(object):
                 'role': 'astronaut' or 'moderator' or 'superadmin',
                 'date of birth': 'DD-MM-YYYY',
                 'country of employment': country,
+                'secret phrase' : phrase
                 'username': username,
                 'password': password
             }
@@ -572,6 +577,32 @@ class ActionsController(object):
         self.__logger.log(json)
         # return results
         return {"radiation": radiation, "units": units}
+    
+    def change_password(self, *args, **kwargs):
+        '''
+            A method for changing passwords.
+        '''
+        action = 'Change Password'
+        # assert permission for action
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
+            return {'Error': 'Unauthorised action'}
+        # log action
+        json = {
+            'user' : self.__login_service.get_loggedin_username(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : {},
+                'results' : {}
+            }
+        }
+        self.__logger.log(json)
+        # perform action
+        self.__cli.change_password()
+        # return results
+        return {}
+
 
     def assert_params_shape(self, parameters, action):
         '''
@@ -625,3 +656,7 @@ class ActionsController(object):
     def connect_login_service(self, login_service):
         """Connects the record service"""
         self.__login_service = login_service
+
+    def connect_cli(self, cli):
+        """Connects the cli"""
+        self.__cli = cli

@@ -19,6 +19,7 @@ class AuthorisationService:
             "Edit Health Record": "update-user-health-record",
             "View Temperature": "view-temperature",
             "View Radiation Level": "view-radiation",
+            "Change Password": "change-password"
         }
 
     def get_user_role(self, username):
