@@ -80,18 +80,31 @@ class CommandLineInterface:
                 params = self.__action_controller.get_action_params(options[selection - 1])
                 details = {}
                 print("\nRequesting details...")
-                for param in params:
-                    while True:
-                        if not param[1]: # only field name provided
-                            print(f"{param[0]}")
-                        else: # field name and options provided
-                            print(f"Options for {param[0]}: {param[1]}")
-                        response = self.ask_for_selection()
-                        if param[2]:
-                            if not self.__sanitisation_service.validate(response, param[2]):
-                                continue
-                        details[param[0]] = response
+                while True:
+                    for param in params:
+                        while True:
+                            if not param[1]: # only field name provided
+                                print(f"{param[0]}")
+                            else: # field name and options provided
+                                print(f"Options for {param[0]}: {param[1]}")
+                            response = self.ask_for_selection()
+                            if param[2]:
+                                #validate input
+                                if not self.__sanitisation_service.validate(response, param[2]):
+                                    continue
+                            details[param[0]] = response
+                            break
+                    # Confirm details
+                    if details:
+                        print("\nAre you happy to submit the following details?")
+                        print(f"{[f'{key}: {value}' for key, value in details.items()]}")
+                        if self.ask_for_confirmation():
+                            break
+                        else:
+                            continue
+                    else:
                         break
+                        
                 # Perform action
                 results = self.__action_controller(options[selection - 1], details)
                 print("\nResults...")
