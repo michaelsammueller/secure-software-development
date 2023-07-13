@@ -90,7 +90,7 @@ class CommandLineInterface:
                             response = self.ask_for_selection()
                             if param[2]:
                                 #validate input
-                                if not self.__sanitisation_service.validate(response, param[2]):
+                                if not self.__sanitisation_service.validate(response, param[2], param[1]):
                                     continue
                             details[param[0]] = response
                             break
@@ -108,7 +108,11 @@ class CommandLineInterface:
                 # Perform action
                 results = self.__action_controller(options[selection - 1], details)
                 print("\nResults...")
-                print(f"{[f'{key}: {value}' for key, value in results.items()]}")
+                try:
+                    print(f"{[f'{key}: {value}' for key, value in results.items()]}") # dict results
+                except:
+                    for result in results:
+                        print(f"{[f'{key}: {value}' for key, value in result.items()]}")
                 # Ask to continue
                 print("\nWould you like to continue?")
                 if self.ask_for_confirmation():
