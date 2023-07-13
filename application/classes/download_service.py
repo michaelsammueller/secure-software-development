@@ -51,6 +51,7 @@ class DownloadService:
         text_records += f"Record Items:\n"
         for record_item in record_items:
             #if record_item['record_id'] == record['id']:
+            text_records += f"Created at: {record_item['created_at']}\n"
             text_records += f"Complaints: {record_item['complains']}\n"
             text_records += f"Height: {record_item['height']}\n"
             text_records += f"Weight: {record_item['weight']}\n"

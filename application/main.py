@@ -39,6 +39,7 @@ def main():
     commandline_interface.connect_encryption_service(encryption_service)
     commandline_interface.connect_logger(logger)
     commandline_interface.connect_download_service(download_service)
+    commandline_interface.connect_db_manager(db_manager)
 
     action_controller.connect_login_service(login_service)
     action_controller.connect_authorisation_service(authorisation_service)
