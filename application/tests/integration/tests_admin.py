@@ -50,7 +50,7 @@ class TestAdminActions(unittest.TestCase):
 
         print("----Adding user----")
         # test database and logger integration
-        mock_selections = (x for x in ['1', '1', 'test_user', 'astronaut', '01-01-1971', 'US', f'username{randint(0, 2**16)}', 'password', 'Y', 'N', '2'])
+        mock_selections = (x for x in ['1', '1', 'test_user', 'astronaut', '01-01-1971', 'US', 'OK', f'username{randint(0, 2**16)}', 'password', 'Y', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
