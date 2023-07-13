@@ -16,6 +16,7 @@ class ActionsController(object):
             'Add Health Record',
             'Add Own Health Record',
             'View User Health Records',
+            'View Own Health Records',
             'Delete User Health Records',
             'Edit Health Record',
             'View Temperature',
@@ -42,6 +43,7 @@ class ActionsController(object):
                                   ('weight', ['kg'], 'INT'),
                                   ('blood_pressure', ['mmHg'], 'INT')],
             'View All Users': [],
+            'View Own Health Records': [],
             'View User Details': [('uuid', [], '')],
             'View User Health Records': [('uuid', [], '')],
             'Delete User Health Records': [('uuid', [], '')],
@@ -85,6 +87,7 @@ class ActionsController(object):
             'View Radiation Level': self.view_radiation_level,
             'View All Users': self.view_all_users,
             'View User Details': self.view_user,
+            'View Own Health Records': self.view_own_health_records,
             'View User Health Records': self.view_users_health_records,
             'Delete User Health Records': self.delete_user_health_records,
             'Update User Details': self.update_user_information,
@@ -369,6 +372,38 @@ class ActionsController(object):
         if not self.__authorisation_service.check_permission(action, user_role):
             return {'Error': 'Unauthorised action'}
         # perform action
+        results = self.__health_record_service.view_user_health_records(user_identifiers)
+        if not results:
+            log_results = {'Error': 'No Health Records Found'}
+            display_results = log_results
+        else:
+            log_results = {'Confirmation': 'Health Records Viewed'}
+            display_results = [{key: str(value) for key, value in result.items()} for result in results]
+        # log action
+        json = {
+            'user' : self.__login_service.get_loggedin_username(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : user_identifiers,
+                'results' : log_results
+            }
+        }
+        self.__logger.log(json)
+        # return results
+        return display_results
+    
+    def view_own_health_records(self, *args, **kwargs):
+        '''
+            A method for viewing the health records about a user.
+        '''
+        action = 'View Own Health Records'
+        # assert permission for action
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
+            return {'Error': 'Unauthorised action'}
+        # perform action
+        user_identifiers = {'uuid' : self.__user_service.get_user_uuid(self.__login_service.get_loggedin_username())}
         results = self.__health_record_service.view_user_health_records(user_identifiers)
         if not results:
             log_results = {'Error': 'No Health Records Found'}

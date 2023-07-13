@@ -14,6 +14,7 @@ class AuthorisationService:
             "Add Health Record": "add-health-record",
             'Add Own Health Record': 'add-own-health-record',
             "View User Health Records": "view-user-health-records",
+            "View Own Health Records": "view-own-health-records",
             "Delete User Health Records": "delete-user-health-records",
             "Edit Health Record": "update-user-health-record",
             "View Temperature": "view-temperature",
