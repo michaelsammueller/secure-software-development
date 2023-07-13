@@ -138,18 +138,18 @@ The planned roles did not cover system functionality. We also needed to map perm
 role-based access controls (RBAC) was implemented robustly. The SuperAdmin can perform all actions.
  
 The updated role matrix maped to permissions and roles is shown in the table below:
-| UserAction / Permission Name            | _Superadmin_ | _Moderator_ | _Astronaut_ |
-| :-------------------------------------- | :----------: | :---------: | :---------: |
-| Add New User / add-user                 | [x]          | [ ]         | [ ]         |
-| Delete User / delete-user               | [x]          | [ ]         | [ ]         |
-| Add Health Record/ add-health-record    | [x]          | [ ]         | [x]         |
-| View Health Record / view-health-record | [x]          | [x]         | [x]         | 
-| View Warning Logs/ view-logs            | [x]          | [ ]         | [ ]         |
-| View Temperature / view-temperature     | [x]          | [x]         | [x]         |
-| View Radition Level / view-radiation    | [x]          | [x]         | [x]         |
-| Update Health Record / update-record    | [x]          | [x]         | [x]         |
-| Delete Health Record / delete-record    | [x]          | [ ]         | [ ]         |
-| Download Health Record / download-record| [x]          | [ ]         | [x]         |
+| UserAction / Permission Name                            | _Superadmin_ | _Moderator_ | _Astronaut_ |
+| :--------------------------------------                 | :----------: | :---------: | :---------: |
+| Add New User / create-user                              | [x]          | [ ]         | [ ]         |
+| Delete User / delete-user                               | [x]          | [ ]         | [ ]         |
+| View All Users / view-all-users                         | [x]          | [ ]         | [ ]         |
+| View User Details / view-user-details                   | [x]          | [x]         | [x]         | 
+| Add Health Record / add-health-record                   | [x]          | [ ]         | [x]         |
+| View User Health Records / view-user-health-records     | [x]          | [x]         | [ ]         |
+| Delete User Health Records / delete-user-health-records | [x]          | [ ]         | [ ]         |
+| View Temperature / view-temperature                     | [x]          | [x]         | [x]         |
+| View Radiation level / view-radiation                   | [x]          | [x]         | [x]         |
+| Download Health Record / download-record                | [x]          | [ ]         | [x]         |
 
 
 ### <a name="10">Testing</a>

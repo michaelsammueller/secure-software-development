@@ -11,7 +11,7 @@ class Input_Sanitisation_Service:
 
     def filter_sql_keywords(self, user_input): # TESTED AND WORKING
         """Filters SQL keywords from user input"""
-        sql_keywords = ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'FROM', 'WHERE', 'JOIN']
+        sql_keywords = ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'FROM', 'WHERE', 'JOIN', ' OR', 'OR']
 
         for keyword in sql_keywords:
             if keyword in user_input:

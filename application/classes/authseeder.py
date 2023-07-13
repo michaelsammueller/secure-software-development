@@ -55,7 +55,16 @@ class AuthSeeder():
                 'username': 'Braddarb',
                 'password': 'password123',
                 'uuid' : '12345'
-            }
+            },
+            {
+                'name': 'Michael',
+                'role': 3,
+                'date of birth': '30-06-1998',
+                'country of employment': 'DE',
+                'username': 'michael.sammueller',
+                'password': 'michael123',
+                'uuid': '987654'
+            },
         ]
 
     def __call__(self):
