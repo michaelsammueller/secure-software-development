@@ -292,11 +292,11 @@ class Login_Service:
         current_time = time.time()
         if self.__lock_time is None:
             return False
-        if current_time - self.__lock_time >= 300:
+        if current_time - self.__lock_time >= 10:
             self.__lock_time = None
             return False
         else:
-            remaining_time = int(300 - (current_time - self.__lock_time))
+            remaining_time = int(10 - (current_time - self.__lock_time))
             return remaining_time
     
     def start_lockdown_timer(self):
@@ -310,22 +310,28 @@ class Login_Service:
     def password_input_thread(self):
         """Thread function to ask for superadmin access"""
         while True:
-            username = input("Enter admin username: ")
-            password = getpass.getpass("Enter admin password: ")
-            # Create a thread safe connection to the database
-
-            query = 'SELECT password, role_id FROM users WHERE username = ?'
-            user = self.__db_manager.do_select(query, (username,))
-            if user:
-                stored_password = user[0]['password']
-                role_id = user[0]['role_id']
-                if role_id == 1 and bcrypt.checkpw(password.encode(), stored_password):
-                    self.__stop_timer = True
-                    break
-                else:
-                    print("This user is not an admin.\n")
+            if not self.check_lockdown():
+                self.set_login_attempts(0)
+                print("\n1. Login")
+                print("2. Exit\n")
+                break
             else:
-                print("This user does not exist.\n")
+                username = input("Enter admin username: ")
+                password = getpass.getpass("Enter admin password: ")
+                # Create a thread safe connection to the database
+
+                query = 'SELECT password, role_id FROM users WHERE username = ?'
+                user = self.__db_manager.do_select(query, (username,))
+                if user:
+                    stored_password = user[0]['password']
+                    role_id = user[0]['role_id']
+                    if role_id == 1 and bcrypt.checkpw(password.encode(), stored_password):
+                        self.__stop_timer = True
+                        break
+                    else:
+                        print("This user is not an admin.\n")
+                else:
+                    print("This user does not exist.\n")
     
     def display_password_requirements(self):
         print("Password Requirements\n")
