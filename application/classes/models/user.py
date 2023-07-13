@@ -95,6 +95,14 @@ class User:
         where = (username, )
         role_id = self.__db_manager.do_select(query, where)[0][0]
         return self.__role_service.get_role_name(role_id)
+    
+    def get_user_uuid(self, username):
+        '''
+            Get the uuid of a user from the database
+        '''
+        query ='SELECT uuid FROM users WHERE username = ?'
+        where = (username, )
+        return self.__db_manager.do_select(query, where)[0][0]
 
     def connect_db_manager(self, db_manager):
         '''

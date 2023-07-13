@@ -24,16 +24,16 @@ class AuthSeeder():
 
         self.permissions = ["create-user", "delete-user", "view-all-users",
                     "view-user-details", "update-user-details",
-                    "add-health-record", "view-user-health-records",
+                    "add-health-record", "add-own-health-record", "view-user-health-records",
                     "update-user-health-record",
                     "delete-user-health-records",
                     "view-temperature", "view-radiation", 
         ]
 
         self.role_has_permissions = [(1,1), (1,2), (1,3), (1,4), (1,5), (1,6),
-                                (1,7), (1,8), (1,9), (1,10), (1, 11),
-                                (2,6), (2,7), (2,10), (2,11),
-                                (3,6), (3,10), (3,11)
+                                (1,7), (1,8), (1,9), (1,10), (1, 11), (1,12),
+                                (2,6), (2,7), (2,8), (2,9), (2,11), (2,12),
+                                (3,7), (3,11), (3,12)
         ]
 
         self.records = [

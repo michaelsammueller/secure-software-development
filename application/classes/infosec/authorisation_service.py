@@ -12,6 +12,7 @@ class AuthorisationService:
             "View User Details": "view-user-details",
             "Update User Details": "update-user-details",
             "Add Health Record": "add-health-record",
+            'Add Own Health Record': 'add-own-health-record',
             "View User Health Records": "view-user-health-records",
             "Delete User Health Records": "delete-user-health-records",
             "Edit Health Record": "update-user-health-record",
