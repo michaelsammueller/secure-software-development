@@ -327,6 +327,8 @@ class Login_Service:
                     role_id = user[0]['role_id']
                     if role_id == 1 and bcrypt.checkpw(password.encode(), stored_password):
                         self.__stop_timer = True
+                        print("\n1. Login")
+                        print("2. Exit\n")
                         break
                     else:
                         print("This user is not an admin.\n")
