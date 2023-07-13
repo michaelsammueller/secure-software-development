@@ -5,12 +5,18 @@
 # Imports
 import bcrypt
 import datetime
+import time
+import getpass
+from classes.dbmanager import DBManager
 
 # Login Class
 class Login_Service:
     def __init__(self):
         self.__username = ''
         self.__password = ''
+        self.__login_attempts = 0
+        self.__lock_time = None
+        self.__stop_timer = False
     
     def set_username(self, username):
         """Sets username"""
@@ -20,10 +26,26 @@ class Login_Service:
         encrypted_password = self.__encryption_service.encrypt(password)
         self.__password = encrypted_password
     
+    def set_login_attempts(self, login_attempts):
+        """Sets number of login attempts"""
+        self.__login_attempts = login_attempts
+    
     def get_password(self):
         """Decrypts password and returns it"""
         decrypted_password = self.__encryption_service.decrypt(self.__password)
         return decrypted_password
+    
+    def get_stop_timer(self):
+        """Returns stop timer"""
+        return self.__stop_timer
+    
+    def get_login_attempts(self):
+        """Returns number of login attempts"""
+        return self.__login_attempts
+    
+    def get_lock_time(self):
+        """Returns lock time"""
+        return self.__lock_time
     
     def check_password(self, password):
         """Reauthenticates user by checking password"""
@@ -129,8 +151,10 @@ class Login_Service:
                     return True
                 else:
                     print("Invalid username or password.\n")
+                    self.__login_attempts += 1
                     return False
             else:
+                self.__login_attempts += 1
                 print("No such user.\n")
         except Exception as e:
             print(f"An error occured: {e}\n")
@@ -247,6 +271,60 @@ class Login_Service:
             self.__logger.log(json)
             return False
     
+    def increment_attempts(self):
+        """Increments login attempts"""
+        self.__login_attempts += 1
+
+    def lockdown_required(self):
+        """Checks if number of failed attempts has reached the limit"""
+        if self.__login_attempts >= 3:
+            return True
+        else:
+            return False
+    
+    def lockdown(self):
+        """Locks the application"""
+        current_time = time.time()
+        self.__lock_time = current_time
+    
+    def check_lockdown(self):
+        """Checks if the application is locked and returns the remaining time"""
+        current_time = time.time()
+        if self.__lock_time is None:
+            return False
+        if current_time - self.__lock_time >= 300:
+            self.__lock_time = None
+            return False
+        else:
+            remaining_time = int(300 - (current_time - self.__lock_time))
+            return remaining_time
+    
+    def start_lockdown_timer(self):
+        """Starts the lockdown timer"""
+        self.__lock_time = time.time()
+
+    def stop_lockdown_timer(self):
+        """Stops the lockdown timer"""
+        self.__lock_time = None
+
+    def password_input_thread(self):
+        """Thread function to ask for superadmin access"""
+        username = input("Enter admin username: ")
+        password = getpass.getpass("Enter admin password: ")
+        # Create a thread safe connection to the database
+
+        query = 'SELECT password, role_id FROM users WHERE username = ?'
+        user = self.__db_manager.do_select(query, (username,))
+        if user:
+            stored_password = user[0]['password']
+            role_id = user[0]['role_id']
+            if role_id == 1 and bcrypt.checkpw(password.encode(), stored_password):
+                self.__stop_timer = True
+            else:
+                print("This user is not an admin.\n")
+        else:
+            print("This user does not exist.\n")
+    
     def display_password_requirements(self):
         print("Password Requirements\n")
         print("1. Must be between 8 and 64 characters long\n")
@@ -266,3 +344,4 @@ class Login_Service:
     def connect_db_manager(self, db_manager):
         """Connects the db manager"""
         self.__db_manager = db_manager
+
