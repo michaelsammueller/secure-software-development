@@ -277,7 +277,7 @@ class Login_Service:
 
     def lockdown_required(self):
         """Checks if number of failed attempts has reached the limit"""
-        if self.__login_attempts >= 3:
+        if self.__login_attempts >= 5:
             return True
         else:
             return False
@@ -309,21 +309,23 @@ class Login_Service:
 
     def password_input_thread(self):
         """Thread function to ask for superadmin access"""
-        username = input("Enter admin username: ")
-        password = getpass.getpass("Enter admin password: ")
-        # Create a thread safe connection to the database
+        while True:
+            username = input("Enter admin username: ")
+            password = getpass.getpass("Enter admin password: ")
+            # Create a thread safe connection to the database
 
-        query = 'SELECT password, role_id FROM users WHERE username = ?'
-        user = self.__db_manager.do_select(query, (username,))
-        if user:
-            stored_password = user[0]['password']
-            role_id = user[0]['role_id']
-            if role_id == 1 and bcrypt.checkpw(password.encode(), stored_password):
-                self.__stop_timer = True
+            query = 'SELECT password, role_id FROM users WHERE username = ?'
+            user = self.__db_manager.do_select(query, (username,))
+            if user:
+                stored_password = user[0]['password']
+                role_id = user[0]['role_id']
+                if role_id == 1 and bcrypt.checkpw(password.encode(), stored_password):
+                    self.__stop_timer = True
+                    break
+                else:
+                    print("This user is not an admin.\n")
             else:
-                print("This user is not an admin.\n")
-        else:
-            print("This user does not exist.\n")
+                print("This user does not exist.\n")
     
     def display_password_requirements(self):
         print("Password Requirements\n")
