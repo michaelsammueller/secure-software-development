@@ -14,38 +14,48 @@ class ActionsController(object):
             'View User Details',
             'Update User Details',
             'Add Health Record',
+            'Add Own Health Record',
             'View User Health Records',
+            'View Own Health Records',
             'Delete User Health Records',
             'Edit Health Record',
             'View Temperature',
             'View Radiation Level',
+            'Change Password'
         ]
 
         self.__ACTIONPARAMS = {
-            'View Temperature': [('units', ['C', 'F', 'K'], '')],
-            'View Radiation Level': [('units', ['Rem', 'SV'], '')],
+            'View Temperature': [('units', ['C', 'F', 'K'], 'ENUM')],
+            'View Radiation Level': [('units', ['Rem', 'SV'], 'ENUM')],
             'Add New User': [('name', [], ''), 
-                             ('role', ['astronaut', 'moderator', 'superadmin'], 'ROLE'),
+                             ('role', ['Astronaut', 'Moderator', 'Superadmin'], 'ROLE'),
                              ('date of birth', ['DD-MM-YYYY'], 'DATE'),
                              ('country of employment', [], 'COUNTRY'),
+                             ('secret phrase', [], ''),
                              ('username', [], ''),
                              ('password', [], 'PASSWORD')],
             'Delete User': [('uuid', [], '')],
+            'Add Own Health Record': [('complains', [], ''),
+                                  ('height', ['cm'], 'INT'),
+                                  ('weight', ['kg'], 'INT'),
+                                  ('blood_pressure', ['mmHg'], 'INT')],
             'Add Health Record': [('uuid', [], ''),
                                   ('complains', [], ''),
-                                  ('height', ['cm'], ''),
-                                  ('weight', ['kg'], ''),
-                                  ('blood_pressure', ['mmHg'], '')],
+                                  ('height', ['cm'], 'INT'),
+                                  ('weight', ['kg'], 'INT'),
+                                  ('blood_pressure', ['mmHg'], 'INT')],
             'View All Users': [],
+            'View Own Health Records': [],
             'View User Details': [('uuid', [], '')],
             'View User Health Records': [('uuid', [], '')],
             'Delete User Health Records': [('uuid', [], '')],
             'Update User Details': [('uuid', [], ''),
-                                    ('field', ['name', 'role', 'date of birth', 'country of employment'], ''),
+                                    ('field', ['name', 'role', 'date of birth', 'country of employment'], 'ENUM'),
                                     ('new value', [], '')], # VULNERABILITY (bypasses sanitisation)
             'Edit Health Record': [('record id', [], ''),
-                                    ('field', ['complains', 'weight', 'height', 'blood pressure'], ''),
+                                    ('field', ['complains', 'weight', 'height', 'blood pressure'], 'ENUM'),
                                     ('new value', [], '')], # VULNERABILITY (bypasses sanitisation)
+            'Change Password': [],
         }
 
     def get_actions(self):
@@ -75,14 +85,17 @@ class ActionsController(object):
             'Add New User': self.add_new_user,
             'Delete User': self.delete_user,
             'Add Health Record': self.add_health_record,
+            'Add Own Health Record': self.add_own_health_record,
             'View Temperature': self.view_temperature,
             'View Radiation Level': self.view_radiation_level,
             'View All Users': self.view_all_users,
             'View User Details': self.view_user,
+            'View Own Health Records': self.view_own_health_records,
             'View User Health Records': self.view_users_health_records,
             'Delete User Health Records': self.delete_user_health_records,
             'Update User Details': self.update_user_information,
-            'Edit Health Record': self.update_health_record
+            'Edit Health Record': self.update_health_record,
+            'Change Password': self.change_password
         }
         return func_map[action](parameters)
 
@@ -96,6 +109,7 @@ class ActionsController(object):
                 'role': 'astronaut' or 'moderator' or 'superadmin',
                 'date of birth': 'DD-MM-YYYY',
                 'country of employment': country,
+                'secret phrase' : phrase
                 'username': username,
                 'password': password
             }
@@ -288,7 +302,46 @@ class ActionsController(object):
         if not self.__authorisation_service.check_permission(action, user_role):
             return {'Error': 'Unauthorised action'}
         # perform action
-        if self.__health_record_service.add_record(new_health_record_details): # TODO
+        if self.__health_record_service.add_record(new_health_record_details):
+            results = {'Confirmation': 'Health Record Added'}
+        else:
+            results = {'Error': 'Health Record Not Added'}
+        # log action
+        json = {
+            'user' : self.__login_service.get_loggedin_username(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : new_health_record_details,
+                'results' : results
+            }
+        }
+        self.__logger.log(json)
+        # return results
+        return results
+    
+    def add_own_health_record(self, new_health_record_details):
+        '''
+            A method for adding own health record details to the system about a user.
+
+            new_user_details interface:
+            {
+                'complains' : complaints
+                'height': height,
+                'weight': weight,
+                'blood_pressure': blood_pressure,
+            }
+        '''
+        action = 'Add Own Health Record'
+        if not self.assert_params_shape(new_health_record_details, action):
+            return {'Error': 'Missing parameters'}
+        # assert permission for action
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
+            return {'Error': 'Unauthorised action'}
+        # perform action
+        new_health_record_details['uuid'] = self.__user_service.get_user_uuid(self.__login_service.get_loggedin_username())
+        if self.__health_record_service.add_record(new_health_record_details):
             results = {'Confirmation': 'Health Record Added'}
         else:
             results = {'Error': 'Health Record Not Added'}
@@ -326,9 +379,11 @@ class ActionsController(object):
         # perform action
         results = self.__health_record_service.view_user_health_records(user_identifiers)
         if not results:
-            results = {'Error': 'No Health Records Found'}
+            log_results = {'Error': 'No Health Records Found'}
+            display_results = log_results
         else:
-            results = {key: str(value) for key, value in results.items()}
+            log_results = {'Confirmation': 'Health Records Viewed'}
+            display_results = [{key: str(value) for key, value in result.items()} for result in results]
         # log action
         json = {
             'user' : self.__login_service.get_loggedin_username(),
@@ -336,12 +391,44 @@ class ActionsController(object):
             'action' : {
                 'type' : action,
                 'parameters' : user_identifiers,
-                'results' : results
+                'results' : log_results
             }
         }
         self.__logger.log(json)
         # return results
-        return results
+        return display_results
+    
+    def view_own_health_records(self, *args, **kwargs):
+        '''
+            A method for viewing the health records about a user.
+        '''
+        action = 'View Own Health Records'
+        # assert permission for action
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
+            return {'Error': 'Unauthorised action'}
+        # perform action
+        user_identifiers = {'uuid' : self.__user_service.get_user_uuid(self.__login_service.get_loggedin_username())}
+        results = self.__health_record_service.view_user_health_records(user_identifiers)
+        if not results:
+            log_results = {'Error': 'No Health Records Found'}
+            display_results = log_results
+        else:
+            log_results = {'Confirmation': 'Health Records Viewed'}
+            display_results = [{key: str(value) for key, value in result.items()} for result in results]
+        # log action
+        json = {
+            'user' : self.__login_service.get_loggedin_username(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : user_identifiers,
+                'results' : log_results
+            }
+        }
+        self.__logger.log(json)
+        # return results
+        return display_results
     
     def delete_user_health_records(self, user_identifiers):
         '''
@@ -490,6 +577,32 @@ class ActionsController(object):
         self.__logger.log(json)
         # return results
         return {"radiation": radiation, "units": units}
+    
+    def change_password(self, *args, **kwargs):
+        '''
+            A method for changing passwords.
+        '''
+        action = 'Change Password'
+        # assert permission for action
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
+            return {'Error': 'Unauthorised action'}
+        # log action
+        json = {
+            'user' : self.__login_service.get_loggedin_username(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : {},
+                'results' : {}
+            }
+        }
+        self.__logger.log(json)
+        # perform action
+        self.__cli.change_password()
+        # return results
+        return {}
+
 
     def assert_params_shape(self, parameters, action):
         '''
@@ -543,3 +656,7 @@ class ActionsController(object):
     def connect_login_service(self, login_service):
         """Connects the record service"""
         self.__login_service = login_service
+
+    def connect_cli(self, cli):
+        """Connects the cli"""
+        self.__cli = cli

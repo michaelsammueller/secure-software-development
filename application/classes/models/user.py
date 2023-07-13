@@ -15,13 +15,13 @@ class User:
         
         # perform database query to save user attributes.
         query = "INSERT INTO users (uuid, name, code, dob, role_id, \
-            country_id, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
+            country_id, phrase, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
         if 'uuid' in user_details.keys():
             _uuid = user_details['uuid']
         else:
             _uuid = str(uuid.uuid4())
         values = (_uuid, user_details['name'], user_details['username'], user_details['date of birth'], user_details['role'],
-                  user_details['country of employment'], user_details['username'], user_details['password'])
+                  user_details['country of employment'], user_details['secret phrase'], user_details['username'], user_details['password'])
 
         # call do_insert method from DBmanager.
         return self.__db_manager.do_insert(query, values, dry=False)
@@ -95,6 +95,14 @@ class User:
         where = (username, )
         role_id = self.__db_manager.do_select(query, where)[0][0]
         return self.__role_service.get_role_name(role_id)
+    
+    def get_user_uuid(self, username):
+        '''
+            Get the uuid of a user from the database
+        '''
+        query ='SELECT uuid FROM users WHERE username = ?'
+        where = (username, )
+        return self.__db_manager.do_select(query, where)[0][0]
 
     def connect_db_manager(self, db_manager):
         '''

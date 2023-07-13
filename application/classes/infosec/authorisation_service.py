@@ -12,11 +12,14 @@ class AuthorisationService:
             "View User Details": "view-user-details",
             "Update User Details": "update-user-details",
             "Add Health Record": "add-health-record",
+            'Add Own Health Record': 'add-own-health-record',
             "View User Health Records": "view-user-health-records",
+            "View Own Health Records": "view-own-health-records",
             "Delete User Health Records": "delete-user-health-records",
             "Edit Health Record": "update-user-health-record",
             "View Temperature": "view-temperature",
             "View Radiation Level": "view-radiation",
+            "Change Password": "change-password"
         }
 
     def get_user_role(self, username):

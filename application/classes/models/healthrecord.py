@@ -33,7 +33,7 @@ class HealthRecord:
         # call do_select method from DBManager.
         result = self.__db_manager.do_select(query, where)
         if result:
-            json = {result[0].keys()[i] : value for i, value in enumerate(result[0])}
+            json = [{result[j].keys()[i] : value for i, value in enumerate(result[j])} for j in range(len(result))]
         else:
             json = {}
         return json
