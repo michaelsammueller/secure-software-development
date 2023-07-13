@@ -54,6 +54,18 @@ class MockLoginService:
         '''
         return "Braddarb"
     
+    def check_lockdown(self, *args, **kwargs):
+        '''
+        A method for mocking lockdown.
+        '''
+        return False
+    
+    def lockdown_required(  self, *args, **kwargs):
+        '''
+        A method for mocking lockdown.
+        '''
+        return False
+    
 class MockEncryptionService:
     '''
         A class for mocking the encryption service.
