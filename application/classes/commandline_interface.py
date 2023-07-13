@@ -513,10 +513,6 @@ Astronaut Health Monitoring System
         """Connects the download service"""
         self.__download_service = download_service
     
-    def connect_logincounter(self, logincounter):
-        """Connects the login counter"""
-        self.__logincounter = logincounter
-    
     def connect_db_manager(self, db_manager):
         """Connects the database manager"""
         self.__db_manager = db_manager
