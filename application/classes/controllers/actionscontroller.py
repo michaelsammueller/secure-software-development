@@ -371,9 +371,11 @@ class ActionsController(object):
         # perform action
         results = self.__health_record_service.view_user_health_records(user_identifiers)
         if not results:
-            results = {'Error': 'No Health Records Found'}
+            log_results = {'Error': 'No Health Records Found'}
+            display_results = log_results
         else:
-            results = [{key: str(value) for key, value in result.items()} for result in results]
+            log_results = {'Confirmation': 'Health Records Viewed'}
+            display_results = [{key: str(value) for key, value in result.items()} for result in results]
         # log action
         json = {
             'user' : self.__login_service.get_loggedin_username(),
@@ -381,12 +383,12 @@ class ActionsController(object):
             'action' : {
                 'type' : action,
                 'parameters' : user_identifiers,
-                'results' : results
+                'results' : log_results
             }
         }
         self.__logger.log(json)
         # return results
-        return results
+        return display_results
     
     def delete_user_health_records(self, user_identifiers):
         '''
