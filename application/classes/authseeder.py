@@ -44,13 +44,6 @@ class AuthSeeder():
                 'username': 'Braddarb',
                 'password': 'password123'
             }
-            {
-                'name': 'Rachel',
-                'role': 3,
-                'date of birth': '30-04-1989',
-                'country of employment': 'DE',
-                'username': 'RDohe',
-                'password': 'password456'
         ]
 
     def __call__(self):
