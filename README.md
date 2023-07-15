@@ -15,7 +15,7 @@ Team Members: _Bradley Graham, Michael Sammueller, Tomas Mestanza & Rachel Doher
 7. [Database](7)
 8. [Security Features Checklist](8)
 9. [List of changes - Design Document --> Implementation](9)
-10. [Testing Results](10)
+10. [Testing](10)
 11. [GDPR](11)
     - [Data Security Statement](11a)
     - [Data Privacy Policy](11b)
