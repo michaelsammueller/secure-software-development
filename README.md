@@ -62,7 +62,7 @@ On first-time deployment of the application and database intialisation, a user w
 
 The program is written in Python3 and uses the following built-in libraries: **re, logging, unittest, getpass, threading, pip, json, datetime, random, sys, uuid, cryptography, unittest, abc, os**
 
-### <a name="6">External tools & libraries></a>
+### <a name="6">External tools & libraries</a>
 
 - **bcrypt** - for password hashing
 - **Pylama** - for checking code quality
