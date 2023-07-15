@@ -15,9 +15,13 @@ class User:
         
         # perform database query to save user attributes.
         query = "INSERT INTO users (uuid, name, code, dob, role_id, \
-            country_id, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
-        values = (str(uuid.uuid4()), user_details['name'], user_details['username'], user_details['date of birth'], user_details['role'],
-                  user_details['country of employment'], user_details['username'], user_details['password'])
+            country_id, phrase, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
+        if 'uuid' in user_details.keys():
+            _uuid = user_details['uuid']
+        else:
+            _uuid = str(uuid.uuid4())
+        values = (_uuid, user_details['name'], user_details['username'], user_details['date of birth'], user_details['role'],
+                  user_details['country of employment'], user_details['secret phrase'], user_details['username'], user_details['password'])
 
         # call do_insert method from DBmanager.
         return self.__db_manager.do_insert(query, values, dry=False)
@@ -49,6 +53,9 @@ class User:
         result = self.__db_manager.do_select(query, where)
         if result:
             json = {result[0].keys()[i] : value for i, value in enumerate(result[0])}
+            # clean up json
+            json['role'] = self.__role_service.get_role_name(json['role_id'])
+            del json['role_id']
         else:
             json = {}
         return json
@@ -60,7 +67,25 @@ class User:
         query = "DELETE FROM users WHERE uuid = ?"
         where = (user_identifiers['uuid'],)
         # call do_delete method from DBManager
-        return self.__db_manager.do_delete(query, where, False)   
+        return self.__db_manager.do_delete(query, where, False)
+
+    def update_user(self, user_information):
+        '''
+            Update a user from the database
+        '''
+        field = user_information['field']
+        value = user_information['new value']
+        if field == 'date of birth':
+            field = 'dob'
+        elif field == 'country of employment':
+            field = 'country_id'
+        elif field == 'role':
+            field = 'role_id'
+            value = self.__role_service.get_role_id(value)
+        query = f"UPDATE users SET {field} = {value} WHERE uuid = ?"
+        where = (user_information['uuid'],)
+        # call do_delete method from DBManager
+        return self.__db_manager.do_update(query, where, False)    
     
     def get_user_role(self, username):
         '''
@@ -70,6 +95,14 @@ class User:
         where = (username, )
         role_id = self.__db_manager.do_select(query, where)[0][0]
         return self.__role_service.get_role_name(role_id)
+    
+    def get_user_uuid(self, username):
+        '''
+            Get the uuid of a user from the database
+        '''
+        query ='SELECT uuid FROM users WHERE username = ?'
+        where = (username, )
+        return self.__db_manager.do_select(query, where)[0][0]
 
     def connect_db_manager(self, db_manager):
         '''

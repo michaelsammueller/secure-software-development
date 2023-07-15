@@ -11,7 +11,7 @@ class Input_Sanitisation_Service:
 
     def filter_sql_keywords(self, user_input): # TESTED AND WORKING
         """Filters SQL keywords from user input"""
-        sql_keywords = ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'FROM', 'WHERE', 'JOIN']
+        sql_keywords = ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'FROM', 'WHERE', 'JOIN', ' OR', 'OR']
 
         for keyword in sql_keywords:
             if keyword in user_input:
@@ -125,7 +125,24 @@ class Input_Sanitisation_Service:
             print("Incorrect data format, should be DD-MM-YYYY")
             return False
         
-    def validate(self, user_input, type, *args, **kwargs):
+    def validate_integer(self, number):
+        """Validates integer"""
+        try:
+            int(number)
+            return True
+        except ValueError:
+            print("Please enter an integer")
+            return False
+        
+    def validate_enum(self, user_input, options):
+        """Validates option"""
+        if user_input in options:
+            return True
+        else:
+            print(f"Please select from: {options}")
+            return False
+        
+    def validate(self, user_input, type, options, *args, **kwargs):
         '''
             Validates user input based on type. Returns True if validation passes,
             False otherwise.
@@ -138,6 +155,10 @@ class Input_Sanitisation_Service:
             return self.validate_role(user_input)
         elif type == 'DATE':
             return self.validate_dob(user_input)
+        elif type == 'ENUM':
+            return self.validate_enum(user_input, options)
+        elif type == 'INT':
+            return self.validate_integer(user_input)
         else:
             print("Invalid type.")
             return False

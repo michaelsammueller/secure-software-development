@@ -4,10 +4,14 @@
 
 # Imports
 import getpass
+import time
+import threading
 
 # CommandLineInterface class
 # This class will be responsible for handling user input
 class CommandLineInterface:
+    def __init__(self):
+        self.__timer_thread = None
 
     def greeting(self, username):
         """Display greeting message"""
@@ -38,7 +42,7 @@ class CommandLineInterface:
     
     def request_password(self):
         """Requests user to re-enter password"""
-        password = getpass.getpass("Password: ", stream=None)
+        password = getpass.getpass("Old password: ", stream=None)
         return password
 
     def ask_for_selection(self):
@@ -80,22 +84,40 @@ class CommandLineInterface:
                 params = self.__action_controller.get_action_params(options[selection - 1])
                 details = {}
                 print("\nRequesting details...")
-                for param in params:
-                    while True:
-                        if not param[1]: # only field name provided
-                            print(f"{param[0]}")
-                        else: # field name and options provided
-                            print(f"Options for {param[0]}: {param[1]}")
-                        response = self.ask_for_selection()
-                        if param[2]:
-                            if not self.__sanitisation_service.validate(response, param[2]):
-                                continue
-                        details[param[0]] = response
+                while True:
+                    for param in params:
+                        while True:
+                            if not param[1]: # only field name provided
+                                print(f"{param[0]}")
+                            else: # field name and options provided
+                                print(f"Options for {param[0]}: {param[1]}")
+                            response = self.ask_for_selection()
+                            if param[2]:
+                                #validate input
+                                if not self.__sanitisation_service.validate(response, param[2], param[1]):
+                                    continue
+                            details[param[0]] = response
+                            break
+                    # Confirm details
+                    if details:
+                        print("\nAre you happy to submit the following details?")
+                        print(f"{[f'{key}: {value}' for key, value in details.items()]}")
+                        if self.ask_for_confirmation():
+                            break
+                        else:
+                            continue
+                    else:
                         break
+                        
                 # Perform action
                 results = self.__action_controller(options[selection - 1], details)
-                print("\nResults...")
-                print(f"{[f'{key}: {value}' for key, value in results.items()]}")
+                if results:
+                    print("\nResults...")
+                    try:
+                        print(f"{[f'{key}: {value}' for key, value in results.items()]}") # dict results
+                    except:
+                        for result in results:
+                            print(f"{[f'{key}: {value}' for key, value in result.items()]}")
                 # Ask to continue
                 print("\nWould you like to continue?")
                 if self.ask_for_confirmation():
@@ -128,50 +150,81 @@ Astronaut Health Monitoring System
             print("\n1. Login")
             print("2. Exit\n")
 
+            # Check if application is locked
+            remaining_time = self.__login_service.check_lockdown()
+            if remaining_time > 0:
+                if self.__timer_thread is None:
+                    minutes = remaining_time // 60
+                    seconds = remaining_time % 60
+                    print(f"Application is locked. Please try again in {minutes} minutes and {seconds} seconds.\n")
+                
+                    self.__timer_thread = threading.Thread(target=self.__login_service.password_input_thread,)
+                    self.__timer_thread.start()
+
+                self.__timer_thread.join()
+
+                stop_timer = self.__login_service.get_stop_timer()
+                if stop_timer: # Stop the timer
+                    self.__login_service.stop_lockdown_timer()
+                    self.__login_service.set_login_attempts(0)
             # Request user selection
             selection = self.ask_for_selection()
-            # Login attempt counter
-            login_attempts = 0
+
+            # Check if lockdown is required
+            if self.__login_service.lockdown_required():
+                print("Exceeded maximum amount of login attempts. Please try again later.\n")
+                # Lock application
+                self.__login_service.lockdown()
+                # Log the lockdown event
+                json = {
+                    'user': 'system',
+                    'activity_type': 'event',
+                    'severity': 'danger',
+                    'event': {
+                        'type': 'lockdown',
+                        'details': {
+                            'message': 'Exceeded maximum amount of login attempts'
+                        }
+                    }
+                }
+                self.__logger.log(json)
+                continue
 
             # Handle user selection
             if selection == '1':
-                if login_attempts < 6:
-                    username, password = self.request_login_details()  # Request user login details
-                    # Handle Login
-                    if self.__login_service.login(username, password):
-                        self.display_user_menu(username)
-                        #self.display_test_menu(username)
-                        json = {
-                            'user': username,
-                            'activity_type': 'event',
-                            'severity': 'info',
-                            'event': {
-                                'type': 'successful login',
-                                'details': {
-                                    'username': username,
-                                    'password': password
-                                }
+                username, password = self.request_login_details()  # Request user login details
+                # Handle Login
+                if self.__login_service.login(username, password):
+                    #self.display_test_menu(username)
+                    json = {
+                        'user': username,
+                        'activity_type': 'event',
+                        'severity': 'info',
+                        'event': {
+                            'type': 'successful login',
+                            'details': {
+                                'username': username,
+                                'password': password
                             }
                         }
-                        self.__logger.log(json)
-                    else:
-                        login_attempts += 1
-                        json = {
-                            'user': username,
-                            'activity_type': 'event',
-                            'severity': 'warning',
-                            'event': {
-                                'type': 'failed login',
-                                'details': {
-                                    'username': username,
-                                    'password': password
-                                }
-                            }
-                        }
-                        self.__logger.log(json)
+                    }
+                    self.__logger.log(json)
+                    self.display_user_menu(username)
                 else:
-                    # Add lockdown method
-                    pass
+                    self.__login_service.increment_attempts()
+                    json = {
+                        'user': username,
+                        'activity_type': 'event',
+                        'severity': 'warning',
+                        'event': {
+                            'type': 'failed login',
+                            'details': {
+                                'username': username,
+                                'password': password
+                            }
+                        }
+                    }
+                    self.__logger.log(json)
             elif selection == '2':
                 # Handle Exit
                 print("Exiting...\n")
@@ -331,13 +384,13 @@ Astronaut Health Monitoring System
             print("Password incorrect.\n")
             # Create logger to log failed password change
             json = {
-                'user': username,
+                'user': self.__login_service.get_loggedin_username(),
                 'activity_type': 'event',
                 'severity': 'warning',
                 'event': {
                     'type': 'failed password change',
                     'details': {
-                        'username': username,
+                        'username': self.__login_service.get_loggedin_username(),
                         'password': password,
                         'reason': 'Password did not match stored password'
                     }
@@ -474,14 +527,22 @@ Astronaut Health Monitoring System
         """Connects the logger"""
         self.__logger = logger
     
+    def connect_download_service(self, download_service):
+        """Connects the download service"""
+        self.__download_service = download_service
+    
+    def connect_db_manager(self, db_manager):
+        """Connects the database manager"""
+        self.__db_manager = db_manager
+    
     def display_test_menu(self, username): # FOR TESTING ONLY: TODO REMOVE THIS
         print("Test Menu")
         self.greeting(username)
         while True:
             print("\n1. Change Password")
             print("\n2. Change Phrase")
-            print("\n3. Ask for confirmation")
-            print("\n4. Retrieve user attributes")
+            print("\n3. Get user details")
+            print("\n4. Download")
             print("\n99. Exit\n")
 
             # Request user selection
@@ -493,13 +554,13 @@ Astronaut Health Monitoring System
             elif selection == '2':
                 self.change_phrase()
             elif selection == '3':
-                self.ask_for_confirmation()
+                username = input("Username: ")
+                user = self.__db_manager.do_select('SELECT password, role_id FROM users WHERE username = ?', (username,))
+                password = user[0][0]
+                role = user[0][1]
+                print(password, role)
             elif selection == '4':
-                attribute = input("Attribute: ")
-                if attribute is not None:
-                    print(self.get_user_information(attribute))
-                elif attribute == "":
-                    print(self.get_user_information())
+                self.__download_service.download()
             elif selection == '99':
                 # Handle Exit
                 print("Exiting...\n")

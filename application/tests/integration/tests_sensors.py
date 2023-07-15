@@ -1,8 +1,8 @@
 '''
     This file contains integration tests for functionality involving sensor components.
 '''
-from context import ActionsController, CommandLineInterface, Logger, GeigerCounter, Thermometer
-from mock import MockAuthorisationService, MockLoginService, MockEncryptionService, MockAuditor
+from context import ActionsController, CommandLineInterface, Logger, GeigerCounter, Thermometer, Input_Sanitisation_Service, Encryption_Service
+from mock import MockAuthorisationService, MockLoginService, MockAuditor
 import unittest
 
 class TestSensors(unittest.TestCase):
@@ -19,6 +19,7 @@ class TestSensors(unittest.TestCase):
         logger = Logger(self.log_path)
         self.cli.connect_logger(logger)
         action_controller.connect_logger(logger)
+        self.cli.connect_sanitisation_service(Input_Sanitisation_Service())
 
         # mock classes
         login_service = MockLoginService()
@@ -26,7 +27,7 @@ class TestSensors(unittest.TestCase):
         action_controller.connect_login_service(login_service)
         action_controller.connect_authorisation_service(MockAuthorisationService())
         logger.connect_auditor(MockAuditor())
-        logger.connect_encryption_service(MockEncryptionService())
+        logger.connect_encryption_service(Encryption_Service())
 
         # monkey patches
         self.cli.request_login_details = lambda: ('test_name', 'test_password')
@@ -36,7 +37,7 @@ class TestSensors(unittest.TestCase):
         '''
             A method that tests the view temperature option.
         '''
-        mock_selections = (x for x in ['1', '8', 'C', 'Y', '8', 'F', 'Y', '8', 'K', 'N', '2'])
+        mock_selections = (x for x in ['1', '12', 'C', 'Y', 'Y', '12', 'F', 'Y', 'Y', '12', 'K', 'Y', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections) # comment line for demo
         self.assertTrue(self.cli.display_main_menu())
 
@@ -44,7 +45,7 @@ class TestSensors(unittest.TestCase):
         '''
             A method that tests the view radiation level option.
         '''
-        mock_selections = (x for x in ['1', '9', 'Rem', 'Y', '9', 'SV', 'N', '2'])
+        mock_selections = (x for x in ['1', '13', 'Rem', 'Y', '13', 'SV', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections) # comment line for demo
         self.cli.display_main_menu()
 

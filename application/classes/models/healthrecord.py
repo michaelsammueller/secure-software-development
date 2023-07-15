@@ -33,7 +33,7 @@ class HealthRecord:
         # call do_select method from DBManager.
         result = self.__db_manager.do_select(query, where)
         if result:
-            json = {result[0].keys()[i] : value for i, value in enumerate(result[0])}
+            json = [{result[j].keys()[i] : value for i, value in enumerate(result[j])} for j in range(len(result))]
         else:
             json = {}
         return json
@@ -45,7 +45,20 @@ class HealthRecord:
         query = "DELETE FROM record_items WHERE uuid = ?"
         where = (user_identifiers['uuid'],)
         # call do_delete method from DBManager
-        return self.__db_manager.do_delete(query, where, False)  
+        return self.__db_manager.do_delete(query, where, False) 
+
+    def update_health_record(self, user_information):
+        '''
+            Update a health record in the database
+        '''
+        field = user_information['field']
+        value = user_information['new value']
+        if field in ['complains']:
+            value = f"'{value}'"
+        query = f"UPDATE record_items SET {field} = {value} WHERE record_id = ?"
+        where = (user_information['record id'],)
+        # call do_delete method from DBManager
+        return self.__db_manager.do_update(query, where, False)   
 
     def connect_db_manager(self, db_manager):
         '''

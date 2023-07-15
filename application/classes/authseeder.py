@@ -23,16 +23,28 @@ class AuthSeeder():
         self.roles = ["Superadmin", "Moderator", "Astronaut"]
 
         self.permissions = ["create-user", "delete-user", "view-all-users",
-                    "view-user-details", 
-                    "add-health-record", "view-user-health-records",
+                    "view-user-details", "update-user-details",
+                    "add-health-record", "add-own-health-record", "view-user-health-records",
+                    "view-own-health-records",
+                    "update-user-health-record",
                     "delete-user-health-records",
-                    "view-temperature", "view-radiation", "download-record"
+                    "view-temperature", "view-radiation", "change-password"
         ]
 
         self.role_has_permissions = [(1,1), (1,2), (1,3), (1,4), (1,5), (1,6),
-                                (1,7), (1,8), (1,9), (1,10),
-                                (2,4), (2,6), (2,8), (2,9),
-                                (3,4), (3,5), (3,8), (3,9), (3,10)
+                                (1,7), (1,8), (1,9), (1,10), (1, 11), (1,12), (1,13), (1,14),
+                                (2,6), (2,7), (2,8), (2,9), (2,10), (2,12), (2,13), (2,14),
+                                (3,7), (3,9), (3,12), (3,13), (3, 14)
+        ]
+
+        self.records = [
+            {
+                'uuid': '12345',
+                'complains' : 'headache',
+                'height': '180',
+                'weight': '80',
+                'blood_pressure': '120',
+            }
         ]
 
         self.users = [
@@ -42,8 +54,20 @@ class AuthSeeder():
                 'date of birth': '09-09-1989',
                 'country of employment': 'GB',
                 'username': 'Braddarb',
-                'password': 'password123'
-            }
+                'password': 'password123',
+                'secret phrase': 'ok',
+                'uuid' : '12345'
+            },
+            {
+                'name': 'Michael',
+                'role': 3,
+                'date of birth': '30-06-1998',
+                'country of employment': 'DE',
+                'username': 'michael.sammueller',
+                'password': 'michael123',
+                'secret phrase': 'ok',
+                'uuid': '987654'
+            },
         ]
 
     def __call__(self):
@@ -60,6 +84,17 @@ class AuthSeeder():
 
         for k, v in self.countries.items():           
             id = self.__country.add_country(k, v)
+            if id:
+                added_ids.append(id) 
+        return added_ids
+    
+    # where is a tuple
+    def seed_health_records( self ):
+
+        added_ids = []
+
+        for record in self.records:        
+            id = self.__health_record.add_record(record)
             if id:
                 added_ids.append(id) 
         return added_ids
@@ -113,6 +148,7 @@ class AuthSeeder():
         p = self.seed_permissions()  
         rhp = self.seed_role_has_permissions()
         u = self.seed_users()
+        hr = self.seed_health_records()
 
     def connect_country(self, country):
         """Connects the country"""
@@ -129,6 +165,10 @@ class AuthSeeder():
     def connect_user(self, user):
         """Connects the user"""
         self.__user = user
+
+    def connect_health_record(self, health_record):
+        """Connects the health_record"""
+        self.__health_record = health_record
 
     def connect_encryption(self, encryption):
         """Connects the encryption"""
