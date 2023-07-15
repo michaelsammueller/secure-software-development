@@ -14,7 +14,7 @@ Team Members: _Bradley Graham, Michael Sammueller, Tomas Mestanza & Rachel Doher
 6. [External tools & Libraries](6)
 7. [Database](7)
 8. [Security Features Checklist](8)
-9. [List of changes - Design Document --> Implementation](9)
+9. [List of changes - Design Document vs. Implementation](9)
 10. [Testing](10)
 11. [GDPR](11)
     - [Data Security Statement](11a)
@@ -122,7 +122,7 @@ This project is based on secure design principles, following key vulnerabilites 
 - [ ] store log records in a dedicated database with restrictive commands - _not implemented, time limitations_
 - [x] encrypt logs 
 
-### <a name="9">List of changes - Design Document --> Implementation</a>
+### <a name="9">List of changes - Design Document vs. Implementation</a>
 
 #### 1. Class 'CommonActions'
 > _Original System Design:_
