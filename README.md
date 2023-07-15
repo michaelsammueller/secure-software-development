@@ -38,15 +38,17 @@ The project domain is the International Space Station (ISS), which is a collabor
 
 ### Design Principles
 
-The application is accessed via a Command Line Interface (CLI) and allows the User to perform various CRUD actions, based on predefined role-based permission and access parameters. The project brief was to implement secure software development principles into the application design.
+The application is accessed via a Command Line Interface (CLI) and allows the User to perform various CRUD actions, based on predefined role-based permission. The project brief was to implement secure software development principles into the application design.
 
-The project has been deliberately developed in a modular way using object-oriented coding principles and with a 'microservice' architecture in mind, which aims to produce modules of code which encapsulate their own methods and functionality and interact only with necessary modules within the program in order to improve modifiability, testability, scalability and code efficiency.
+The project has been deliberately developed in a modular way using object-oriented coding principles and with a 'microservice' architecture in mind, which aims to produce modules of code which encapsulate their own methods and functionality and interact only with necessary modules within the program in order to improve modifiability, testability, scalability and code efficiency. No networks or virtualisation have been implemented in this version.
 
-The project implements secure design techniques including encryption, input sanitisation, role-based access control, database normalisation, logging of auditable events and tracking/ auditing of dangerous logged events, log reading restrictions and password complexity.
+The project implements secure designs techniques including encryption, input sanitisation, role-based access control, database normalisation, action and event logging, removal of echo on input, uuids, and password complexity enforcement.
 
-The database application is designed to be accessible via a single terminal onboard the ISS and does not require onboard internet network connectivity. User data is relevant only for the mission in question and useful only to the crew members onboard that particular mission. User data and profiles will be deleted following each mission and set up again for the crew of the following mission. This encolsed deployment and limited usership maintains the application's lightweight functionality and low attack surface.
+The database application is designed to be accessible via a single terminal onboard the ISS and does not require onboard internet network connectivity. User data is accessible only for the mission in question for the crew members onboard that particular mission. User data and profiles will be deleted following each mission and set up again for the crew of the following mission. This enclosed deployment and limited usership maintains the application's low attack surface.
 
-Passwords and some user data are encrypted before being stored in the database, however some database records do remain unencrypted. The unencrypted records do not reveal personal information which could be exploited. The only individual with database access would be a superadmin. Even if superadmin access details were leaked, there would be no way to access the database without access to the onboard terminal which is located in space, onboard the ISS. Implementing unnecessary encryption would not add value to this application. According to the principles of Agile and Lean software development, functionality should only be implemented if it brings value to the product and enhances the arhitectural quality of the system (Alahyari et al., 2017). For this reason and with the domain in mind, SecureSpace consider it counterintuitive to encrypt the entire database, especially as this may also slow down application performance.
+Passwords and some user data are encrypted before being stored in the database, however some database records do remain unencrypted. The unencrypted records do not reveal personal information which could elevate permissions. The superadmin has most permissions. If superadmin access details were leaked, there would be no way to access the database without access to the onboard terminal which is located in space, onboard the ISS.
+
+According to the principles of Agile and Lean software development, functionality should only be implemented if it brings value to the product and enhances the architectural quality of the system (Alahyari et al., 2017). For this reason and with the domain in mind, SecureSpace consider it counterintuitive to encrypt the entire database at this point, which slows down application performance.
 
 ### User Briefing
 
@@ -138,7 +140,7 @@ _Original System Design:_
 The ‘CommonActions’ class was originally planned as a class to handle all functions and methods relating to user actions.
 
 _Final Implementation:_
-The class has been renamed to ‘ActionController’ and will act as an interface between the command line and the system objects. It will therefore always call another object’s version of a method. This way, individual class methods remain encapsulated which is favourable in terms of application scalability and code efficiency.
+The class has been renamed to ‘ActionController’ and will act as an interface between the command line and the system objects. It will therefore always call another object’s version of a method. This way, the application is more scalable as services can be replaced.
 
 #### 2. File Downloads
 
@@ -166,7 +168,7 @@ The updated role matrix maped to permissions and roles is shown in the table bel
 | Add New User / create-user                              | [x]          | [ ]         | [ ]         |
 | Delete User / delete-user                               | [x]          | [ ]         | [ ]         |
 | View All Users / view-all-users                         | [x]          | [ ]         | [ ]         |
-| View User Details / view-user-details                   | [x]          | [x]         | [x]         | 
+| View User Details / view-user-details                   | [x]          | [x]         | [x]         |
 | Add Health Record / add-health-record                   | [x]          | [ ]         | [x]         |
 | View User Health Records / view-user-health-records     | [x]          | [x]         | [ ]         |
 | Delete User Health Records / delete-user-health-records | [x]          | [ ]         | [ ]         |
@@ -176,7 +178,7 @@ The updated role matrix maped to permissions and roles is shown in the table bel
 
 ### Testing
 
-Integration and unit testing has been implemented throughout the system build process to periodically verify that system features are working as intended ([see here](application/tests)).
+Integration and unit testing has been implemented throughout the system build process to periodically verify that system features are working as intended ([see here](application/tests)). Whitebox testing has done throughout too.
 
 ### GDPR
 
@@ -192,7 +194,7 @@ It is assumed that astronaut consent to data processing is sought before any mis
 
 ### Data Security Statement
 
-We have prioritised the security and privacy of users' personal data. This application is developed with stringent measures in place to protect personal information against the vulnerabilities outlined by the OWASP Top 10 common security risks framework (see "Security Features Checklist" for detailed protective measures). 
+We have prioritised the security and privacy of users' personal data. This application is developed with stringent measures in place to protect personal information against the vulnerabilities outlined by the OWASP Top 10 common security risks framework (see "Security Features Checklist" for detailed protective measures).
 
 ### Data Privacy Policy
 
@@ -201,6 +203,10 @@ Personal data is collected for the intended purpose only (astronaut health monit
 ### Data Deletion Policy
 
 The intended system implementation is that user profiles and user data will be available for the duration of a single ISS mission only. All personal data and user profiles are to be deleted from the database immediately following a mission.
+
+### Software Development Lifecycle
+
+The team has made us of communication tools such as slack, [trello](https://trello.com/b/kPkuxyFW/nasa-project); as well as [github](https://github.com/michaelsammueller/secure-software-development) as the main repositiory. Changes were made incrementally and peer reviewed via pull requests.
 
 ## References
 
