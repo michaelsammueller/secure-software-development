@@ -64,7 +64,7 @@ The program is written in Python3 and uses the following built-in libraries: **r
 
 ### <a name="6">External tools & libraries></a>
 
--**bcrypt** - for password hashing
+- **bcrypt** - for password hashing
 - **Pylama** - for checking code quality
 - **Bandit** - to check for common security flaws
 - **Pytest Security** - to write security tests in python
@@ -165,7 +165,7 @@ The updated role matrix maped to permissions and roles is shown in the table bel
 
 ### <a name="10">Testing</a>
 
-Unit testing has been implemented throughout the system build process to periodically verify that system features are working as intended (<a href="application/tests">see here</a>).
+Integration and unit testing has been implemented throughout the system build process to periodically verify that system features are working as intended (<a href="application/tests">see here</a>).
 
 
 ### <a name="11">GDPR</a>
