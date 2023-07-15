@@ -6,23 +6,23 @@ Team Members: _Bradley Graham, Michael Sammueller, Tomas Mestanza & Rachel Doher
 
 ### Table of Contents
 
-1. [How to run the program](1)
-2. [Design Principles](2)
-3. [Description](3)
-4. [User Briefing](4)
-5. [Application Features & Implemented Technologies](5)
-6. [External tools & Libraries](6)
-7. [Database](7)
-8. [Security Features Checklist](8)
-9. [List of changes - Design Document vs. Implementation](9)
-10. [Testing](10)
-11. [GDPR](11)
-    - [Data Security Statement](11a)
-    - [Data Privacy Policy](11b)
-    - [Data Deletion Policy](11c)
-12. [References](12)
+1. [How to run the program](#how-to-run-the-program)
+2. [Design Principles](#design-principles)
+3. [Description](#description)
+4. [User Briefing](#user-briefing)
+5. [Application Features & Implemented Technologies](#application-features--implemented-technologies)
+6. [External tools & Libraries](#external-tools--libraries)
+7. [Database](#database)
+8. [Security Features Checklist](#security-features-checklist)
+9. [List of changes - Design Document vs. Implementation](#list-of-changes---design-document-vs-implementation)
+10. [Testing](#testing)
+11. [GDPR](#gdpr)
+    - [Data Security Statement](#data-security-statement)
+    - [Data Privacy Policy](#data-privacy-policy)
+    - [Data Deletion Policy](#data-deletion-policy)
+12. [References](#references)
 
-### <a name="2">How to run the program</a>
+### How to run the program
 
 In order to install all the dependencies required for this project run the command:
 
@@ -30,15 +30,15 @@ In order to install all the dependencies required for this project run the comma
 
 This will install all of the packages in the requirements.txt file.
 
-### <a name="3">Description</a>
+### Description
 
 This application is intended for use by astronauts to record health indicators related to their physical fitness and mental health during a space mission. It also models the measurement of ambient temperature and radiation exposure via onboard sensors.
 
 The project domain is the International Space Station (ISS), which is a collaborative international space travel and research program between 15 governments, overseen and facilitated by NASA. The  application is intended to support the health and safety of astronauts aboard the ISS during a mission in order to prevent crew health issues jeopardising the success of a mission. The application responds to a report by the ISS Safety Task Force (ISSTF) which deemed crew health issues to present a major risk to the successful operation of the ISS (ISSTF, 2007).
 
-### <a name="2">Design Principles</a>
+### Design Principles
 
-The application is accessed via a Command Line Interface (CLI) and allows the User to perform various CRUD actions, based on predefined role-based permission and access parameters. The project brief was to implement secure software development principles into the application design. 
+The application is accessed via a Command Line Interface (CLI) and allows the User to perform various CRUD actions, based on predefined role-based permission and access parameters. The project brief was to implement secure software development principles into the application design.
 
 The project has been deliberately developed in a modular way using object-oriented coding principles and with a 'microservice' architecture in mind, which aims to produce modules of code which encapsulate their own methods and functionality and interact only with necessary modules within the program in order to improve modifiability, testability, scalability and code efficiency.
 
@@ -48,12 +48,11 @@ The database application is designed to be accessible via a single terminal onbo
 
 Passwords and some user data are encrypted before being stored in the database, however some database records do remain unencrypted. The unencrypted records do not reveal personal information which could be exploited. The only individual with database access would be a superadmin. Even if superadmin access details were leaked, there would be no way to access the database without access to the onboard terminal which is located in space, onboard the ISS. Implementing unnecessary encryption would not add value to this application. According to the principles of Agile and Lean software development, functionality should only be implemented if it brings value to the product and enhances the arhitectural quality of the system (Alahyari et al., 2017). For this reason and with the domain in mind, SecureSpace consider it counterintuitive to encrypt the entire database, especially as this may also slow down application performance.
 
-
-### <a name="4">User Briefing</a>
+### User Briefing
 
 On first-time deployment of the application and database intialisation, a user with superadmin rights will be able to add user profiles. It is assumed that usernames and passwords will be assigned by a superadmin to the individual mission crew members and shared in an 'analog' environment. No functionality to distribute login data via email or other means has been incorporated, which consequentially can be considered an additional layer of security.
 
-### <a name ="5">Application features & implemented technologies</a>
+### Application features & implemented technologies
 
 - **Languages:** Python / SQL
 - **Database:** SQLite3
@@ -62,7 +61,7 @@ On first-time deployment of the application and database intialisation, a user w
 
 The program is written in Python3 and uses the following built-in libraries: **re, logging, unittest, getpass, threading, pip, json, datetime, random, sys, uuid, cryptography, unittest, abc, os**
 
-### <a name="6">External tools & libraries</a>
+### External tools & libraries
 
 - **bcrypt** - for password hashing
 - **Pylama** - for checking code quality
@@ -70,7 +69,7 @@ The program is written in Python3 and uses the following built-in libraries: **r
 - **Pytest Security** - to write security tests in python
 - **coverage** - to check test coverage of code
 
-### <a name="7">Database</a>
+### Database
 
 This solution makes use of a relational database to store data relevant to the system.
 
@@ -81,73 +80,86 @@ As a consequence of applying normalisation, consistency is improved, and mainten
 UUIDs are use to avoid reveal actual user IDs. We kept the numeric IDs to be able to sort as UUIDs do not allow sorting.
 
 ### Database Considerations
+
 In general, constraints are not implemented at this stage but applying the correct SQL statements will generate the necessary structure to handle deleting associated records.
 
 Minimum indexation has been applied to ensure the queries run quickly.
 
-### <a name="8">Security Features Checklist</a>
+### Security Features Checklist
 
 This project is based on secure design principles, following key vulnerabilites identified in the "OWASP Top 10 Application Security Risks" (2017). The following checklist outlines the implemented security features:
 
-#### **OWASP Top 10: Planned vs. Implemented measures**                             
+#### **OWASP Top 10: Planned vs. Implemented measures**
+
 ##### **A1: 2017 Injection**
+
 - [x] Sanitize input (filter keywords and special characters) for all roles
-      
+
 ##### **A2:2017 Broken Authentication**
+
 - [x] multi-factor authentication (secret phrase)
 - [ ] time-limited set-up passwords - _not necessary, password distribution not in scope_
 - [x] password length and complexity requirements (min. 8/ max. 64 characters; allow most characters)
 - [x] limit, log and alert all failed login attempts
-      
+
 ##### **A3:2017 Sensitive Data Exposure**
+
 - [ ] encrypt database records - _unnecessary for system functionality/ security - see above_
 - [x] store passwords using strong salted hashing functions (bcrypt)
 - [ ] penetration testing (incl. link to evidence when done)
-- [x] delete sensitive info after mission ends - included, but cannot be simulated by system, see <a name="11c">data deletion policy</a>
-      
+- [x] delete sensitive info after mission ends - included, but cannot be simulated by system, see data deletion policy
+
 ##### **A5:2017 Broken Access Control**
+
 - [x] robust roles
 - [x] no role-inheritance
-      
+
 ##### **A6:2017 Security Misconfiguration**
-- [x] only implement necessary libraries 
+
+- [x] only implement necessary libraries
 - [x] only implement OWASP-approved or known libraries
 - [x] ensure correct configuration of all technologies through testing
 
 ##### **A9:2017 Using Components with Known Vulnerabilities**
+
 - [x] implement a tool that checks for dependencies and security vulnerabilities (bandit) (see test result)
 
 ##### **(A10:2017 Insufficient Logging & Monitoring)**
+
 - [x] implement an effective monitoring and alert system for auditable actions
 - [ ] store log records in a dedicated database with restrictive commands - _not implemented, time limitations_
-- [x] encrypt logs 
+- [x] encrypt logs
 
-### <a name="9">List of changes - Design Document vs. Implementation</a>
+### List of changes - Design Document vs. Implementation
 
 #### 1. Class 'CommonActions'
-> _Original System Design:_
-> The ‘CommonActions’ class was originally planned as a class to handle all functions and methods relating to user actions.
->
+
+_Original System Design:_
+The ‘CommonActions’ class was originally planned as a class to handle all functions and methods relating to user actions.
+
 _Final Implementation:_
 The class has been renamed to ‘ActionController’ and will act as an interface between the command line and the system objects. It will therefore always call another object’s version of a method. This way, individual class methods remain encapsulated which is favourable in terms of application scalability and code efficiency.
 
 #### 2. File Downloads
-> _Original System Design:_
-> Originally, we would allow users to download their health records as data files.
->
+
+_Original System Design:_
+Originally, we would allow users to download their health records as data files.
+
 _Final Implementation:_
 File download has been implemented with the resulting file in json format, offering limited readability.
 
 #### 3. Role / Permissions mapping
-> _Original System Design:_
-> 1. Superadmin permissions: create user, assign roles and privileges, execute SQL queries for database management
-> 2. Moderator permissions: approve user, delete user profile and data
-> 3. Astronaut permissions: update and view health records, download data files
->
+
+_Original System Design:_
+
+1. Superadmin permissions: create user, assign roles and privileges, execute SQL queries for database management
+2. Moderator permissions: approve user, delete user profile and data
+3. Astronaut permissions: update and view health records, download data files
+
 _Final Implementation:_
 The planned roles did not cover system functionality. We also needed to map permissions to user actions / roles explicity in order to ensure that
 role-based access controls (RBAC) was implemented robustly. The superadmin should perform all actions.
- 
+
 The updated role matrix maped to permissions and roles is shown in the table below:
 | UserAction / Permission Name                            | _Superadmin_ | _Moderator_ | _Astronaut_ |
 | :--------------------------------------                 | :----------: | :---------: | :---------: |
@@ -162,13 +174,11 @@ The updated role matrix maped to permissions and roles is shown in the table bel
 | View Radiation level / view-radiation                   | [x]          | [x]         | [x]         |
 | Download Health Record / download-record                | [x]          | [ ]         | [x]         |
 
+### Testing
 
-### <a name="10">Testing</a>
+Integration and unit testing has been implemented throughout the system build process to periodically verify that system features are working as intended ([see here](application/tests)).
 
-Integration and unit testing has been implemented throughout the system build process to periodically verify that system features are working as intended (<a href="application/tests">see here</a>).
-
-
-### <a name="11">GDPR</a>
+### GDPR
 
 The application is developed according to UK GDPR.
 
@@ -178,17 +188,19 @@ The lawful basis for data processing is subject to:
 2) the vital interests of crew health as a key ISS vulnerability (IISTF, 2007);
 3) the continuation of ISS operations, as outlined in the legal framework of the ISS (IISTF, 2007)
 
-It is assumed that astronaut consent to data processing is sought before any mission commences by that respective national space travel authority (e.g. the UK Space Agency, the Japan Aerospace Exploration Agency etc.). 
+It is assumed that astronaut consent to data processing is sought before any mission commences by that respective national space travel authority (e.g. the UK Space Agency, the Japan Aerospace Exploration Agency etc.).
 
-> ### <a name="11a">Data Security Statement</a>
-> We have prioritised the security and privacy of users' personal data. This application is developed with stringent measures in place to protect personal information against the vulnerabilities outlined by the OWASP Top 10 common security risks framework (see <a name=8>"Security Features Checklist"</a> for detailed protective measures). 
+### Data Security Statement
 
-> ### <a name="11b">Data Privacy Policy</a>
-> Personal data is collected for the intended purpose only (astronaut health monitoring for the duration of a single ISS mission) and will not be shared with 3rd parties outside of NASA/ ISS operations. No third parties will have database access without having access to the onboard terminal, which is in space on the ISS. Remote access to the program is not possible as it is neither web-based nor exposes external APIs. Third party access to personal data is therefore only for athorised mission/ crew members who have superadmin system access.
+We have prioritised the security and privacy of users' personal data. This application is developed with stringent measures in place to protect personal information against the vulnerabilities outlined by the OWASP Top 10 common security risks framework (see "Security Features Checklist" for detailed protective measures). 
 
-> ### <a name="11c">Data Deletion Policy</a>
-> The intended system implementation is that user profiles and user data will be available for the duration of a single ISS mission only. All personal data and user profiles are to be deleted from the database immediately following a mission.
+### Data Privacy Policy
 
+Personal data is collected for the intended purpose only (astronaut health monitoring for the duration of a single ISS mission) and will not be shared with 3rd parties outside of NASA/ ISS operations. No third parties will have database access without having access to the onboard terminal, which is in space on the ISS. Remote access to the program is not possible as it is neither web-based nor exposes external APIs. Third party access to personal data is therefore only for athorised mission/ crew members who have superadmin system access.
+
+### Data Deletion Policy
+
+The intended system implementation is that user profiles and user data will be available for the duration of a single ISS mission only. All personal data and user profiles are to be deleted from the database immediately following a mission.
 
 ## References
 
@@ -198,5 +210,3 @@ Eessaar, E. (2016) The Database Normalization Theory and the Theory of Normalize
 
 IISTF (2007) Final Report of the International Space Station Independent Safety Task Force.
 NASA, pp 1-111.
-
-
