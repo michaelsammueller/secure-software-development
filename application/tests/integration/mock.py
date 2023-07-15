@@ -2,6 +2,7 @@
     This is a file that contains classes with mock methods for testing.
 '''
 
+
 class MockAuthorisationService:
     '''
         A class for mocking the authorisation service.
@@ -11,13 +12,14 @@ class MockAuthorisationService:
         A method for mocking authorisation.
         '''
         return True
-    
+
     def get_user_role(self, *args, **kwargs):
         '''
         A method for mocking a user role.
         '''
         return "developer"
-    
+
+
 class MockLogger:
     '''
         A class for mocking the logger.
@@ -27,7 +29,8 @@ class MockLogger:
         A method for mocking logging.
         '''
         return True
-    
+
+
 class MockAuditor:
     '''
         A class for mocking the logger.
@@ -38,6 +41,7 @@ class MockAuditor:
         '''
         return False
 
+
 class MockLoginService:
     '''
         A class for mocking the login service.
@@ -47,25 +51,26 @@ class MockLoginService:
         A method for mocking a login.
         '''
         return True
-    
+
     def get_loggedin_username(self, *args, **kwargs):
         '''
         A method for mocking a username.
         '''
         return "Braddarb"
-    
+
     def check_lockdown(self, *args, **kwargs):
         '''
         A method for mocking lockdown.
         '''
         return False
-    
-    def lockdown_required(  self, *args, **kwargs):
+
+    def lockdown_required(self, *args, **kwargs):
         '''
         A method for mocking lockdown.
         '''
         return False
-    
+
+
 class MockEncryptionService:
     '''
         A class for mocking the encryption service.
@@ -75,24 +80,26 @@ class MockEncryptionService:
         A method for mocking a login.
         '''
         return "ENCRYPTED"
-    
+
+
 class MockUserService:
     '''
         A class for mocking a user.
     '''
-    
+
     def add_user(self, *args, **kwargs):
         '''
         A method for mocking adding a user.
         '''
         return True
-    
+
     def delete_user(self, *args, **kwargs):
         '''
         A method for mocking deleting a user.
         '''
         return True
-    
+
+
 class MockHealthRecordService:
     '''
         A class for mocking the health record service.
@@ -102,7 +109,8 @@ class MockHealthRecordService:
         A method for mocking a login.
         '''
         return True
-    
+
+
 class MockRoleService:
     '''
         A class for mocking a role.
@@ -112,11 +120,9 @@ class MockRoleService:
         A method for getting a role id.
         '''
         return 1
-    
+
     def get_role_name(self, *args, **kwargs):
         '''
         A method forgetting a role name.
         '''
         return "bugfixer"
-    
-    

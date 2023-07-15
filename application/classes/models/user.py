@@ -3,6 +3,7 @@
 '''
 import uuid
 
+
 class User:
     '''
         A class to create user objects.
@@ -12,7 +13,7 @@ class User:
         '''
             Adds a user to the database
         '''
-        
+
         # perform database query to save user attributes.
         query = "INSERT INTO users (uuid, name, code, dob, role_id, \
             country_id, phrase, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
@@ -20,8 +21,10 @@ class User:
             _uuid = user_details['uuid']
         else:
             _uuid = str(uuid.uuid4())
-        values = (_uuid, user_details['name'], user_details['username'], user_details['date of birth'], user_details['role'],
-                  user_details['country of employment'], user_details['secret phrase'], user_details['username'], user_details['password'])
+        values = (_uuid, user_details['name'], user_details['username'],
+                  user_details['date of birth'], user_details['role'],
+                  user_details['country of employment'], user_details['secret phrase'],
+                  user_details['username'], user_details['password'])
 
         # call do_insert method from DBmanager.
         return self.__db_manager.do_insert(query, values, dry=False)
@@ -36,12 +39,11 @@ class User:
         # call do_select method from DBManager.
         result = self.__db_manager.do_select(query, where)
         if result:
-            json = {row[0] : row[1] for row in result}
+            json = {row[0]: row[1] for row in result}
         else:
             json = {}
         return json
-    
-    
+
     def view_user(self, user_identifiers):
         '''
             View a user from the database
@@ -52,14 +54,14 @@ class User:
         # call do_select method from DBManager.
         result = self.__db_manager.do_select(query, where)
         if result:
-            json = {result[0].keys()[i] : value for i, value in enumerate(result[0])}
+            json = {result[0].keys()[i]: value for i, value in enumerate(result[0])}
             # clean up json
             json['role'] = self.__role_service.get_role_name(json['role_id'])
             del json['role_id']
         else:
             json = {}
         return json
-    
+
     def delete_user(self, user_identifiers):
         '''
             Delete a user from the database
@@ -85,22 +87,22 @@ class User:
         query = f"UPDATE users SET {field} = {value} WHERE uuid = ?"
         where = (user_information['uuid'],)
         # call do_delete method from DBManager
-        return self.__db_manager.do_update(query, where, False)    
-    
+        return self.__db_manager.do_update(query, where, False)
+
     def get_user_role(self, username):
         '''
             Get the role of a user from the database
         '''
-        query ='SELECT role_id FROM users WHERE username = ?'
+        query = 'SELECT role_id FROM users WHERE username = ?'
         where = (username, )
         role_id = self.__db_manager.do_select(query, where)[0][0]
         return self.__role_service.get_role_name(role_id)
-    
+
     def get_user_uuid(self, username):
         '''
             Get the uuid of a user from the database
         '''
-        query ='SELECT uuid FROM users WHERE username = ?'
+        query = 'SELECT uuid FROM users WHERE username = ?'
         where = (username, )
         return self.__db_manager.do_select(query, where)[0][0]
 
@@ -115,4 +117,3 @@ class User:
             A method for connecting the role service.
         '''
         self.__role_service = role_service
-

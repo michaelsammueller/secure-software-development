@@ -4,8 +4,8 @@
 
 # Imports
 import getpass
-import time
 import threading
+
 
 # CommandLineInterface class
 # This class will be responsible for handling user input
@@ -20,7 +20,7 @@ class CommandLineInterface:
         Welcome, {username}!
         -------------------------\n""")
 
-    def get_user_information(self, attribute=None): # TODO: TEST AND DEBUG
+    def get_user_information(self, attribute=None):
         """
             Retrieve user information.
             Args:
@@ -39,7 +39,7 @@ class CommandLineInterface:
         username = input("Username: ")
         password = getpass.getpass("Password: ", stream=None)
         return username, password
-    
+
     def request_password(self):
         """Requests user to re-enter password"""
         password = getpass.getpass("Old password: ", stream=None)
@@ -63,14 +63,14 @@ class CommandLineInterface:
             else:
                 print("Invalid selection. Please enter 'Y' or 'N'.\n")
 
-    def display_user_menu(self, username): # TESTED AND WORKING
+    def display_user_menu(self, username):
         """Display user menu options"""
-        self.greeting(username) # Display greeting message
+        self.greeting(username)  # Display greeting message
         while True:
             options = self.__action_controller.get_actions()
             for i, option in enumerate(options):
                 print(f"{i + 1}. {option}")
-        
+
             # Request user selection
             selection = self.ask_for_selection()
             # Handle user selection
@@ -80,21 +80,22 @@ class CommandLineInterface:
                 print("Invalid selection.\n")
                 continue
             if selection <= len(options):
-                # Get additional paramaters from user 
+                # Get additional paramaters from user
                 params = self.__action_controller.get_action_params(options[selection - 1])
                 details = {}
                 print("\nRequesting details...")
                 while True:
                     for param in params:
                         while True:
-                            if not param[1]: # only field name provided
+                            if not param[1]:  # only field name provided
                                 print(f"{param[0]}")
-                            else: # field name and options provided
+                            else:  # field name and options provided
                                 print(f"Options for {param[0]}: {param[1]}")
                             response = self.ask_for_selection()
                             if param[2]:
-                                #validate input
-                                if not self.__sanitisation_service.validate(response, param[2], param[1]):
+                                # validate input
+                                if not self.__sanitisation_service.validate(response,
+                                                                            param[2], param[1]):
                                     continue
                             details[param[0]] = response
                             break
@@ -108,13 +109,14 @@ class CommandLineInterface:
                             continue
                     else:
                         break
-                        
+
                 # Perform action
                 results = self.__action_controller(options[selection - 1], details)
                 if results:
                     print("\nResults...")
                     try:
-                        print(f"{[f'{key}: {value}' for key, value in results.items()]}") # dict results
+                        # dict results
+                        print(f"{[f'{key}: {value}' for key, value in results.items()]}")
                     except:
                         for result in results:
                             print(f"{[f'{key}: {value}' for key, value in result.items()]}")
@@ -127,19 +129,18 @@ class CommandLineInterface:
             else:
                 print("Invalid selection.\n")
 
-    def display_main_menu(self): # TESTED AND WORKING
+    def display_main_menu(self):
         """Display main menu options"""
         # Adding color options for user interface
-        COLOR_RED = '\033[31m'
         COLOR_GREEN = '\033[38;2;0;128;0m'
         COLOR_RESET = '\033[0m'
         while True:
             print(COLOR_GREEN + """
-     █████  ██   ██ ███    ███ 
-    ██   ██ ██   ██ ████  ████ 
-    ███████ ███████ ██ ████ ██ 
-    ██   ██ ██   ██ ██  ██  ██ 
-    ██   ██ ██   ██ ██      ██ 
+     █████  ██   ██ ███    ███
+    ██   ██ ██   ██ ████  ████
+    ███████ ███████ ██ ████ ██
+    ██   ██ ██   ██ ██  ██  ██
+    ██   ██ ██   ██ ██      ██
                 """ + COLOR_RESET)
             print("""
 ----------------------------------
@@ -156,15 +157,19 @@ Astronaut Health Monitoring System
                 if self.__timer_thread is None:
                     minutes = remaining_time // 60
                     seconds = remaining_time % 60
-                    print(f"Application is locked. Please try again in {minutes} minutes and {seconds} seconds.\n")
-                
-                    self.__timer_thread = threading.Thread(target=self.__login_service.password_input_thread,)
+                    print(f"""
+                          Application is locked.
+                          Please try again in {minutes} minutes and {seconds} seconds.
+                          \n""")
+
+                    self.__timer_thread = threading.Thread(
+                        target=self.__login_service.password_input_thread,)
                     self.__timer_thread.start()
 
                 self.__timer_thread.join()
 
                 stop_timer = self.__login_service.get_stop_timer()
-                if stop_timer: # Stop the timer
+                if stop_timer:  # Stop the timer
                     self.__login_service.stop_lockdown_timer()
                     self.__login_service.set_login_attempts(0)
             # Request user selection
@@ -195,7 +200,7 @@ Astronaut Health Monitoring System
                 username, password = self.request_login_details()  # Request user login details
                 # Handle Login
                 if self.__login_service.login(username, password):
-                    #self.display_test_menu(username)
+                    # self.display_test_menu(username)
                     json = {
                         'user': username,
                         'activity_type': 'event',
@@ -242,7 +247,7 @@ Astronaut Health Monitoring System
                     }
                 }
                 self.__logger.log(json)
-                return True # Confirms exit
+                return True  # Confirms exit
             else:
                 print("Invalid selection.\n")
 
@@ -450,25 +455,25 @@ Astronaut Health Monitoring System
                 new_phrase_confirmation = input("Confirm New Phrase: ")
                 # Check if new phrase matches confirmation
                 if new_phrase == new_phrase_confirmation:
-                        sanitised_phrase = self.__sanitisation_service.sanitise_phrase(new_phrase)
-                        self.__login_service.change_phrase(sanitised_phrase)
-                        print("Phrase changed successfully.\n")
-                        # Create logger to log phrase change
-                        json = {
-                            'user': username,
-                            'activity_type': 'event',
-                            'severity': 'info',
-                            'event': {
-                                'type': 'successful phrase change',
-                                'details': {
-                                    'username': username,
-                                    'old phrase': self.__login_service.get_phrase(),
-                                    'new phrase': sanitised_phrase
-                                }
+                    sanitised_phrase = self.__sanitisation_service.sanitise_phrase(new_phrase)
+                    self.__login_service.change_phrase(sanitised_phrase)
+                    print("Phrase changed successfully.\n")
+                    # Create logger to log phrase change
+                    json = {
+                        'user': username,
+                        'activity_type': 'event',
+                        'severity': 'info',
+                        'event': {
+                            'type': 'successful phrase change',
+                            'details': {
+                                'username': username,
+                                'old phrase': self.__login_service.get_phrase(),
+                                'new phrase': sanitised_phrase
                             }
                         }
-                        self.__logger.log(json)
-                        return True
+                    }
+                    self.__logger.log(json)
+                    return True
                 else:
                     print("Phrases do not match.\n")
                     # Create logger to log failed phrase change
@@ -506,7 +511,7 @@ Astronaut Health Monitoring System
             }
             self.__logger.log(json)
             return False
-        
+
     def connect_login_service(self, login_service):
         """Connects the login service"""
         self.__login_service = login_service
@@ -514,54 +519,23 @@ Astronaut Health Monitoring System
     def connect_action_controller(self, action_controller):
         """Connects the action controller"""
         self.__action_controller = action_controller
-    
+
     def connect_sanitisation_service(self, sanitisation_service):
         """Connects the sanitisation service"""
         self.__sanitisation_service = sanitisation_service
-    
+
     def connect_encryption_service(self, encryption_service):
         """Connects the encryption service"""
         self.__encryption_service = encryption_service
-    
+
     def connect_logger(self, logger):
         """Connects the logger"""
         self.__logger = logger
-    
+
     def connect_download_service(self, download_service):
         """Connects the download service"""
         self.__download_service = download_service
-    
+
     def connect_db_manager(self, db_manager):
         """Connects the database manager"""
         self.__db_manager = db_manager
-    
-    def display_test_menu(self, username): # FOR TESTING ONLY: TODO REMOVE THIS
-        print("Test Menu")
-        self.greeting(username)
-        while True:
-            print("\n1. Change Password")
-            print("\n2. Change Phrase")
-            print("\n3. Get user details")
-            print("\n4. Download")
-            print("\n99. Exit\n")
-
-            # Request user selection
-            selection = self.ask_for_selection()
-
-            # Handle user selection
-            if selection == '1':
-                self.change_password()
-            elif selection == '2':
-                self.change_phrase()
-            elif selection == '3':
-                username = input("Username: ")
-                user = self.__db_manager.do_select('SELECT password, role_id FROM users WHERE username = ?', (username,))
-                password = user[0][0]
-                role = user[0][1]
-                print(password, role)
-            elif selection == '4':
-                self.__download_service.download()
-            elif selection == '99':
-                # Handle Exit
-                print("Exiting...\n")
-                break

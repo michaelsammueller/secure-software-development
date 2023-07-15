@@ -1,4 +1,4 @@
-''' 
+'''
 This file is necessary for importing from regular packages contained elsewhere
 in the project i.e files not nested in this folder.
 

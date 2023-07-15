@@ -2,8 +2,10 @@
     Contains the main function for the program.
 """
 # Imports
-from imports import AuthSeeder, DBShape, DBManager, CommandLineInterface, ActionsController, Input_Sanitisation_Service, Encryption_Service, Login_Service, Logger
-from imports import Thermometer, GeigerCounter, User, Role, Permission, HealthRecord, Country, AuthorisationService, DownloadService
+from imports import AuthSeeder, DBShape, DBManager, CommandLineInterface, ActionsController
+from imports import Input_Sanitisation_Service, Encryption_Service, Login_Service, Logger
+from imports import Thermometer, GeigerCounter, User, Role, Permission, HealthRecord
+from imports import Country, AuthorisationService, DownloadService
 from tests.integration.mock import MockAuditor
 
 
@@ -48,7 +50,7 @@ def main():
     action_controller.connect_thermometer(thermometer)
     action_controller.connect_geiger_counter(geiger_counter)
     action_controller.connect_health_record_service(health_record)
-    action_controller.connect_cli(commandline_interface) # circular
+    action_controller.connect_cli(commandline_interface)  # circular
 
     login_service.connect_input_sanitisation_service(sanitisation_service)
     login_service.connect_encryption_service(encryption_service)
@@ -86,6 +88,7 @@ def main():
     authseeder()
 
     commandline_interface.display_main_menu()
+
 
 # Run Program
 if __name__ == "__main__":

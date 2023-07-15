@@ -7,7 +7,7 @@ import bcrypt
 import datetime
 import time
 import getpass
-from classes.dbmanager import DBManager
+
 
 # Login Class
 class Login_Service:
@@ -17,7 +17,7 @@ class Login_Service:
         self.__login_attempts = 0
         self.__lock_time = None
         self.__stop_timer = False
-    
+
     def set_username(self, username):
         """Sets username"""
         self.__username = username
@@ -25,28 +25,28 @@ class Login_Service:
     def set_password(self, password):
         encrypted_password = self.__encryption_service.encrypt(password)
         self.__password = encrypted_password
-    
+
     def set_login_attempts(self, login_attempts):
         """Sets number of login attempts"""
         self.__login_attempts = login_attempts
-    
+
     def get_password(self):
         """Decrypts password and returns it"""
         decrypted_password = self.__encryption_service.decrypt(self.__password)
         return decrypted_password
-    
+
     def get_stop_timer(self):
         """Returns stop timer"""
         return self.__stop_timer
-    
+
     def get_login_attempts(self):
         """Returns number of login attempts"""
         return self.__login_attempts
-    
+
     def get_lock_time(self):
         """Returns lock time"""
         return self.__lock_time
-    
+
     def check_password(self, password):
         """Reauthenticates user by checking password"""
         auth_password = self.get_password()
@@ -55,20 +55,22 @@ class Login_Service:
             return True
         else:
             return False
-    
+
     def get_loggedin_username(self):
         """Returns username of logged in user"""
         return self.__username
 
     def get_loggedin_user_id(self):
         """Returns user id of logged in user"""
-        user_id = self.__db_manager.do_select('SELECT id FROM users WHERE username = ?', (self.__username,))
+        user_id = self.__db_manager.do_select('SELECT id FROM users WHERE username = ?',
+                                              (self.__username,))
         user_id = user_id[0][0]
         return user_id
-    
+
     def get_loggedin_user_uuid(self):
         """Returns uuid of logged in user"""
-        uuid = self.__db_manager.do_select('SELECT uuid FROM users WHERE username = ?', (self.__username,))
+        uuid = self.__db_manager.do_select('SELECT uuid FROM users WHERE username = ?',
+                                           (self.__username,))
         uuid = uuid[0][0]
         return uuid
 
@@ -109,12 +111,14 @@ class Login_Service:
             }
             self.__logger.log(json)
             return True
-    
+
     def check_phrase(self, new_phrase):
         """Checks new phrase against stored phrase"""
         try:
-            stored_phrase = self.__db_manager.do_select('SELECT phrase FROM users WHERE username = ?', (self.__username,))
-            stored_phrase = stored_phrase[0][0] # Get stored phrase from tuple
+            stored_phrase = self.__db_manager.do_select(
+                'SELECT phrase FROM users WHERE username = ?',
+                (self.__username,))
+            stored_phrase = stored_phrase[0][0]  # Get stored phrase from tuple
 
             # Check if new phrase matches stored phrase
             if new_phrase == stored_phrase:
@@ -177,7 +181,7 @@ class Login_Service:
         try:
             secret_phrase = self.__db_manager.do_select(
                 'SELECT phrase FROM users WHERE username = ?', (self.__username,))
-            secret_phrase = secret_phrase[0][0] # Get secret phrase from tuple
+            secret_phrase = secret_phrase[0][0]  # Get secret phrase from tuple
             if phrase == secret_phrase:
                 return True
             else:
@@ -226,9 +230,10 @@ class Login_Service:
     def change_password(self, new_password):
         """Change user password"""
         try:
-            hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())  # Hash password
+            hashed_password = bcrypt.hashpw(new_password.encode('utf-8'),
+                                            bcrypt.gensalt())  # Hash password
             self.__db_manager.do_update('UPDATE users SET password = ? WHERE username = ?',
-                            (hashed_password, self.__username), dry=False)
+                                        (hashed_password, self.__username), dry=False)
             print("Password changed successfully.\n")
             return True
         except Exception as e:
@@ -246,13 +251,13 @@ class Login_Service:
             }
             self.__logger.log(json)
             return False
-    
+
     # Changes secret phrase in database
     def change_phrase(self, new_phrase):
         """Change secret phrase"""
         try:
             self.__db_manager.do_update('UPDATE users SET phrase = ? WHERE username = ?',
-                             (new_phrase, self.__username), dry=False)
+                                        (new_phrase, self.__username), dry=False)
             print("Secret phrase changed successfully.\n")
             return True
         except Exception as e:
@@ -270,7 +275,7 @@ class Login_Service:
             }
             self.__logger.log(json)
             return False
-    
+
     def increment_attempts(self):
         """Increments login attempts"""
         self.__login_attempts += 1
@@ -281,12 +286,12 @@ class Login_Service:
             return True
         else:
             return False
-    
+
     def lockdown(self):
         """Locks the application"""
         current_time = time.time()
         self.__lock_time = current_time
-    
+
     def check_lockdown(self):
         """Checks if the application is locked and returns the remaining time"""
         current_time = time.time()
@@ -298,7 +303,7 @@ class Login_Service:
         else:
             remaining_time = int(10 - (current_time - self.__lock_time))
             return remaining_time
-    
+
     def start_lockdown_timer(self):
         """Starts the lockdown timer"""
         self.__lock_time = time.time()
@@ -334,24 +339,23 @@ class Login_Service:
                         print("This user is not an admin.\n")
                 else:
                     print("This user does not exist.\n")
-    
+
     def display_password_requirements(self):
         print("\nNew Password Requirements")
         print("1. Must be between 8 and 64 characters long\n")
-    
+
     def connect_encryption_service(self, encryption_service):
         """Connects the encryption service"""
         self.__encryption_service = encryption_service
-    
+
     def connect_input_sanitisation_service(self, input_sanitisation_service):
         """Connects the input sanitisation service"""
         self.__input_sanitisation_service = input_sanitisation_service
-    
+
     def connect_logger(self, logger):
         """Connects the logger"""
         self.__logger = logger
-    
+
     def connect_db_manager(self, db_manager):
         """Connects the db manager"""
         self.__db_manager = db_manager
-

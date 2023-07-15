@@ -4,6 +4,7 @@
 from context import GeigerCounter, Thermometer
 import unittest
 
+
 class TestGeigerCounter(unittest.TestCase):
     '''
         A class for encapsulating unit tests for a GeigerCounter.
@@ -16,6 +17,7 @@ class TestGeigerCounter(unittest.TestCase):
             A method that tests the read_data method.
         '''
         self.assertTrue(type(self.geiger_counter.read_data()) == float)
+
 
 class TestThermometer(unittest.TestCase):
     '''
@@ -30,6 +32,6 @@ class TestThermometer(unittest.TestCase):
         '''
         self.assertTrue(type(self.thermometer.read_data()) == float)
 
+
 if __name__ == '__main__':
     unittest.main()
-
