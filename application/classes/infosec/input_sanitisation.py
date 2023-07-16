@@ -6,22 +6,24 @@
 import re
 import datetime
 
+
 # Input Sanitisation Service Class
 class Input_Sanitisation_Service:
 
-    def filter_sql_keywords(self, user_input): # TESTED AND WORKING
+    def filter_sql_keywords(self, user_input):
         """Filters SQL keywords from user input"""
-        sql_keywords = ['SELECT', 'UPDATE', 'INSERT', 'DELETE', 'FROM', 'WHERE', 'JOIN', ' OR', 'OR']
+        sql_keywords = ['SELECT', 'UPDATE', 'INSERT', 'DELETE',
+                        'FROM', 'WHERE', 'JOIN', ' OR', 'OR']
 
         for keyword in sql_keywords:
             if keyword in user_input:
-            # Replace SQL keywords with empty string
+                # Replace SQL keywords with empty string
                 sanitized_input = user_input.replace(keyword, '')
                 return sanitized_input
 
         return user_input
 
-    def filter_special_characters(self, user_input, whitespace=True): # TESTED AND WORKING
+    def filter_special_characters(self, user_input, whitespace=True):
         """
             Filters special characters from user input. If whitespace is false,
             whitespace is not filtered.
@@ -30,11 +32,11 @@ class Input_Sanitisation_Service:
             sanitized_input = re.sub(r'[^\w\s]', '', user_input)
         else:
             sanitized_input = re.sub(r'[^\w]', '', user_input)
-        
+
         # Check if any changes were made
         if sanitized_input == user_input:
             return user_input
-        
+
         return sanitized_input
 
     def assert_input_size(self, user_input, min_size, max_size):
@@ -57,19 +59,19 @@ class Input_Sanitisation_Service:
         match = re.match(pattern, user_input)
         return bool(match)  # Returns True if match is found, False otherwise
 
-    def sanitise_phrase(self, phrase): # TESTED AND WORKING
+    def sanitise_phrase(self, phrase):
         """Sanitises phrase"""
         try:
             # Filter SQL keywords
             phrase = self.filter_sql_keywords(phrase)
             # Filter special characters
             phrase = self.filter_special_characters(phrase, False)
-            return phrase # Return sanitised phrase
+            return phrase  # Return sanitised phrase
         except Exception as e:
             print(f"An error occured: {e}\n")
             # Create logger to log error
-    
-    def validate_password(self, password): # SHOULD THIS CONTAIN CHARACTER FILTER TO PREVENT EVIL REGEX?
+
+    def validate_password(self, password):
         """Validates user password based on constraints"""
         try:
             # Assert password size
@@ -97,16 +99,17 @@ class Input_Sanitisation_Service:
                 }
             }
             self.__logger.log(json)
-    
+
     def validate_country(self, country):
         """Validates country input"""
-        countries = ["CA", "DK", "FR", "DE", "IT", "JP", "NL", "NO", "RU", "ES", "SE", "SZ", "GB", "US"]
+        countries = ["CA", "DK", "FR", "DE", "IT", "JP", "NL",
+                     "NO", "RU", "ES", "SE", "SZ", "GB", "US"]
         if country in countries:
             return True
         else:
             print(f"Invalid country. Please select from: \n{countries} ")
             return False
-    
+
     def validate_role(self, role):
         """Validates roles input"""
         roles = ["Superadmin", "Moderator", "Astronaut"]
@@ -115,7 +118,7 @@ class Input_Sanitisation_Service:
         else:
             print("Invalid role.")
             return False
-    
+
     def validate_dob(self, dob):
         """Validates date of birth input"""
         try:
@@ -124,7 +127,7 @@ class Input_Sanitisation_Service:
         except ValueError:
             print("Incorrect data format, should be DD-MM-YYYY")
             return False
-        
+
     def validate_integer(self, number):
         """Validates integer"""
         try:
@@ -133,7 +136,7 @@ class Input_Sanitisation_Service:
         except ValueError:
             print("Please enter an integer")
             return False
-        
+
     def validate_enum(self, user_input, options):
         """Validates option"""
         if user_input in options:
@@ -141,7 +144,7 @@ class Input_Sanitisation_Service:
         else:
             print(f"Please select from: {options}")
             return False
-        
+
     def validate(self, user_input, type, options, *args, **kwargs):
         '''
             Validates user input based on type. Returns True if validation passes,

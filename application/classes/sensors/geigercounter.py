@@ -10,7 +10,7 @@ class GeigerCounter(Sensor):
         A class for encapsulating a geiger counter component.
     '''
     def __init__(self):
-        self.__radiation = abs(gauss(0, 0.0005)) # Random radiation level
+        self.__radiation = abs(gauss(0, 0.0005))  # Random radiation level
         self.__unit = 'Rem'
         self.__RATEOFCHANGE = 1
 
@@ -27,13 +27,13 @@ class GeigerCounter(Sensor):
         self.__radiation = max(self.get_converters()[unit](self.__radiation_rem + delta, 'Rem'), 0)
         self.__unit = unit
         return self.__radiation
-    
+
     def get_units(self):
         '''
             A method for getting the units used for the last reading.
         '''
         return self.__unit
-    
+
     @classmethod
     def convert_to_rem(cls, radiation, unit):
         '''
@@ -43,7 +43,7 @@ class GeigerCounter(Sensor):
             return radiation
         elif unit == 'SV':
             return radiation * 100
-        
+
     @classmethod
     def convert_to_sievert(cls, radiation, unit):
         '''
@@ -53,7 +53,7 @@ class GeigerCounter(Sensor):
             return radiation * 0.01
         elif unit == 'SV':
             return radiation
-        
+
     @classmethod
     def get_converters(cls):
         '''
@@ -64,5 +64,3 @@ class GeigerCounter(Sensor):
             'SV': cls.convert_to_sievert
         }
         return func_map
-
-   

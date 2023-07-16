@@ -1,12 +1,14 @@
 '''
     This file contains integration tests for functionality involving sensor components.
 '''
-from context import ActionsController, CommandLineInterface, DBManager, User, DBShape, Logger, Encryption_Service, Input_Sanitisation_Service
+from context import ActionsController, CommandLineInterface, DBManager, User, DBShape
+from context import Logger, Encryption_Service, Input_Sanitisation_Service
 from mock import MockAuthorisationService, MockLoginService, MockAuditor, MockRoleService
 
 import unittest
 from random import randint
 import os
+
 
 class TestAdminActions(unittest.TestCase):
     '''
@@ -50,7 +52,9 @@ class TestAdminActions(unittest.TestCase):
 
         print("----Adding user----")
         # test database and logger integration
-        mock_selections = (x for x in ['1', '1', 'test_user', 'astronaut', '01-01-1971', 'US', 'OK', f'username{randint(0, 2**16)}', 'password', 'Y', 'N', '2'])
+        mock_selections = (x for x in ['1', '1', 'test_user', 'astronaut', '01-01-1971',
+                                       'US', 'OK', f'username{randint(0, 2**16)}', 'password',
+                                       'Y', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
@@ -83,7 +87,9 @@ class TestAdminActions(unittest.TestCase):
 
         print("----Deleting a user----")
         # test database and logger integration
-        mock_selections = (x for x in ['1', '4', '5a08d606-8ed8-434d-8928-e50913ee7134', 'Y', 'Y', '2', '5a08d606-8ed8-434d-8928-e50913ee7134', 'Y', 'N', '2'])
+        mock_selections = (x for x in ['1', '4', '5a08d606-8ed8-434d-8928-e50913ee7134',
+                                       'Y', 'Y', '2', '5a08d606-8ed8-434d-8928-e50913ee7134',
+                                       'Y', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
 
@@ -94,9 +100,12 @@ class TestAdminActions(unittest.TestCase):
 
         print("----Updating a user----")
         # test database and logger integration
-        mock_selections = (x for x in ['1', '5', '77432281-1a57-4de2-83c8-57d5e1997287', 'role', 'Astronaut', 'Y', 'Y', '4', '77432281-1a57-4de2-83c8-57d5e1997287', 'Y', 'N', '2'])
+        mock_selections = (x for x in ['1', '5', '77432281-1a57-4de2-83c8-57d5e1997287',
+                                       'role', 'Astronaut', 'Y', 'Y', '4',
+                                       '77432281-1a57-4de2-83c8-57d5e1997287', 'Y', 'N', '2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
         self.assertTrue(self.cli.display_main_menu())
+
 
 if __name__ == '__main__':
     unittest.main()

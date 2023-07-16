@@ -4,6 +4,7 @@
 from context import CommandLineInterface
 import unittest
 
+
 class TestCLI(unittest.TestCase):
     '''
         A class for encapsulating unit tests for the CommandLineInterface class.
@@ -17,9 +18,8 @@ class TestCLI(unittest.TestCase):
         '''
         mock_selections = (x for x in ['2'])
         self.cli.ask_for_selection = lambda: next(mock_selections)
-        self.assertTrue(self.cli.display_main_menu()) # successful exit
-    
+        self.assertTrue(self.cli.display_main_menu())  # successful exit
+
 
 if __name__ == '__main__':
     unittest.main()
-
