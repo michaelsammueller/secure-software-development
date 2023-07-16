@@ -1,6 +1,2 @@
-getpass
 bcrypt
 cryptography
-re
-sqlite3
-uuid
