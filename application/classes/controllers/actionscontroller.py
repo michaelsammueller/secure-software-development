@@ -37,12 +37,12 @@ class ActionsController(object):
                              ('username', [], ''),
                              ('password', [], 'PASSWORD')],
             'Delete User': [('uuid', [], '')],
-            'Add Own Health Record': [('complains', [], ''),
+            'Add Own Health Record': [('complaints', [], ''),
                                       ('height', ['cm'], 'INT'),
                                       ('weight', ['kg'], 'INT'),
                                       ('blood_pressure', ['mmHg'], 'INT')],
             'Add Health Record': [('uuid', [], ''),
-                                  ('complains', [], ''),
+                                  ('complaints', [], ''),
                                   ('height', ['cm'], 'INT'),
                                   ('weight', ['kg'], 'INT'),
                                   ('blood_pressure', ['mmHg'], 'INT')],
@@ -57,7 +57,7 @@ class ActionsController(object):
                                      'ENUM'),
                                     ('new value', [], '')],  # VULNERABILITY (bypasses sanitisation)
             'Edit Health Record': [('record id', [], ''),
-                                   ('field', ['complains', 'weight',
+                                   ('field', ['complaints', 'weight',
                                               'height', 'blood pressure'],
                                     'ENUM'),
                                    ('new value', [], '')],  # VULNERABILITY (bypasses sanitisation)
@@ -303,7 +303,7 @@ class ActionsController(object):
             new_user_details interface:
             {
                 'uuid': uuid,
-                'complains' : complaints
+                'complaints' : complaints
                 'height': height,
                 'weight': weight,
                 'blood_pressure': blood_pressure,
@@ -342,7 +342,7 @@ class ActionsController(object):
 
             new_user_details interface:
             {
-                'complains' : complaints
+                'complaints' : complaints
                 'height': height,
                 'weight': weight,
                 'blood_pressure': blood_pressure,
@@ -497,7 +497,7 @@ class ActionsController(object):
             old_user_details interface:
             {
                 'record id': id,
-                'field': ['complains', 'height', 'weight', 'blood_pressure],
+                'field': ['complaints', 'height', 'weight', 'blood_pressure],
                 'new value': 'new value'
             }
         '''

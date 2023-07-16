@@ -42,7 +42,7 @@ class AuthSeeder():
         self.records = [
             {
                 'uuid': '12345',
-                'complains': 'headache',
+                'complaints': 'headache',
                 'height': '180',
                 'weight': '80',
                 'blood_pressure': '120',

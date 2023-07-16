@@ -18,11 +18,11 @@ def main():
     sanitisation_service = Input_Sanitisation_Service()
     encryption_service = Encryption_Service()
     authorisation_service = AuthorisationService()
-    log_path = 'application/logs.txt'
+    log_path = 'logs/securespace.txt'
     logger = Logger(log_path)
     auditor = MockAuditor()
     authseeder = AuthSeeder()
-    db_path = 'application/data.db'
+    db_path = 'data/securespace.db'
     DBShape(db_path)
     db_manager = DBManager(db_path)
     thermometer = Thermometer()

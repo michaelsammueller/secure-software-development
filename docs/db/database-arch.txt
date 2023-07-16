@@ -75,7 +75,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `iss`.`record_item` (
   `id` INT(11) NOT NULL,
   `record_id` INT(11) NOT NULL,
-  `complains` VARCHAR(255) NULL DEFAULT NULL,
+  `complaints` VARCHAR(255) NULL DEFAULT NULL,
   `height` FLOAT NULL,
   `weight` FLOAT NULL,
   `blood_pressure` VARCHAR(25) NULL,

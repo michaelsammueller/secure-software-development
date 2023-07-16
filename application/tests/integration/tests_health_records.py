@@ -92,7 +92,7 @@ class TestModeratorActions(unittest.TestCase):
 
         print("----Updating a health record----")
         # test database and logger integration
-        mock_selections = (x for x in ['1', '11', '1', 'complains',
+        mock_selections = (x for x in ['1', '11', '1', 'complaints',
                                        'test condition', 'Y', 'Y', '8',
                                        '5a08d606-8ed8-434d-8928-e50913ee7134',
                                        'Y', 'N', '2'])

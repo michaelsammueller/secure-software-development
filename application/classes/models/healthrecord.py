@@ -17,9 +17,9 @@ class HealthRecord:
         '''
         nhrd = new_health_record_details
         query = ("INSERT INTO record_items"
-                 "(uuid, record_id, complains, height, weight, blood_pressure)"
+                 "(uuid, record_id, complaints, height, weight, blood_pressure)"
                  "VALUES (?, ?, ?, ?, ?, ?)")
-        values = (nhrd['uuid'], (self.__num_records + 1), nhrd['complains'], nhrd['height'],
+        values = (nhrd['uuid'], (self.__num_records + 1), nhrd['complaints'], nhrd['height'],
                   nhrd['weight'], nhrd['blood_pressure'])
         self.__num_records += 1
         return self.__db_manager.do_insert(query, values,  False)
@@ -56,7 +56,7 @@ class HealthRecord:
         '''
         field = user_information['field']
         value = user_information['new value']
-        if field in ['complains']:
+        if field in ['complaints']:
             value = f"'{value}'"
         query = f"UPDATE record_items SET {field} = {value} WHERE record_id = ?"
         where = (user_information['record id'],)
