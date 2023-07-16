@@ -54,6 +54,18 @@ class MockLoginService:
         '''
         return "Braddarb"
     
+    def check_lockdown(self, *args, **kwargs):
+        '''
+        A method for mocking lockdown.
+        '''
+        return False
+    
+    def lockdown_required(  self, *args, **kwargs):
+        '''
+        A method for mocking lockdown.
+        '''
+        return False
+    
 class MockEncryptionService:
     '''
         A class for mocking the encryption service.
@@ -90,3 +102,21 @@ class MockHealthRecordService:
         A method for mocking a login.
         '''
         return True
+    
+class MockRoleService:
+    '''
+        A class for mocking a role.
+    '''
+    def get_role_id(self, *args, **kwargs):
+        '''
+        A method for getting a role id.
+        '''
+        return 1
+    
+    def get_role_name(self, *args, **kwargs):
+        '''
+        A method forgetting a role name.
+        '''
+        return "bugfixer"
+    
+    

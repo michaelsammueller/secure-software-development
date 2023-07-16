@@ -66,9 +66,18 @@ class Logger(object):
             for key, value in loggable_information['action']['parameters'].items():
                 encrypted_information['parameters'][key] = self.__encryption_service.encrypt(value)
             loggable_information[activity_type]['parameters'] = encrypted_information['parameters']
-            for key, value in loggable_information['action']['results'].items():
-                encrypted_information['results'][key] = self.__encryption_service.encrypt(value)
-            loggable_information['action']['results'] = encrypted_information['results']
+            try:
+                for key, value in loggable_information['action']['results'].items():
+                    encrypted_information['results'][key] = self.__encryption_service.encrypt(value)
+            except:
+                encrypted_information['results'] = []
+                for result in loggable_information['action']['results']:
+                    encrypted_entry = {}
+                    for key, value in result.items():
+                        encrypted_entry[key] = self.__encryption_service.encrypt(value)
+                    encrypted_information['results'].append(encrypted_entry)
+            finally:
+                loggable_information['action']['results'] = encrypted_information['results']
         elif activity_type == 'event':
             encrypted_information = {'details': {}}
             for key, value in loggable_information['event']['details'].items():
