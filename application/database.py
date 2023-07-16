@@ -1,8 +1,10 @@
 import sqlite3
 
+
 class DBShape(object):
+    """This class creates the database and its tables if they don't exist."""
     def __init__(self, database_path='application/data/securespace.db'):
-        
+
         # Connect to SQL database or create database if it doesn't exist
         connect = sqlite3.connect(database_path)
         cursor = connect.cursor()
@@ -15,16 +17,16 @@ class DBShape(object):
                 name TEXT NOT NULL,
                 code TEXT UNIQUE NOT NULL,
                 dob INTEGER,
-                role_id INTEGER,        
+                role_id INTEGER,
                 country_id INTEGER,
                 username TEXT UNIQUE,
-                password TEXT,     
-                phrase TEXT,   
+                password TEXT,
+                phrase TEXT,
                 last_login_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 is_held NUMERIC DEFAULT 1,
-                status NUMERIC DEFAULT 0,        
+                status NUMERIC DEFAULT 0,
                 FOREIGN KEY (role_id) REFERENCES roles (id),
                 FOREIGN KEY (country_id) REFERENCES countries (id)
             )
@@ -57,8 +59,8 @@ class DBShape(object):
             CREATE TABLE IF NOT EXISTS role_has_permissions (
                 role_id INTEGER NOT NULL,
                 permission_id INTEGER NOT NULL,
-                FOREIGN KEY (role_id) REFERENCES roles (id)   
-                FOREIGN KEY (permission_id) REFERENCES permissions (id)        
+                FOREIGN KEY (role_id) REFERENCES roles (id)
+                FOREIGN KEY (permission_id) REFERENCES permissions (id)
             )
         ''')
 
@@ -83,21 +85,19 @@ class DBShape(object):
                 complains TEXT NULL,
                 height REAL NULL,
                 weight REAL NULL,
-                blood_pressure TEXT NULL,      
+                blood_pressure TEXT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (record_id) REFERENCES records (id)
             )
         ''')
 
-
-
         # Creation of the checks table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS checks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 uuid TEXT NOT NULL,
-                name TEXT NOT NULL       
+                name TEXT NOT NULL
             )
         ''')
 
@@ -106,8 +106,8 @@ class DBShape(object):
             CREATE TABLE IF NOT EXISTS record_item_has_checks (
                 record_item_id INTEGER NOT NULL,
                 check_id INTEGER NOT NULL,
-                FOREIGN KEY (record_item_id) REFERENCES record_items (id)   
-                FOREIGN KEY (check_id) REFERENCES checks (id)        
+                FOREIGN KEY (record_item_id) REFERENCES record_items (id)
+                FOREIGN KEY (check_id) REFERENCES checks (id)
             )
         ''')
 
@@ -120,13 +120,12 @@ class DBShape(object):
                 severity TEXT NULL,
                 activity TEXT NULL,
                 category INTEGER NULL,
-                data TEXT NULL,      
+                data TEXT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users (id)
             )
         ''')
-
 
         # Creation of the countries table
         cursor.execute('''
@@ -145,8 +144,8 @@ class DBShape(object):
         # checks = [('Temperature',),
         #           ('Radiation',)]
 
-        # cursor.executemany(''' 
-        #         INSERT INTO checks(name) 
+        # cursor.executemany('''
+        #         INSERT INTO checks(name)
         #         VALUES(?)
         # ''', checks)
 
@@ -155,6 +154,7 @@ class DBShape(object):
         connect.close()
 
         print("Database initialised.")
+
 
 if __name__ == '__main__':
     DBShape()

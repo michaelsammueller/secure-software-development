@@ -1,6 +1,8 @@
 '''
     This file contains the Authorisation Service Class
 '''
+
+
 class AuthorisationService:
 
     def __init__(self):
@@ -28,14 +30,14 @@ class AuthorisationService:
         '''
         return self.__user_service.get_user_role(username)
 
-    # Check if role has permission: 
+    # Check if role has permission:
     def check_permission(self, action, user_role):
         permission = self.action_to_permission[action]
         permission_id = self.__permission_service.get_permission_id(permission)
         role_id = self.__role_service.get_role_id(user_role)
-    
+
         # select row where permission matches role_id
-        query = "SELECT * FROM role_has_permissions WHERE permission_id = ? AND role_id = ?" 
+        query = "SELECT * FROM role_has_permissions WHERE permission_id = ? AND role_id = ?"
         values = (permission_id, role_id)
 
         result = self.__db_manager.do_select(query, values)
@@ -43,7 +45,7 @@ class AuthorisationService:
             return True
         else:
             return False
-           
+
     def connect_db_manager(self, db_manager):
         '''
             Connects to the database manager
@@ -67,6 +69,3 @@ class AuthorisationService:
             Connects to the role_service
         '''
         self.__role_service = role_service
-
-
-        

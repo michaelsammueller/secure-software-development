@@ -6,9 +6,9 @@ from abc import ABC, abstractmethod
 
 class Sensor(ABC):
     '''
-        Abstract class for sensor components, 
-        encapsulating hardware whose function is to provide 
-        data to the system. 
+        Abstract class for sensor components,
+        encapsulating hardware whose function is to provide
+        data to the system.
     '''
     @abstractmethod
     def read_data():
@@ -20,4 +20,3 @@ class Sensor(ABC):
         '''
             Abstract method for getting the units used for the last reading.
         '''
-    

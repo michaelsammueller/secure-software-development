@@ -4,6 +4,7 @@
 from context import Role
 import unittest
 
+
 class TestRole(unittest.TestCase):
     '''
         A class for encapsulating unit tests for the Role class.
@@ -16,7 +17,7 @@ class TestRole(unittest.TestCase):
             A method that tests getting the role.
         '''
         self.assertEqual(self.role.get_role('1'), ('Superadmin'))
-    
+
+
 if __name__ == '__main__':
     unittest.main()
-    

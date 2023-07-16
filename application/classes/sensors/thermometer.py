@@ -10,7 +10,7 @@ class Thermometer(Sensor):
         A class for encapsulating a thermometer component.
     '''
     def __init__(self):
-        self.__temperature = gauss(25.0, 5.0) # Random temperature
+        self.__temperature = gauss(25.0, 5.0)  # Random temperature
         self.__unit = 'C'
         self.__RATEOFCHANGE = 1
 
@@ -27,7 +27,7 @@ class Thermometer(Sensor):
         self.__temperature = self.get_converters()[unit](self.__temperature_c + delta, 'C')
         self.__unit = unit
         return self.__temperature
-    
+
     def get_units(self):
         '''
             A method for getting the units used for the last reading.
@@ -42,22 +42,22 @@ class Thermometer(Sensor):
         if unit == 'C':
             return temperature
         elif unit == 'F':
-            return (temperature - 32) * 5/9
+            return (temperature - 32) * 5 / 9
         elif unit == 'K':
             return temperature - 273.15
-    
+
     @classmethod
     def convert_to_fahrenheit(cls, temperature, unit):
         '''
             A method for converting the temperature to Fahrenheit.
         '''
         if unit == 'C':
-            return (temperature * 9/5) + 32
+            return (temperature * 9 / 5) + 32
         elif unit == 'F':
             return temperature
         elif unit == 'K':
-            return (temperature * 9/5) - 459.67
-        
+            return (temperature * 9 / 5) - 459.67
+
     @classmethod
     def convert_to_kelvin(cls, temperature, unit):
         '''
@@ -66,7 +66,7 @@ class Thermometer(Sensor):
         if unit == 'C':
             return temperature + 273.15
         elif unit == 'F':
-            return (temperature + 459.67) * 5/9
+            return (temperature + 459.67) * 5 / 9
         elif unit == 'K':
             return temperature
 
