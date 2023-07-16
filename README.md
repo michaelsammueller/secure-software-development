@@ -9,7 +9,6 @@ Team Members: _Bradley Graham, Michael Sammueller, Tomas Mestanza & Rachel Doher
 1. [How to run the program](#how-to-run-the-program)
 2. [Design Principles](#design-principles)
 3. [Description](#description)
-4. [User Briefing](#user-briefing)
 5. [Application Features & Implemented Technologies](#application-features--implemented-technologies)
 6. [External tools & Libraries](#external-tools--libraries)
 7. [Database](#database)
@@ -49,8 +48,6 @@ The database application is designed to be accessible via a single terminal onbo
 Passwords and some user data are encrypted before being stored in the database, however some database records do remain unencrypted. The unencrypted records do not reveal personal information which could elevate permissions. The superadmin has most permissions. If superadmin access details were leaked, there would be no way to access the database without access to the onboard terminal which is located in space, onboard the ISS.
 
 According to the principles of Agile and Lean software development, functionality should only be implemented if it brings value to the product and enhances the architectural quality of the system (Alahyari et al., 2017). For this reason and with the domain in mind, SecureSpace consider it counterintuitive to encrypt the entire database at this point, which slows down application performance.
-
-### User Briefing
 
 On first-time deployment of the application and database intialisation, a user with superadmin rights will be able to add user profiles. It is assumed that usernames and passwords will be assigned by a superadmin to the individual mission crew members and shared in an 'analog' environment. No functionality to distribute login data via email or other means has been incorporated, which consequentially can be considered an additional layer of security.
 
@@ -148,7 +145,7 @@ _Original System Design:_
 Originally, we would allow users to download their health records as data files.
 
 _Final Implementation:_
-File download has been implemented with the resulting file in json format, offering limited readability.
+File download has been implemented with the resulting file in .txt format.
 
 #### 3. Role / Permissions mapping
 
