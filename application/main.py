@@ -49,6 +49,7 @@ def main():
     action_controller.connect_geiger_counter(geiger_counter)
     action_controller.connect_health_record_service(health_record)
     action_controller.connect_cli(commandline_interface) # circular
+    action_controller.connect_download_service(download_service)
 
     login_service.connect_input_sanitisation_service(sanitisation_service)
     login_service.connect_encryption_service(encryption_service)
