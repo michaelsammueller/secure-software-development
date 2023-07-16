@@ -30,6 +30,14 @@ In order to install all the dependencies required for this project run the comma
 
 This will install all of the packages in the requirements.txt file.
 
+Three demo accounts have been provided, each with different priviliges. These can be altered in the application/classes/authseeder.py file
+
+1. Username: demosuperadmin, Password: password123, Secret Phrase: demo, uuid: 100
+2. Username: demomoderator, Password: password123, Secret Phrase: demo, uuid: 101
+3. Username: demoastronaut, Password: password123, Secret Phrase: demo, uuid: 102
+
+Tests can be found in the application/tests directory.
+
 ### Description
 
 This application is intended for use by astronauts to record health indicators related to their physical fitness and mental health during a space mission. It also models the measurement of ambient temperature and radiation exposure via onboard sensors.

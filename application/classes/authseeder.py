@@ -69,6 +69,36 @@ class AuthSeeder():
                 'secret phrase': 'ok',
                 'uuid': '987654'
             },
+            {
+                'name': 'demosuperadmin',
+                'role': 1,
+                'date of birth': '20-07-1997',
+                'country of employment': 'US',
+                'username': 'demosuperadmin',
+                'password': 'password123',
+                'secret phrase': 'demo',
+                'uuid': '100'
+            },
+            {
+                'name': 'demomoderator',
+                'role': 2,
+                'date of birth': '28-05-1980',
+                'country of employment': 'US',
+                'username': 'demomoderator',
+                'password': 'password123',
+                'secret phrase': 'demo',
+                'uuid': '101'
+            },
+                        {
+                'name': 'demoastronaut',
+                'role': 3,
+                'date of birth': '01-12-1987',
+                'country of employment': 'US',
+                'username': 'demoastronaut',
+                'password': 'password123',
+                'secret phrase': 'demo',
+                'uuid': '102'
+            },
         ]
 
     def __call__(self):
