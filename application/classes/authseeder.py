@@ -23,22 +23,26 @@ class AuthSeeder():
 
         self.roles = ["Superadmin", "Moderator", "Astronaut"]
 
-        self.permissions = ["create-user", "delete-user", "view-all-users", "view-user-details",
-                            "update-user-details", "add-health-record", "add-own-health-record",
-                            "view-user-health-records", "view-own-health-records",
-                            "update-user-health-record", "delete-user-health-records",
-                            "view-temperature", "view-radiation", "change-password"
-                            ]
+        self.permissions = ["create-user", "delete-user", "view-all-users",
+                    "view-user-details", "update-user-details",
+                    "add-health-record", "add-own-health-record", "view-user-health-records",
+                    "view-own-health-records",
+                    "update-user-health-record",
+                    "delete-user-health-records",
+                    "view-temperature", "view-radiation", "change-password",
+                    "download-own-health-records"
+        ]
 
-        self.role_has_permissions = [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7),
-                                     (1, 8), (1, 9), (1, 10), (1, 11), (1, 12), (1, 13), (1, 14),
-                                     (2, 6), (2, 7), (2, 8), (2, 9), (2, 10), (2, 12),
-                                     (2, 13), (2, 14), (3, 7), (3, 9), (3, 12), (3, 13), (3, 14)]
+        self.role_has_permissions = [(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7),
+                                (1,8), (1,9), (1,10), (1, 11), (1,12), (1,13), (1,14), (1,15),
+                                (2,6), (2,7), (2,8), (2,9), (2,12), (2,13), (2,14), (2,15),
+                                (3,7), (3,9), (3,12), (3,13), (3, 14), (3, 15)
+        ]
 
         self.records = [
             {
                 'uuid': '12345',
-                'complains': 'headache',
+                'complaints': 'headache',
                 'height': '180',
                 'weight': '80',
                 'blood_pressure': '120',
@@ -65,6 +69,36 @@ class AuthSeeder():
                 'password': 'michael123',
                 'secret phrase': 'ok',
                 'uuid': '987654'
+            },
+            {
+                'name': 'demosuperadmin',
+                'role': 1,
+                'date of birth': '20-07-1997',
+                'country of employment': 'US',
+                'username': 'demosuperadmin',
+                'password': 'password123',
+                'secret phrase': 'demo',
+                'uuid': '100'
+            },
+            {
+                'name': 'demomoderator',
+                'role': 2,
+                'date of birth': '28-05-1980',
+                'country of employment': 'US',
+                'username': 'demomoderator',
+                'password': 'password123',
+                'secret phrase': 'demo',
+                'uuid': '101'
+            },
+                        {
+                'name': 'demoastronaut',
+                'role': 3,
+                'date of birth': '01-12-1987',
+                'country of employment': 'US',
+                'username': 'demoastronaut',
+                'password': 'password123',
+                'secret phrase': 'demo',
+                'uuid': '102'
             },
         ]
 

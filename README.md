@@ -29,6 +29,14 @@ In order to install all the dependencies required for this project run the comma
 
 This will install all of the packages in the requirements.txt file.
 
+Three demo accounts have been provided, each with different privileges. These can be altered in the application/classes/authseeder.py file
+
+1. Username: demosuperadmin, Password: password123, Secret Phrase: demo, uuid: 100
+2. Username: demomoderator, Password: password123, Secret Phrase: demo, uuid: 101
+3. Username: demoastronaut, Password: password123, Secret Phrase: demo, uuid: 102
+
+Tests can be found in the application/tests directory.
+
 ### Description
 
 This application is intended for use by astronauts to record health indicators related to their physical fitness and mental health during a space mission. It also models the measurement of ambient temperature and radiation exposure via onboard sensors.
@@ -165,13 +173,18 @@ The updated role matrix maped to permissions and roles is shown in the table bel
 | Add New User / create-user                              | [x]          | [ ]         | [ ]         |
 | Delete User / delete-user                               | [x]          | [ ]         | [ ]         |
 | View All Users / view-all-users                         | [x]          | [ ]         | [ ]         |
-| View User Details / view-user-details                   | [x]          | [x]         | [x]         |
-| Add Health Record / add-health-record                   | [x]          | [ ]         | [x]         |
+| View User Details / view-user-details                   | [x]          | [ ]         | [ ]         |
+| Edit User Details / update-user-details                 | [x]          | [ ]         | [ ]         |
+| Add Health Record / add-health-record                   | [x]          | [x]         | [ ]         |
+| Add Own Health Record / add-health-record               | [x]          | [x]         | [x]         |
 | View User Health Records / view-user-health-records     | [x]          | [x]         | [ ]         |
+| View Own Health Records / view-own-health-records       | [x]          | [x]         | [x]         |
+| Edit User Health Record / update-user-health-record     | [x]          | [ ]         | [ ]         |
 | Delete User Health Records / delete-user-health-records | [x]          | [ ]         | [ ]         |
 | View Temperature / view-temperature                     | [x]          | [x]         | [x]         |
 | View Radiation level / view-radiation                   | [x]          | [x]         | [x]         |
-| Download Health Record / download-record                | [x]          | [ ]         | [x]         |
+| Change password / change-password                       | [x]          | [x]         | [x]         |
+| Download Health Record / download-record                | [x]          | [x]         | [x]         |
 
 ### Testing
 

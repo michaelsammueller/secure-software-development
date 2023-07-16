@@ -82,7 +82,7 @@ class DBShape(object):
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 uuid TEXT NOT NULL,
                 record_id INTEGER,
-                complains TEXT NULL,
+                complaints TEXT NULL,
                 height REAL NULL,
                 weight REAL NULL,
                 blood_pressure TEXT NULL,

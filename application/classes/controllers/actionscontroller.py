@@ -22,7 +22,8 @@ class ActionsController(object):
             'Edit Health Record',
             'View Temperature',
             'View Radiation Level',
-            'Change Password'
+            'Change Password',
+            'Download Own Health Records'
         ]
 
         self.__ACTIONPARAMS = {
@@ -36,12 +37,12 @@ class ActionsController(object):
                              ('username', [], ''),
                              ('password', [], 'PASSWORD')],
             'Delete User': [('uuid', [], '')],
-            'Add Own Health Record': [('complains', [], ''),
+            'Add Own Health Record': [('complaints', [], ''),
                                       ('height', ['cm'], 'INT'),
                                       ('weight', ['kg'], 'INT'),
                                       ('blood_pressure', ['mmHg'], 'INT')],
             'Add Health Record': [('uuid', [], ''),
-                                  ('complains', [], ''),
+                                  ('complaints', [], ''),
                                   ('height', ['cm'], 'INT'),
                                   ('weight', ['kg'], 'INT'),
                                   ('blood_pressure', ['mmHg'], 'INT')],
@@ -56,11 +57,12 @@ class ActionsController(object):
                                      'ENUM'),
                                     ('new value', [], '')],  # VULNERABILITY (bypasses sanitisation)
             'Edit Health Record': [('record id', [], ''),
-                                   ('field', ['complains', 'weight',
+                                   ('field', ['complaints', 'weight',
                                               'height', 'blood pressure'],
                                     'ENUM'),
                                    ('new value', [], '')],  # VULNERABILITY (bypasses sanitisation)
             'Change Password': [],
+            'Download Own Health Records': [],
         }
 
     def get_actions(self):
@@ -101,7 +103,8 @@ class ActionsController(object):
             'Delete User Health Records': self.delete_user_health_records,
             'Update User Details': self.update_user_information,
             'Edit Health Record': self.update_health_record,
-            'Change Password': self.change_password
+            'Change Password': self.change_password,
+            'Download Own Health Records': self.download_health_records,
         }
         return func_map[action](parameters)
 
@@ -300,7 +303,7 @@ class ActionsController(object):
             new_user_details interface:
             {
                 'uuid': uuid,
-                'complains' : complaints
+                'complaints' : complaints
                 'height': height,
                 'weight': weight,
                 'blood_pressure': blood_pressure,
@@ -339,7 +342,7 @@ class ActionsController(object):
 
             new_user_details interface:
             {
-                'complains' : complaints
+                'complaints' : complaints
                 'height': height,
                 'weight': weight,
                 'blood_pressure': blood_pressure,
@@ -494,7 +497,7 @@ class ActionsController(object):
             old_user_details interface:
             {
                 'record id': id,
-                'field': ['complains', 'height', 'weight', 'blood_pressure],
+                'field': ['complaints', 'height', 'weight', 'blood_pressure],
                 'new value': 'new value'
             }
         '''
@@ -627,6 +630,31 @@ class ActionsController(object):
         self.__cli.change_password()
         # return results
         return {}
+    
+    def download_health_records(self, *args, **kwargs):
+        '''
+            A method for changing passwords.
+        '''
+        action = 'Download Own Health Records'
+        # assert permission for action
+        user_role = self.__authorisation_service.get_user_role(self.__login_service.get_loggedin_username())
+        if not self.__authorisation_service.check_permission(action, user_role):
+            return {'Error': 'Unauthorised action'}
+        # log action
+        json = {
+            'user' : self.__login_service.get_loggedin_username(),
+            'activity_type' : 'action',
+            'action' : {
+                'type' : action,
+                'parameters' : {},
+                'results' : {}
+            }
+        }
+        self.__logger.log(json)
+        # perform action
+        self.__download_service.download()
+        # return results
+        return {}
 
     def assert_params_shape(self, parameters, action):
         '''
@@ -680,6 +708,10 @@ class ActionsController(object):
     def connect_login_service(self, login_service):
         """Connects the record service"""
         self.__login_service = login_service
+
+    def connect_download_service(self, download_service):
+        """Connects the download service"""
+        self.__download_service = download_service
 
     def connect_cli(self, cli):
         """Connects the cli"""

@@ -18,11 +18,11 @@ def main():
     sanitisation_service = Input_Sanitisation_Service()
     encryption_service = Encryption_Service()
     authorisation_service = AuthorisationService()
-    log_path = 'application/logs.txt'
+    log_path = 'logs/securespace.txt'
     logger = Logger(log_path)
     auditor = MockAuditor()
     authseeder = AuthSeeder()
-    db_path = 'application/data.db'
+    db_path = 'data/securespace.db'
     DBShape(db_path)
     db_manager = DBManager(db_path)
     thermometer = Thermometer()
@@ -50,7 +50,8 @@ def main():
     action_controller.connect_thermometer(thermometer)
     action_controller.connect_geiger_counter(geiger_counter)
     action_controller.connect_health_record_service(health_record)
-    action_controller.connect_cli(commandline_interface)  # circular
+    action_controller.connect_cli(commandline_interface) # circular
+    action_controller.connect_download_service(download_service)
 
     login_service.connect_input_sanitisation_service(sanitisation_service)
     login_service.connect_encryption_service(encryption_service)
