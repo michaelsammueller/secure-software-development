@@ -6,6 +6,25 @@ class Role:
     '''
         A parent class for the system roles.
     '''
+
+    def get_roles(self):
+       
+        return self.db_manager.do_select('SELECT * FROM roles')
+       
+
+    def get_role(self, id):
+      
+        if id:
+            return self.db_manager.do_select('SELECT * FROM roles WHERE id = ?', (id,) )
+        else:
+            return False
+        
+    def get_role_id(self, name):
+        result = self.db_manager.do_select('SELECT id FROM roles WHERE name = ?', (name,) )
+        if len(result) >= 1:        
+            return result[0]['name'] # TODO
+        else:
+            return 0
     
     # Creates a record and returns the inserted id
     def add_role(self, name):
