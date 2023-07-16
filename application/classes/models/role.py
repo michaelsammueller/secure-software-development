@@ -9,7 +9,7 @@ class Role:
     '''
         A parent class for the system roles.
     '''
-
+    
     # Creates a record and returns the inserted id
     def add_role(self, name):
         '''
