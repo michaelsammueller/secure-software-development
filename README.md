@@ -168,13 +168,18 @@ The updated role matrix maped to permissions and roles is shown in the table bel
 | Add New User / create-user                              | [x]          | [ ]         | [ ]         |
 | Delete User / delete-user                               | [x]          | [ ]         | [ ]         |
 | View All Users / view-all-users                         | [x]          | [ ]         | [ ]         |
-| View User Details / view-user-details                   | [x]          | [x]         | [x]         |
-| Add Health Record / add-health-record                   | [x]          | [ ]         | [x]         |
+| View User Details / view-user-details                   | [x]          | [ ]         | [ ]         |
+| Edit User Details / update-user-details                 | [x]          | [ ]         | [ ]         |
+| Add Health Record / add-health-record                   | [x]          | [x]         | [ ]         |
+| Add Own Health Record / add-health-record               | [x]          | [x]         | [x]         |
 | View User Health Records / view-user-health-records     | [x]          | [x]         | [ ]         |
+| View Own Health Records / view-own-health-records       | [x]          | [x]         | [x]         |
+| Edit User Health Record / update-user-health-record     | [x]          | [ ]         | [ ]         |
 | Delete User Health Records / delete-user-health-records | [x]          | [ ]         | [ ]         |
 | View Temperature / view-temperature                     | [x]          | [x]         | [x]         |
 | View Radiation level / view-radiation                   | [x]          | [x]         | [x]         |
-| Download Health Record / download-record                | [x]          | [ ]         | [x]         |
+| Change password / change-password                       | [x]          | [x]         | [x]         |
+| Download Health Record / download-record                | [x]          | [x]         | [x]         |
 
 ### Testing
 
